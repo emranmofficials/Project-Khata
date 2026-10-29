@@ -19,6 +19,12 @@ void main() {
       final date = DateTime(2026, 10, 29);
       final formattedDate = BengaliFormatter.formatDate(date);
       expect(formattedDate, '২৯ অক্টোবর ২০২৬');
+      expect(BengaliFormatter.toDate(date), '২৯ অক্টোবর ২০২৬');
+    });
+
+    test('formats square feet and aliases', () {
+      expect(BengaliFormatter.toCurrency(1200), '৳ ১,২০০');
+      expect(BengaliFormatter.toSqft(2500), '২৫০০ বর্গফুট');
     });
   });
 }

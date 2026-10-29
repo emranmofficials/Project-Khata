@@ -189,7 +189,7 @@ class _CreateProjectScreenState extends ConsumerState<CreateProjectScreen> {
                             ),
                           )
                         : DropdownButtonFormField<String>(
-                            value: _selectedClientId,
+                            initialValue: _selectedClientId,
                             decoration: const InputDecoration(
                               labelText: 'ক্লায়েন্ট নির্বাচন করুন *',
                               prefixIcon: Icon(Icons.person_pin_rounded),

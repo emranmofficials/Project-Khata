@@ -113,7 +113,7 @@ class _AssignSupervisorDialogState
                   'অ্যাসাইন করার মতো কোনো নতুন সুপারভাইজার নেই। সকল সুপারভাইজার ইতিমধ্যে এই প্রজেক্টে যুক্ত আছেন।',
                 )
               : DropdownButtonFormField<String>(
-                  value: _selectedSupervisorId,
+                  initialValue: _selectedSupervisorId,
                   decoration: const InputDecoration(
                     labelText: 'সুপারভাইজার নির্বাচন করুন',
                     prefixIcon: Icon(Icons.badge_outlined),

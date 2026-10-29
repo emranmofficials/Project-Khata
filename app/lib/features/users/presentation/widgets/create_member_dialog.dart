@@ -107,7 +107,7 @@ class _CreateMemberDialogState extends ConsumerState<CreateMemberDialog> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<UserRole>(
-                value: _selectedRole,
+                initialValue: _selectedRole,
                 decoration: const InputDecoration(
                   labelText: AppStrings.selectRole,
                   prefixIcon: Icon(Icons.badge_outlined),
