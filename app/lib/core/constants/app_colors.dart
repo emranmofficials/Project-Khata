@@ -12,6 +12,7 @@ class AppColors {
   static const Color workerPrimary = workerIndigo;
 
   // Aliases for common theme colors
+  static const Color primary = contractorNavy;
   static const Color textSecondary = Color(0xFF64748B);
   static const Color textPrimary = Color(0xFF0F172A);
 

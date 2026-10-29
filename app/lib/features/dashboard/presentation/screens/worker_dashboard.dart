@@ -5,6 +5,7 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../auth/domain/models/app_user.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../attendance/presentation/screens/attendance_history_screen.dart';
+import '../../../accounts/presentation/screens/worker_wage_history_screen.dart';
 
 class WorkerDashboard extends ConsumerStatefulWidget {
   const WorkerDashboard({super.key});
@@ -82,13 +83,7 @@ class _WorkerDashboardState extends ConsumerState<WorkerDashboard> {
   }
 
   Widget _buildWorkAndWagesTab() {
-    return const Center(
-      child: Text(
-        'কাজ ও মজুরির হিসাব\n(ফেজ ৪-এ চালু হবে)',
-        textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.grey),
-      ),
-    );
+    return const WorkerWageHistoryScreen(showAppBar: false);
   }
 
   Widget _buildProfileTab(UserProfile? user) {

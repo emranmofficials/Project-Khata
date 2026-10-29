@@ -283,6 +283,27 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
               ),
             ),
             const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.contractorNavy,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                icon: const Icon(Icons.account_balance_wallet_outlined),
+                label: const Text(
+                  'অ্যাকাউন্টস ও বিল খতিয়ান',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                onPressed: () =>
+                    context.push('/project-accounts', extra: _project),
+              ),
+            ),
+            const SizedBox(height: 12),
             if (!isClient) ...[
               SizedBox(
                 width: double.infinity,

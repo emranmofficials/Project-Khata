@@ -309,12 +309,49 @@ class _SupervisorDashboardState extends ConsumerState<SupervisorDashboard> {
   }
 
   Widget _buildAccountsTab() {
-    return const Center(
-      child: Text(
-        'মজুরি ও সাইট খরচ\n(ফেজ ৪-এ চালু হবে)',
-        textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.grey),
-      ),
+    final projectsAsync = ref.watch(projectsListProvider);
+
+    return projectsAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, _) => Center(child: Text('ত্রুটি: $err')),
+      data: (projects) {
+        if (projects.isEmpty) {
+          return const Center(
+            child: Text(
+              'কোনো প্রজেক্ট অ্যাসাইন করা নেই।',
+              style: TextStyle(color: Colors.grey),
+            ),
+          );
+        }
+
+        return ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            const Text(
+              'সাইট খরচ, মালামাল ও মজুরি হিসাব:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            ...projects.map((p) => Card(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: ListTile(
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    leading: const CircleAvatar(
+                      backgroundColor: AppColors.supervisorAmber,
+                      foregroundColor: Colors.white,
+                      child: Icon(Icons.account_balance_wallet_outlined),
+                    ),
+                    title: Text(p.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text(p.address ?? 'ঠিকানা নির্ধারিত হয়নি'),
+                    trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                    onTap: () => context.push('/project-accounts', extra: p),
+                  ),
+                )),
+          ],
+        );
+      },
     );
   }
 

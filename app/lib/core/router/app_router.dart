@@ -16,6 +16,9 @@ import '../../features/projects/presentation/screens/create_project_screen.dart'
 import '../../features/projects/presentation/screens/project_details_screen.dart';
 import '../../features/attendance/presentation/screens/daily_entry_screen.dart';
 import '../../features/attendance/presentation/screens/attendance_history_screen.dart';
+import '../../features/accounts/presentation/screens/project_accounts_screen.dart';
+import '../../features/accounts/presentation/screens/organization_payments_screen.dart';
+import '../../features/accounts/presentation/screens/worker_wage_history_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authControllerProvider);
@@ -107,6 +110,19 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/attendance-history',
         builder: (context, state) =>
             AttendanceHistoryScreen(workerId: state.extra as String?),
+      ),
+      GoRoute(
+        path: '/project-accounts',
+        builder: (context, state) =>
+            ProjectAccountsScreen(project: state.extra as Project),
+      ),
+      GoRoute(
+        path: '/organization-payments',
+        builder: (context, state) => const OrganizationPaymentsScreen(),
+      ),
+      GoRoute(
+        path: '/worker-wages',
+        builder: (context, state) => const WorkerWageHistoryScreen(),
       ),
     ],
   );

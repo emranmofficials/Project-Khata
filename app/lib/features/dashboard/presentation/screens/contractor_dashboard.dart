@@ -529,12 +529,139 @@ class _ContractorDashboardState extends ConsumerState<ContractorDashboard> {
   }
 
   Widget _buildAccountsTab() {
-    return const Center(
-      child: Text(
-        'হিসাব ও খতিয়ান\n(ফেজ ৪-এ পূর্ণাঙ্গ হিসাব চালু হবে)',
-        textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.grey),
-      ),
+    final projectsAsync = ref.watch(projectsListProvider);
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        // Quick Action for Worker Payments
+        Card(
+          elevation: 2,
+          color: AppColors.contractorNavy,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.payment_rounded, color: Colors.white, size: 24),
+                    SizedBox(width: 8),
+                    Text(
+                      'শ্রমিক মজুরি ও পেমেন্ট খাতা',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'শ্রমিকদের মজুরি পরিশোধ করুন। পূর্বের বকেয়া অনুযায়ী FIFO পদ্ধতিতে স্বয়ংক্রিয়ভাবে প্রজেক্টে বরাদ্দ হবে।',
+                  style: TextStyle(fontSize: 13, color: Colors.white70),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: AppColors.contractorNavy,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+                    label: const Text(
+                      'মজুরি প্রদান ও খাতা দেখুন',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () => context.push('/organization-payments'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Project Accounts Section
+        const Text(
+          'প্রজেক্ট ভিত্তিক হিসাব ও খতিয়ান',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        projectsAsync.when(
+          loading: () => const Center(
+            child: Padding(
+              padding: EdgeInsets.all(24),
+              child: CircularProgressIndicator(),
+            ),
+          ),
+          error: (err, _) => Center(child: Text('ত্রুটি: $err')),
+          data: (projects) {
+            if (projects.isEmpty) {
+              return const Card(
+                child: Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(
+                    child: Text(
+                      'কোনো প্রজেক্ট পাওয়া যায়নি',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            return Column(
+              children: projects.map((p) {
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: ListTile(
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    leading: const CircleAvatar(
+                      backgroundColor: AppColors.contractorNavy,
+                      foregroundColor: Colors.white,
+                      child: Icon(Icons.calculate_outlined),
+                    ),
+                    title: Text(
+                      p.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 4),
+                        Text(
+                          p.type == ProjectType.sqft
+                              ? 'রেট: ${BengaliFormatter.toCurrency(p.ratePerSqft ?? 0)}/বর্গফুট'
+                              : p.type == ProjectType.contract
+                                  ? 'বাজেট: ${BengaliFormatter.toCurrency(p.budget ?? 0)}'
+                                  : 'দৈনিক: ${BengaliFormatter.toCurrency(p.dailyWage ?? 0)}',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: AppColors.contractorNavy,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        if (p.clientName != null)
+                          Text('ক্লায়েন্ট: ${p.clientName}',
+                              style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                      ],
+                    ),
+                    trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                    onTap: () => context.push('/project-accounts', extra: p),
+                  ),
+                );
+              }).toList(),
+            );
+          },
+        ),
+      ],
     );
   }
 

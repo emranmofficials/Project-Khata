@@ -7,6 +7,7 @@ import '../../../auth/domain/models/app_user.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../projects/domain/models/project.dart';
 import '../../../projects/presentation/controllers/project_controller.dart';
+import 'package:go_router/go_router.dart';
 
 class ClientDashboard extends ConsumerStatefulWidget {
   const ClientDashboard({super.key});
@@ -214,6 +215,19 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton.icon(
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: AppColors.clientTeal,
+                                side: const BorderSide(color: AppColors.clientTeal),
+                              ),
+                              icon: const Icon(Icons.receipt_long, size: 18),
+                              label: const Text('হিসাব ও বিল খতিয়ান দেখুন'),
+                              onPressed: () => context.push('/project-accounts', extra: p),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -228,22 +242,94 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
   }
 
   Widget _buildMaterialsTab() {
-    return const Center(
-      child: Text(
-        'মালামাল খতিয়ান\n(ফেজ ৪-এ চালু হবে)',
-        textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.grey),
-      ),
+    final projectsAsync = ref.watch(projectsListProvider);
+
+    return projectsAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, _) => Center(child: Text('ত্রুটি: $err')),
+      data: (projects) {
+        if (projects.isEmpty) {
+          return const Center(
+            child: Text(
+              'কোনো প্রজেক্ট যুক্ত নেই।',
+              style: TextStyle(color: Colors.grey),
+            ),
+          );
+        }
+
+        return ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            const Text(
+              'মালামালের খতিয়ান দেখতে প্রজেক্ট নির্বাচন করুন:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            ...projects.map((p) => Card(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: ListTile(
+                    leading: const CircleAvatar(
+                      backgroundColor: AppColors.clientTeal,
+                      foregroundColor: Colors.white,
+                      child: Icon(Icons.inventory_2_outlined),
+                    ),
+                    title: Text(p.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text(p.address ?? 'ঠিকানা নির্ধারিত হয়নি'),
+                    trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                    onTap: () => context.push('/project-accounts', extra: p),
+                  ),
+                )),
+          ],
+        );
+      },
     );
   }
 
   Widget _buildBillsTab() {
-    return const Center(
-      child: Text(
-        'বিল ও পেমেন্ট রেকর্ড\n(ফেজ ৪-এ চালু হবে)',
-        textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.grey),
-      ),
+    final projectsAsync = ref.watch(projectsListProvider);
+
+    return projectsAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, _) => Center(child: Text('ত্রুটি: $err')),
+      data: (projects) {
+        if (projects.isEmpty) {
+          return const Center(
+            child: Text(
+              'কোনো প্রজেক্ট যুক্ত নেই।',
+              style: TextStyle(color: Colors.grey),
+            ),
+          );
+        }
+
+        return ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            const Text(
+              'বিল স্টেটমেন্ট ও প্রাপ্ত পেমেন্ট দেখতে প্রজেক্ট নির্বাচন করুন:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            ...projects.map((p) => Card(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: ListTile(
+                    leading: const CircleAvatar(
+                      backgroundColor: AppColors.clientTeal,
+                      foregroundColor: Colors.white,
+                      child: Icon(Icons.receipt_long_outlined),
+                    ),
+                    title: Text(p.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text(
+                      p.type == ProjectType.contract
+                          ? 'বাজেট: ${BengaliFormatter.toCurrency(p.budget ?? 0)}'
+                          : 'ধরণ: ${p.type.displayName}',
+                    ),
+                    trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                    onTap: () => context.push('/project-accounts', extra: p),
+                  ),
+                )),
+          ],
+        );
+      },
     );
   }
 
