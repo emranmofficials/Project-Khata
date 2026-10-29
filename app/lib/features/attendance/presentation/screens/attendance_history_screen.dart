@@ -129,6 +129,11 @@ class AttendanceHistoryScreen extends ConsumerWidget {
                           title: 'ওভারটাইম',
                           value: '${BengaliFormatter.toBnNumber(totalOt)} ঘণ্টা',
                         ),
+                        if (totalEarnings > 0)
+                          _buildSummaryItem(
+                            title: 'আনুমানিক আয়',
+                            value: BengaliFormatter.toCurrency(totalEarnings),
+                          ),
                       ],
                     ),
                   ],

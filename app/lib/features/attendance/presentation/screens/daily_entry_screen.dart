@@ -6,7 +6,6 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/utils/bengali_formatter.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../projects/data/project_repository.dart';
-import '../../../projects/domain/models/project.dart';
 import '../controllers/attendance_controller.dart';
 import '../widgets/add_worker_dialog.dart';
 import '../widgets/geofence_status_badge.dart';
@@ -43,7 +42,7 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
     if (widget.projectId != null) {
       final projectRepo = ref.read(projectRepositoryProvider);
       try {
-        final project = await projectRepo.getProject(widget.projectId!);
+        final project = await projectRepo.getProjectById(widget.projectId!);
         ref.read(attendanceControllerProvider.notifier).initForProject(project, currentUser: user);
         ref.read(attendanceControllerProvider.notifier).checkLocation();
       } catch (e) {
@@ -142,7 +141,7 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
                         style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
                       ),
                       trailing: const Icon(Icons.chevron_right),
-                      onTap: () => _pickDate(context, state.entryDate, user?.role ?? 'supervisor'),
+                      onTap: () => _pickDate(context, state.entryDate, user?.role.toDbString() ?? 'supervisor'),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -209,7 +208,7 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
                           showDialog(
                             context: context,
                             builder: (ctx) => AddWorkerDialog(
-                              orgId: user!.organizationId!,
+                              orgId: user.organizationId,
                               existingWorkerIds: state.teamRecords.map((r) => r.workerId).toList(),
                               onWorkerSelected: (w) => controller.addWorker(w),
                             ),
@@ -300,9 +299,10 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
                 onPressed: state.isLoading || user == null
                     ? null
                     : () async {
+                        final navigator = Navigator.of(context);
                         final ok = await controller.submitEntry(supervisorId: user.id);
                         if (ok && mounted) {
-                          context.pop();
+                          navigator.pop();
                         }
                       },
                 child: state.isLoading

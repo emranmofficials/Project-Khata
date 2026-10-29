@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/models/attendance_record.dart';
 import '../domain/models/daily_entry.dart';
-import '../../../auth/domain/models/app_user.dart';
+import '../../auth/domain/models/app_user.dart';
 
 class AttendanceRepository {
   final SupabaseClient _supabase;
