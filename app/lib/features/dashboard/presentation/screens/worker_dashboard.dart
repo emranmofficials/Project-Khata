@@ -4,7 +4,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../auth/domain/models/app_user.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
-import '../../attendance/presentation/screens/attendance_history_screen.dart';
+import '../../../attendance/presentation/screens/attendance_history_screen.dart';
 
 class WorkerDashboard extends ConsumerStatefulWidget {
   const WorkerDashboard({super.key});

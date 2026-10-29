@@ -119,9 +119,9 @@ void main() {
     });
 
     test('Calculated wage with OT hours', () {
-      final dailyWage = 800.0;
-      final otRatePerHour = dailyWage / 8.0; // ১০০ টাকা প্রতি ঘণ্টা
-      final otHours = 3.0;
+      const dailyWage = 800.0;
+      const otRatePerHour = dailyWage / 8.0; // ১০০ টাকা প্রতি ঘণ্টা
+      const otHours = 3.0;
 
       // পূর্ণদিবস + ৩ ঘণ্টা ওভারটাইম
       final fullDayWage = (dailyWage * AttendanceStatus.fullDay.wageMultiplier) + (otHours * otRatePerHour);

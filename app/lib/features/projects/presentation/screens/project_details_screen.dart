@@ -102,6 +102,7 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
   Widget build(BuildContext context) {
     final user = ref.watch(authControllerProvider).value;
     final isContractor = user?.role == UserRole.contractor;
+    final isClient = user?.role == UserRole.client;
 
     return Scaffold(
       appBar: AppBar(

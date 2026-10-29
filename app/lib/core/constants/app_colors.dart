@@ -7,7 +7,13 @@ class AppColors {
   static const Color contractorNavy = Color(0xFF1E3A8A); // ঠিকাদার
   static const Color clientTeal = Color(0xFF0F766E);      // ক্লায়েন্ট
   static const Color supervisorAmber = Color(0xFFC2410C); // সুপারভাইজার
+  static const Color supervisorPrimary = supervisorAmber;
   static const Color workerIndigo = Color(0xFF6D28D9);    // শ্রমিক
+  static const Color workerPrimary = workerIndigo;
+
+  // Aliases for common theme colors
+  static const Color textSecondary = Color(0xFF64748B);
+  static const Color textPrimary = Color(0xFF0F172A);
 
   // Light Mode Palette
   static const Color lightBackground = Color(0xFFF8FAFC);
