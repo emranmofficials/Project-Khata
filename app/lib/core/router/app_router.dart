@@ -14,6 +14,8 @@ import '../../features/dashboard/presentation/screens/worker_dashboard.dart';
 import '../../features/projects/domain/models/project.dart';
 import '../../features/projects/presentation/screens/create_project_screen.dart';
 import '../../features/projects/presentation/screens/project_details_screen.dart';
+import '../../features/attendance/presentation/screens/daily_entry_screen.dart';
+import '../../features/attendance/presentation/screens/attendance_history_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authControllerProvider);
@@ -95,6 +97,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/project-details',
         builder: (context, state) =>
             ProjectDetailsScreen(project: state.extra as Project),
+      ),
+      GoRoute(
+        path: '/daily-entry',
+        builder: (context, state) =>
+            DailyEntryScreen(projectId: state.extra as String?),
+      ),
+      GoRoute(
+        path: '/attendance-history',
+        builder: (context, state) =>
+            AttendanceHistoryScreen(workerId: state.extra as String?),
       ),
     ],
   );

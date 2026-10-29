@@ -4,6 +4,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../auth/domain/models/app_user.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../attendance/presentation/screens/attendance_history_screen.dart';
 
 class WorkerDashboard extends ConsumerStatefulWidget {
   const WorkerDashboard({super.key});
@@ -71,45 +72,12 @@ class _WorkerDashboardState extends ConsumerState<WorkerDashboard> {
   }
 
   Widget _buildAttendanceTab(UserProfile? user) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Card(
-            color: AppColors.workerIndigo,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'স্বাগতম, ${user?.name ?? ""}',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  const Text(
-                    'এখানে আপনার আজকের হাজিরা ও কাজের ইতিহাস দেখতে পাবেন।',
-                    style: TextStyle(color: Colors.white70, fontSize: 13),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          const Center(
-            child: Text(
-              'আজকের এন্ট্রি খোলা নেই।\n(ফেজ ৩-এ হাজিরা দেওয়া চালু হবে)',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey),
-            ),
-          ),
-        ],
-      ),
+    if (user == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return AttendanceHistoryScreen(
+      workerId: user.id,
+      showAppBar: false,
     );
   }
 

@@ -76,4 +76,37 @@ class AppStrings {
   static const String selectDesignation = 'পদ সিলেক্ট করুন';
   static const String memberAddedSuccess = 'ইউজার সফলভাবে যুক্ত হয়েছে!';
   static const String defaultPasswordNotice = 'ডিফল্ট পাসওয়ার্ড হবে মোবাইলের শেষ ৬ সংখ্যা।';
+
+  // Phase 3: Daily Entries & Attendance
+  static const String dailyEntries = 'দৈনিক এন্ট্রি';
+  static const String createDailyEntry = 'নতুন দৈনিক এন্ট্রি';
+  static const String workDescription = 'কাজের বিবরণ';
+  static const String workDescriptionHint = 'আজকের সম্পাদিত কাজের বিবরণ লিখুন...';
+  static const String notesOptional = 'মন্তব্য (ঐচ্ছিক)';
+  static const String dateLabel = 'তারিখ';
+  static const String selectProject = 'প্রজেক্ট নির্বাচন করুন';
+  static const String teamAttendance = 'দলের হাজিরা';
+  static const String addWorkerToTeam = 'শ্রমিক যুক্ত করুন';
+  static const String fullDay = 'উপস্থিত (পূর্ণদিবস)';
+  static const String halfDay = 'অর্ধদিবস';
+  static const String absent = 'অনুপস্থিত';
+  static const String overtimeHours = 'ওভারটাইম (ঘণ্টা)';
+  static const String siteLocationStatus = 'লোকেশন যাচাই';
+  static const String insideSite = 'সাইটের ভিতরে';
+  static const String outsideSite = 'সাইটের বাইরে';
+  static const String locationUnavailable = 'লোকেশন পাওয়া যায়নি';
+  static const String outsideSiteWarning =
+      'সতর্কতা: আপনি সাইটের নির্ধারিত সীমার বাইরে অবস্থান করছেন। হাজিরা ঠিকাদারের অনুমোদনের জন্য চিহ্নিত হবে।';
+  static const String locationPermissionRequired = 'হাজিরা যাচাইয়ের জন্য লোকেশন পারমিশন দিন';
+  static const String submitEntry = 'এন্ট্রি জমা দিন';
+  static const String saveDraft = 'ড্রাফট হিসেবে রাখুন';
+  static const String entrySubmittedSuccess = 'দৈনিক এন্ট্রি সফলভাবে জমা হয়েছে!';
+  static const String entryDraftSaved = 'ড্রাফট সংরক্ষিত হয়েছে';
+  static const String noWorkersFound = 'কোনো শ্রমিক পাওয়া যায়নি';
+  static const String workerAlreadyAdded = 'এই শ্রমিককে ইতিমধ্যে যুক্ত করা হয়েছে';
+  static const String workerAlreadyMarkedToday = 'এই শ্রমিক আজ ইতিমধ্যে অন্য প্রজেক্টে হাজিরা দিয়েছেন';
+  static const String statusDraft = 'ড্রাফট';
+  static const String statusSubmitted = 'জমা দেওয়া হয়েছে';
+  static const String statusApproved = 'অনুমোদিত';
+  static const String statusHandoverRequired = 'হস্তান্তর প্রয়োজন';
 }

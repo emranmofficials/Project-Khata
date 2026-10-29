@@ -13,6 +13,10 @@ final authControllerProvider =
   return AuthController(repo);
 });
 
+final currentUserProvider = Provider<AsyncValue<UserProfile?>>((ref) {
+  return ref.watch(authControllerProvider);
+});
+
 class AuthController extends StateNotifier<AsyncValue<UserProfile?>> {
   final AuthRepository _repository;
 

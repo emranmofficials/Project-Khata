@@ -8,6 +8,7 @@ import '../../data/project_repository.dart';
 import '../../domain/models/project.dart';
 import '../../domain/models/supervisor_assignment.dart';
 import '../widgets/assign_supervisor_dialog.dart';
+import 'package:go_router/go_router.dart';
 
 class ProjectDetailsScreen extends ConsumerStatefulWidget {
   final Project project;
@@ -280,6 +281,29 @@ class _ProjectDetailsScreenState extends ConsumerState<ProjectDetailsScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: 16),
+            if (!isClient) ...[
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.supervisorPrimary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  icon: const Icon(Icons.edit_calendar),
+                  label: const Text(
+                    'দৈনিক এন্ট্রি ও দল হাজিরা',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () => context.push('/daily-entry', extra: _project.id),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
           ],
         ),
       ),

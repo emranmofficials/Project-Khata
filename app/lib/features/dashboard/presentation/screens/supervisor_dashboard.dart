@@ -6,6 +6,7 @@ import '../../../../core/utils/bengali_formatter.dart';
 import '../../../auth/domain/models/app_user.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../projects/presentation/controllers/project_controller.dart';
+import 'package:go_router/go_router.dart';
 
 class SupervisorDashboard extends ConsumerStatefulWidget {
   const SupervisorDashboard({super.key});
@@ -224,6 +225,22 @@ class _SupervisorDashboardState extends ConsumerState<SupervisorDashboard> {
                               ),
                             ],
                           ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.supervisorAmber,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              icon: const Icon(Icons.edit_note, size: 18),
+                              label: const Text('আজকের দৈনিক এন্ট্রি ও হাজিরা'),
+                              onPressed: () => context.push('/daily-entry', extra: p.id),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -238,12 +255,46 @@ class _SupervisorDashboardState extends ConsumerState<SupervisorDashboard> {
   }
 
   Widget _buildEntriesTab() {
-    return const Center(
-      child: Text(
-        'দৈনিক এন্ট্রি\n(ফেজ ৩-এ চালু হবে)',
-        textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.grey),
-      ),
+    final projectsAsync = ref.watch(projectsListProvider);
+
+    return projectsAsync.when(
+      data: (projects) {
+        if (projects.isEmpty) {
+          return const Center(
+            child: Text(
+              'কোনো প্রজেক্ট নেই। অ্যাসাইন হওয়ার পর এন্ট্রি দিতে পারবেন।',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey),
+            ),
+          );
+        }
+
+        return ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            const Text(
+              'দৈনিক এন্ট্রি দিতে প্রজেক্ট নির্বাচন করুন:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            ...projects.map((p) => Card(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: ListTile(
+                    leading: const CircleAvatar(
+                      backgroundColor: AppColors.supervisorAmber,
+                      child: Icon(Icons.edit_document, color: Colors.white, size: 20),
+                    ),
+                    title: Text(p.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text(p.address ?? 'ঠিকানা নির্ধারিত হয়নি'),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                    onTap: () => context.push('/daily-entry', extra: p.id),
+                  ),
+                )),
+          ],
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, _) => Center(child: Text('ত্রুটি: $err')),
     );
   }
 

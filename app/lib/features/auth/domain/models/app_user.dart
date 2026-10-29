@@ -65,6 +65,8 @@ class UserProfile {
   final bool mustChangePassword;
   final String status;
   final DateTime createdAt;
+  final String? designationTitle;
+  final double? dailyWage;
 
   const UserProfile({
     required this.id,
@@ -79,9 +81,13 @@ class UserProfile {
     required this.mustChangePassword,
     required this.status,
     required this.createdAt,
+    this.designationTitle,
+    this.dailyWage,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
+    final designation = json['designations'] as Map<String, dynamic>?;
+
     return UserProfile(
       id: json['id'] as String,
       organizationId: json['organization_id'] as String,
@@ -95,6 +101,10 @@ class UserProfile {
       mustChangePassword: json['must_change_password'] as bool? ?? false,
       status: json['status'] as String? ?? 'active',
       createdAt: DateTime.parse(json['created_at'] as String),
+      designationTitle: designation?['title'] as String?,
+      dailyWage: designation?['daily_wage'] != null
+          ? (designation!['daily_wage'] as num).toDouble()
+          : null,
     );
   }
 
@@ -139,3 +149,5 @@ class UserProfile {
     );
   }
 }
+
+typedef AppUser = UserProfile;
