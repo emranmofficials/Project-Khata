@@ -30,6 +30,9 @@ class BengaliFormatter {
     return '৳ ${toBnNumber(formatted)}';
   }
 
+  /// Alias for formatCurrency
+  static String toCurrency(num amount) => formatCurrency(amount);
+
   /// Formats a DateTime to readable Bengali format (e.g. ২৯ অক্টোবর ২০২৬)
   static String formatDate(DateTime date) {
     const months = [
@@ -51,4 +54,10 @@ class BengaliFormatter {
     final year = toBnNumber(date.year);
     return '$day $month $year';
   }
+
+  /// Alias for formatDate
+  static String toDate(DateTime date) => formatDate(date);
+
+  /// Formats square feet
+  static String toSqft(num sqft) => '${toBnNumber(sqft)} বর্গফুট';
 }

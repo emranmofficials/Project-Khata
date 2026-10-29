@@ -5,8 +5,8 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/utils/bengali_formatter.dart';
 import '../../../auth/domain/models/app_user.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
-import '../../projects/domain/models/project.dart';
-import '../../projects/presentation/controllers/project_controller.dart';
+import '../../../projects/domain/models/project.dart';
+import '../../../projects/presentation/controllers/project_controller.dart';
 
 class ClientDashboard extends ConsumerStatefulWidget {
   const ClientDashboard({super.key});

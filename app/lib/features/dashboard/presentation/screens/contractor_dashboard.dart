@@ -8,8 +8,8 @@ import '../../../../core/utils/bengali_formatter.dart';
 import '../../../auth/domain/models/app_user.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../users/presentation/widgets/create_member_dialog.dart';
-import '../../projects/domain/models/project.dart';
-import '../../projects/presentation/controllers/project_controller.dart';
+import '../../../projects/domain/models/project.dart';
+import '../../../projects/presentation/controllers/project_controller.dart';
 
 class ContractorDashboard extends ConsumerStatefulWidget {
   const ContractorDashboard({super.key});
@@ -316,7 +316,7 @@ class _ContractorDashboardState extends ConsumerState<ContractorDashboard> {
   }
 
   Widget _buildProjectCard(Project p) {
-    Color statusColor;
+    Color statusColor = AppColors.contractorNavy;
     switch (p.status) {
       case ProjectStatus.active:
         statusColor = AppColors.success;
