@@ -1,4 +1,21 @@
--- Project Khata | ফেজ ১: প্রতিষ্ঠান, প্রোফাইল, পদ
+-- Project Khata | ফেজ ১: ফ্রেশ স্কিমা (প্রতিষ্ঠান, প্রোফাইল, পদ)
+
+-- ০. পুরনো টেস্ট টেবিল ও টাইপ পরিষ্কার
+drop table if exists public.attendance cascade;
+drop table if exists public.materials cascade;
+drop table if exists public.expenses cascade;
+drop table if exists public.work_logs cascade;
+drop table if exists public.workers cascade;
+drop table if exists public.supervisor_assignments cascade;
+drop table if exists public.daily_entries cascade;
+drop table if exists public.projects cascade;
+drop table if exists public.users cascade;
+drop table if exists public.profiles cascade;
+drop table if exists public.designations cascade;
+drop table if exists public.organizations cascade;
+
+drop type if exists public.user_role cascade;
+drop type if exists public.user_status cascade;
 
 -- ১. প্রতিষ্ঠান (একজন ঠিকাদার = একটি প্রতিষ্ঠান)
 create table public.organizations (
@@ -68,7 +85,7 @@ alter table public.profiles      enable row level security;
 
 -- organizations: নিজের প্রতিষ্ঠান দেখা; তৈরি ও সম্পাদনা শুধু ঠিকাদার
 create policy org_select on public.organizations
-  for select using (id = public.current_org_id());
+  for select using (id = public.current_org_id() or owner_id = auth.uid());
 
 create policy org_insert_owner on public.organizations
   for insert with check (owner_id = auth.uid());
