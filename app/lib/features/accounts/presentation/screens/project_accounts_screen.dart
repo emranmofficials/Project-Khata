@@ -207,7 +207,7 @@ class _ProjectAccountsScreenState extends ConsumerState<ProjectAccountsScreen>
       margin: const EdgeInsets.symmetric(vertical: 4),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: color.withOpacity(0.1),
+          backgroundColor: color.withValues(alpha: 0.1),
           child: Icon(icon, color: color, size: 20),
         ),
         title: Text(title, style: const TextStyle(fontSize: 14)),

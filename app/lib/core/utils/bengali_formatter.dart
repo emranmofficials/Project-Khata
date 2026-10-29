@@ -57,6 +57,7 @@ class BengaliFormatter {
 
   /// Alias for formatDate
   static String toDate(DateTime date) => formatDate(date);
+  static String toBnDate(DateTime date) => formatDate(date);
 
   /// Formats square feet
   static String toSqft(num sqft) => '${toBnNumber(sqft)} বর্গফুট';

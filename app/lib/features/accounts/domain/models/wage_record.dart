@@ -36,14 +36,21 @@ class WageRecord {
     this.projectName,
   });
 
+  double get dueAmount => isPaid ? 0.0 : totalEarned;
+  double get wageAmount => earnedAmount;
+  String? get designationName => designationTitle;
+
   factory WageRecord.fromJson(Map<String, dynamic> json) {
     final profiles = json['profiles'] as Map<String, dynamic>?;
     final designations = profiles?['designations'] as Map<String, dynamic>?;
     final projects = json['projects'] as Map<String, dynamic>?;
 
-    final earned = (json['earned_amount'] as num?)?.toDouble() ?? 0.0;
+    final earned = (json['earned_amount'] as num?)?.toDouble() ??
+        (json['wage_amount'] as num?)?.toDouble() ??
+        0.0;
     final ot = (json['overtime_amount'] as num?)?.toDouble() ?? 0.0;
     final total = (json['total_earned'] as num?)?.toDouble() ?? (earned + ot);
+    final paid = json['is_paid'] as bool? ?? (json['status'] == 'paid');
 
     return WageRecord(
       id: json['id'] as String,
@@ -51,13 +58,17 @@ class WageRecord {
       projectId: json['project_id'] as String,
       workerId: json['worker_id'] as String,
       workDate: DateTime.parse(json['work_date'] as String),
-      attendanceId: json['attendance_id'] as String?,
+      attendanceId: (json['attendance_id'] ?? json['attendance_record_id']) as String?,
       earnedAmount: earned,
       overtimeAmount: ot,
       totalEarned: total,
-      isPaid: json['is_paid'] as bool? ?? false,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
+      isPaid: paid,
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'] as String)
+          : DateTime.now(),
       workerName: profiles?['name'] as String?,
       workerMobile: profiles?['mobile'] as String?,
       designationTitle: designations?['name'] as String?,

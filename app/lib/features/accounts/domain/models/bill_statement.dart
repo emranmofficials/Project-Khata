@@ -90,13 +90,16 @@ class ProjectAccountsSummary {
 
   double get totalProjectExpenses =>
       totalWagesEarned + totalMaterialsCost + totalExpensesCost;
+  double get totalExpenses => totalProjectExpenses;
 
   double get clientDue =>
       (totalBudgetOrContractValue - totalClientPaid).clamp(0, double.infinity);
 
   double get workerWagesDue =>
       (totalWagesEarned - totalWagesPaid).clamp(0, double.infinity);
+  double get wagesDue => workerWagesDue;
 
   double get netProfitOrBalance =>
       totalBudgetOrContractValue - totalProjectExpenses;
+  double get estimatedProfit => netProfitOrBalance;
 }

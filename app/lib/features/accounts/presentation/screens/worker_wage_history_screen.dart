@@ -142,7 +142,7 @@ class WorkerWageHistoryScreen extends ConsumerWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '${item.projectName ?? "প্রজেক্ট"}${item.overtimeAmount > 0 ? " • ওটি: " + BengaliFormatter.toCurrency(item.overtimeAmount) : ""}',
+                              '${item.projectName ?? "প্রজেক্ট"}${item.overtimeAmount > 0 ? " • ওটি: ${BengaliFormatter.toCurrency(item.overtimeAmount)}" : ""}',
                               style: TextStyle(
                                   color: Colors.grey.shade600, fontSize: 12),
                             ),

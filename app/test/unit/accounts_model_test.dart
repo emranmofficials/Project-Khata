@@ -3,7 +3,6 @@ import 'package:project_khata/features/accounts/domain/models/wage_record.dart';
 import 'package:project_khata/features/accounts/domain/models/payment.dart';
 import 'package:project_khata/features/accounts/domain/models/material_item.dart';
 import 'package:project_khata/features/accounts/domain/models/expense_item.dart';
-import 'package:project_khata/features/accounts/domain/models/client_payment.dart';
 import 'package:project_khata/features/accounts/domain/models/bill_statement.dart';
 
 void main() {
@@ -50,13 +49,14 @@ void main() {
         organizationId: 'org-1',
         projectId: 'proj-1',
         workerId: 'w-1',
-        attendanceRecordId: 'att-1',
+        attendanceId: 'att-1',
         workDate: DateTime(2026, 10, 29),
-        wageAmount: 750.0,
+        earnedAmount: 750.0,
         overtimeAmount: 150.0,
         totalEarned: 900.0,
-        status: 'paid',
+        isPaid: true,
         createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
 
       expect(record.isPaid, true);
