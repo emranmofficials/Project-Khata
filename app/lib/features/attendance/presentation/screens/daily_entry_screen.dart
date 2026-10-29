@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/utils/bengali_formatter.dart';
@@ -204,11 +203,12 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
                         icon: const Icon(Icons.person_add, size: 18),
                         label: const Text('শ্রমিক যোগ'),
                         onPressed: () {
-                          if (user?.organizationId == null) return;
+                          final orgId = user?.organizationId;
+                          if (orgId == null) return;
                           showDialog(
                             context: context,
                             builder: (ctx) => AddWorkerDialog(
-                              orgId: user.organizationId,
+                              orgId: orgId,
                               existingWorkerIds: state.teamRecords.map((r) => r.workerId).toList(),
                               onWorkerSelected: (w) => controller.addWorker(w),
                             ),
