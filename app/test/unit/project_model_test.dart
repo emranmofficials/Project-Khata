@@ -8,11 +8,11 @@ void main() {
       expect(ProjectType.fromString('sqft'), ProjectType.sqft);
       expect(ProjectType.fromString('contract'), ProjectType.contract);
       expect(ProjectType.fromString('daily'), ProjectType.daily);
-      expect(ProjectType.fromString('unknown'), ProjectType.sqft);
+      expect(ProjectType.fromString('unknown'), ProjectType.daily);
 
-      expect(ProjectType.sqft.displayName, 'স্কয়ারফিট চুক্তি');
-      expect(ProjectType.contract.displayName, 'এককালীন চুক্তি');
-      expect(ProjectType.daily.displayName, 'দৈনিক হাজিরা');
+      expect(ProjectType.sqft.displayName, 'স্কয়ার ফিট ভিত্তিক');
+      expect(ProjectType.contract.displayName, 'চুক্তি ভিত্তিক');
+      expect(ProjectType.daily.displayName, 'রোজ ভিত্তিক');
     });
 
     test('ProjectStatus parsing and display names', () {
@@ -22,7 +22,7 @@ void main() {
       expect(ProjectStatus.fromString('on_hold'), ProjectStatus.onHold);
       expect(ProjectStatus.fromString('unknown'), ProjectStatus.active);
 
-      expect(ProjectStatus.planned.displayName, 'পরিকল্পিত');
+      expect(ProjectStatus.planned.displayName, 'পরিকল্পনা');
       expect(ProjectStatus.active.displayName, 'চলমান');
       expect(ProjectStatus.completed.displayName, 'সম্পন্ন');
       expect(ProjectStatus.onHold.displayName, 'স্থগিত');
