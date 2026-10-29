@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/utils/bengali_formatter.dart';
 import '../../../auth/domain/models/app_user.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../projects/domain/models/project.dart';
+import '../../projects/presentation/controllers/project_controller.dart';
 
 class SupervisorDashboard extends ConsumerStatefulWidget {
   const SupervisorDashboard({super.key});
@@ -89,6 +92,8 @@ class _SupervisorDashboardState extends ConsumerState<SupervisorDashboard> {
   }
 
   Widget _buildProjectsTab(UserProfile? user) {
+    final projectsAsync = ref.watch(projectsListProvider);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -118,13 +123,115 @@ class _SupervisorDashboardState extends ConsumerState<SupervisorDashboard> {
               ),
             ),
           ),
-          const SizedBox(height: 24),
-          const Center(
-            child: Text(
-              'কোনো প্রজেক্ট অ্যাসাইন করা নেই।\n(ফেজ ২-এ প্রজেক্ট অ্যাসাইনমেন্ট যুক্ত হবে)',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey),
+          const SizedBox(height: 20),
+          const Text(
+            'অ্যাসাইন করা প্রজেক্টসমূহ',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
+          projectsAsync.when(
+            loading: () => const Center(
+              child: Padding(
+                padding: EdgeInsets.all(32),
+                child: CircularProgressIndicator(),
+              ),
             ),
+            error: (e, _) => Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    Text('প্রজেক্ট লোড করতে ব্যর্থ: $e',
+                        textAlign: TextAlign.center),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: () => ref.invalidate(projectsListProvider),
+                      child: const Text('পুনরায় চেষ্টা করুন'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            data: (projects) {
+              if (projects.isEmpty) {
+                return const Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Center(
+                      child: Text(
+                        'বর্তমানে আপনার কোনো প্রজেক্টে অ্যাসাইনমেন্ট নেই।\nঠিকাদার আপনাকে প্রজেক্টে যুক্ত করলে এখানে দেখতে পাবেন।',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              return Column(
+                children: projects.map((p) {
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  p.name,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              Chip(
+                                label: Text(
+                                  p.type.displayName,
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: AppColors.supervisorAmber,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                backgroundColor: AppColors.supervisorAmber
+                                    .withValues(alpha: 0.1),
+                                side: BorderSide.none,
+                              ),
+                            ],
+                          ),
+                          if (p.address != null && p.address!.isNotEmpty) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              p.address!,
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.grey),
+                            ),
+                          ],
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(Icons.radar,
+                                  size: 14, color: Colors.grey),
+                              const SizedBox(width: 4),
+                              Text(
+                                'সাইট রেডিয়াস: ${BengaliFormatter.toBnNumber(p.geofenceRadiusM)} মি.',
+                                style: const TextStyle(
+                                    fontSize: 12, color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              );
+            },
           ),
         ],
       ),

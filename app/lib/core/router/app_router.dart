@@ -11,6 +11,9 @@ import '../../features/dashboard/presentation/screens/client_dashboard.dart';
 import '../../features/dashboard/presentation/screens/contractor_dashboard.dart';
 import '../../features/dashboard/presentation/screens/supervisor_dashboard.dart';
 import '../../features/dashboard/presentation/screens/worker_dashboard.dart';
+import '../../features/projects/domain/models/project.dart';
+import '../../features/projects/presentation/screens/create_project_screen.dart';
+import '../../features/projects/presentation/screens/project_details_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authControllerProvider);
@@ -83,6 +86,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/worker',
         builder: (context, state) => const WorkerDashboard(),
+      ),
+      GoRoute(
+        path: '/create-project',
+        builder: (context, state) => const CreateProjectScreen(),
+      ),
+      GoRoute(
+        path: '/project-details',
+        builder: (context, state) =>
+            ProjectDetailsScreen(project: state.extra as Project),
       ),
     ],
   );

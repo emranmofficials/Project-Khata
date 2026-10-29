@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
@@ -7,6 +8,8 @@ import '../../../../core/utils/bengali_formatter.dart';
 import '../../../auth/domain/models/app_user.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../users/presentation/widgets/create_member_dialog.dart';
+import '../../projects/domain/models/project.dart';
+import '../../projects/presentation/controllers/project_controller.dart';
 
 class ContractorDashboard extends ConsumerStatefulWidget {
   const ContractorDashboard({super.key});
@@ -71,20 +74,28 @@ class _ContractorDashboardState extends ConsumerState<ContractorDashboard> {
           ),
         ],
       ),
-      floatingActionButton: _currentIndex == 2
+      floatingActionButton: _currentIndex == 1
           ? FloatingActionButton.extended(
-              onPressed: () => showDialog(
-                context: context,
-                builder: (_) => CreateMemberDialog(
-                  onMemberCreated: () => setState(() {}),
-                ),
-              ),
+              onPressed: () => context.push('/create-project'),
               backgroundColor: AppColors.contractorNavy,
               foregroundColor: Colors.white,
-              icon: const Icon(Icons.person_add_rounded),
-              label: const Text(AppStrings.addMember),
+              icon: const Icon(Icons.add_business_rounded),
+              label: const Text('নতুন প্রজেক্ট তৈরি'),
             )
-          : null,
+          : _currentIndex == 2
+              ? FloatingActionButton.extended(
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (_) => CreateMemberDialog(
+                      onMemberCreated: () => setState(() {}),
+                    ),
+                  ),
+                  backgroundColor: AppColors.contractorNavy,
+                  foregroundColor: Colors.white,
+                  icon: const Icon(Icons.person_add_rounded),
+                  label: const Text(AppStrings.addMember),
+                )
+              : null,
     );
   }
 
@@ -144,7 +155,9 @@ class _ContractorDashboardState extends ConsumerState<ContractorDashboard> {
               Expanded(
                 child: _buildStatCard(
                   title: 'চলমান প্রজেক্ট',
-                  value: BengaliFormatter.toBnNumber(0),
+                  value: BengaliFormatter.toBnNumber(
+                    ref.watch(projectsListProvider).valueOrNull?.length ?? 0,
+                  ),
                   icon: Icons.business_rounded,
                   color: AppColors.info,
                 ),
@@ -218,11 +231,224 @@ class _ContractorDashboardState extends ConsumerState<ContractorDashboard> {
   }
 
   Widget _buildProjectsTab() {
-    return const Center(
-      child: Text(
-        'কোনো প্রজেক্ট পাওয়া যায়নি।\n(ফেজ ২-এ প্রজেক্ট তৈরি যুক্ত হবে)',
-        textAlign: TextAlign.center,
-        style: TextStyle(color: Colors.grey),
+    final projectsAsync = ref.watch(projectsListProvider);
+
+    return projectsAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, _) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline_rounded,
+                  size: 48, color: AppColors.error),
+              const SizedBox(height: 12),
+              Text('প্রজেক্ট লোড করতে ব্যর্থ: $e',
+                  textAlign: TextAlign.center),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () => ref.invalidate(projectsListProvider),
+                icon: const Icon(Icons.refresh),
+                label: const Text('পুনরায় চেষ্টা করুন'),
+              ),
+            ],
+          ),
+        ),
+      ),
+      data: (projects) {
+        if (projects.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.business_center_outlined,
+                    size: 72,
+                    color: Colors.grey.shade400,
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'কোনো প্রজেক্ট পাওয়া যায়নি',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'নতুন কনস্ট্রাকশন বা সাইট প্রজেক্ট যুক্ত করতে নিচের বাটনে চাপুন।',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: () => context.push('/create-project'),
+                    icon: const Icon(Icons.add_business_rounded),
+                    label: const Text('নতুন প্রজেক্ট তৈরি করুন'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.contractorNavy,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        return RefreshIndicator(
+          onRefresh: () async => ref.invalidate(projectsListProvider),
+          child: ListView.separated(
+            padding: const EdgeInsets.all(16),
+            itemCount: projects.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            itemBuilder: (context, idx) {
+              final p = projects[idx];
+              return _buildProjectCard(p);
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildProjectCard(Project p) {
+    Color statusColor;
+    switch (p.status) {
+      case ProjectStatus.active:
+        statusColor = AppColors.success;
+        break;
+      case ProjectStatus.planned:
+        statusColor = AppColors.info;
+        break;
+      case ProjectStatus.completed:
+        statusColor = Colors.grey;
+        break;
+      case ProjectStatus.onHold:
+        statusColor = AppColors.warning;
+        break;
+    }
+
+    return Card(
+      elevation: 1.5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () => context.push('/project-details', extra: p),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          p.name,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (p.address != null && p.address!.isNotEmpty) ...[
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              const Icon(Icons.location_on_outlined,
+                                  size: 14, color: Colors.grey),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  p.address!,
+                                  style: const TextStyle(
+                                      fontSize: 12, color: Colors.grey),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: statusColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      p.status.displayName,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: statusColor,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.contractorNavy.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      p.type.displayName,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.contractorNavy,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    p.type == ProjectType.sqft
+                        ? '${BengaliFormatter.toCurrency(p.ratePerSqft ?? 0)}/বর্গফুট'
+                        : p.type == ProjectType.contract
+                            ? 'বাজেট: ${BengaliFormatter.toCurrency(p.budget ?? 0)}'
+                            : 'দৈনিক: ${BengaliFormatter.toCurrency(p.dailyWage ?? 0)}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.contractorNavy,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Icon(Icons.radar_rounded, size: 14, color: Colors.grey),
+                  const SizedBox(width: 4),
+                  Text(
+                    'সাইট ব্যাসার্ধ: ${BengaliFormatter.toBnNumber(p.geofenceRadiusM)} মি.',
+                    style: const TextStyle(fontSize: 11, color: Colors.grey),
+                  ),
+                  const Spacer(),
+                  const Icon(Icons.arrow_forward_ios_rounded,
+                      size: 14, color: Colors.grey),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

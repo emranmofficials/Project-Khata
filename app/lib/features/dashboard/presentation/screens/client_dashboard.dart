@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/utils/bengali_formatter.dart';
 import '../../../auth/domain/models/app_user.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../projects/domain/models/project.dart';
+import '../../projects/presentation/controllers/project_controller.dart';
 
 class ClientDashboard extends ConsumerStatefulWidget {
   const ClientDashboard({super.key});
@@ -79,6 +82,8 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
   }
 
   Widget _buildDashboardTab(UserProfile? user) {
+    final projectsAsync = ref.watch(projectsListProvider);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -107,6 +112,115 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
                 ],
               ),
             ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'আপনার প্রজেক্টসমূহ',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 12),
+          projectsAsync.when(
+            loading: () => const Center(
+              child: Padding(
+                padding: EdgeInsets.all(32),
+                child: CircularProgressIndicator(),
+              ),
+            ),
+            error: (e, _) => Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text('প্রজেক্ট লোড করতে ব্যর্থ: $e'),
+              ),
+            ),
+            data: (projects) {
+              if (projects.isEmpty) {
+                return const Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Center(
+                      child: Text(
+                        'কোনো সক্রিয় প্রজেক্ট যুক্ত নেই।\nঠিকাদার আপনার নামে প্রজেক্ট তৈরি করলে তা এখানে দেখতে পাবেন।',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              return Column(
+                children: projects.map((p) {
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  p.name,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              Chip(
+                                label: Text(
+                                  p.type.displayName,
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: AppColors.clientTeal,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                backgroundColor:
+                                    AppColors.clientTeal.withValues(alpha: 0.1),
+                                side: BorderSide.none,
+                              ),
+                            ],
+                          ),
+                          if (p.address != null && p.address!.isNotEmpty) ...[
+                            const SizedBox(height: 4),
+                            Text(
+                              p.address!,
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.grey),
+                            ),
+                          ],
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'শুরুর তারিখ: ${BengaliFormatter.toDate(p.startDate)}',
+                                style: const TextStyle(
+                                    fontSize: 12, color: Colors.grey),
+                              ),
+                              Text(
+                                p.type == ProjectType.sqft
+                                    ? '${BengaliFormatter.toCurrency(p.ratePerSqft ?? 0)}/বর্গফুট'
+                                    : p.type == ProjectType.contract
+                                        ? 'বাজেট: ${BengaliFormatter.toCurrency(p.budget ?? 0)}'
+                                        : 'দৈনিক: ${BengaliFormatter.toCurrency(p.dailyWage ?? 0)}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.clientTeal,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              );
+            },
           ),
         ],
       ),
