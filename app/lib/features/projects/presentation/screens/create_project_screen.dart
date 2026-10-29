@@ -31,7 +31,7 @@ class _CreateProjectScreenState extends ConsumerState<CreateProjectScreen> {
 
   ProjectType _selectedType = ProjectType.sqft;
   double _geofenceRadius = 150.0; // Default 150m (100-200m per PRD)
-  DateTime _startDate = DateTime.now();
+  final DateTime _startDate = DateTime.now();
   DateTime? _endDate;
 
   String? _selectedClientId;
@@ -107,10 +107,10 @@ class _CreateProjectScreenState extends ConsumerState<CreateProjectScreen> {
     setState(() => _isSaving = true);
 
     try {
-      double? budget = double.tryParse(_budgetController.text.trim());
-      double? ratePerSqft = double.tryParse(_ratePerSqftController.text.trim());
-      double? totalSqft = double.tryParse(_sqftController.text.trim());
-      double? dailyWage = double.tryParse(_dailyWageController.text.trim());
+      final ratePerSqft = double.tryParse(_ratePerSqftController.text.trim());
+      final totalSqft = double.tryParse(_sqftController.text.trim());
+      final dailyWage = double.tryParse(_dailyWageController.text.trim());
+      var budget = double.tryParse(_budgetController.text.trim());
 
       // Auto compute budget for sqft type if not given
       if (_selectedType == ProjectType.sqft && totalSqft != null && ratePerSqft != null) {

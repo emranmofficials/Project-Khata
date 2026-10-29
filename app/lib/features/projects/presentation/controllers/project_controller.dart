@@ -1,11 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../data/project_repository.dart';
-import '../domain/models/project.dart';
+import '../../data/project_repository.dart';
+import '../../domain/models/project.dart';
 
-final projectRepositoryProvider = Provider<ProjectRepository>((ref) {
-  return ProjectRepository(Supabase.instance.client);
-});
+export '../../data/project_repository.dart' show projectRepositoryProvider;
 
 final projectsListProvider =
     AsyncNotifierProvider<ProjectsListNotifier, List<Project>>(() {

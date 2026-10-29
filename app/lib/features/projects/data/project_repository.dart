@@ -1,7 +1,12 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../auth/domain/models/app_user.dart';
 import '../domain/models/project.dart';
 import '../domain/models/supervisor_assignment.dart';
+
+final projectRepositoryProvider = Provider<ProjectRepository>((ref) {
+  return ProjectRepository(Supabase.instance.client);
+});
 
 class ProjectRepository {
   final SupabaseClient _client;
