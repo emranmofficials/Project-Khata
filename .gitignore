@@ -1,0 +1,29 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+.pub-cache/
+.pub/
+
+# Android & iOS artifacts
+*.keystore
+*.jks
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+# IDE & Editor files
+.idea/
+.vscode/
+*.swp
+*.iml
+
+# OS generated
+.DS_Store
+Thumbs.db
