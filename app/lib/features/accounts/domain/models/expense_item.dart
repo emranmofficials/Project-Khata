@@ -1,3 +1,5 @@
+export 'client_payment.dart';
+
 class ExpenseItem {
   final String id;
   final String organizationId;
@@ -61,6 +63,3 @@ class ExpenseItem {
     };
   }
 }
-
-export 'client_payment.dart';
-

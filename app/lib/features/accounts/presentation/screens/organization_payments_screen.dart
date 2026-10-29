@@ -214,10 +214,10 @@ class _OrganizationPaymentsScreenState
               mainAxisSize: MainAxisSize.min,
               children: [
                 DropdownButtonFormField<UserProfile>(
-                  value: selectedWorker,
+                  initialValue: selectedWorker,
                   decoration: const InputDecoration(labelText: 'কর্মী নির্বাচন'),
                   items: workers
-                      .map((w) => DropdownMenuItem(
+                      .map<DropdownMenuItem<UserProfile>>((UserProfile w) => DropdownMenuItem<UserProfile>(
                             value: w,
                             child: Text('${w.name} (${w.role == UserRole.supervisor ? "সুপারভাইজার" : "শ্রমিক"})'),
                           ))
@@ -234,7 +234,7 @@ class _OrganizationPaymentsScreenState
                 ),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
-                  value: method,
+                  initialValue: method,
                   decoration: const InputDecoration(labelText: 'পেমেন্ট মাধ্যম'),
                   items: const [
                     DropdownMenuItem(value: 'cash', child: Text('ক্যাশ')),

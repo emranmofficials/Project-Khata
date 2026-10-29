@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_strings.dart';
 import '../../../../core/utils/bengali_formatter.dart';
 import '../../../auth/domain/models/app_user.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
@@ -9,7 +8,6 @@ import '../../../projects/domain/models/project.dart';
 import '../controllers/accounts_controller.dart';
 import '../../domain/models/material_item.dart';
 import '../../domain/models/expense_item.dart';
-import '../../domain/models/client_payment.dart';
 
 class ProjectAccountsScreen extends ConsumerStatefulWidget {
   final Project project;
@@ -686,7 +684,7 @@ class _ProjectAccountsScreenState extends ConsumerState<ProjectAccountsScreen>
               mainAxisSize: MainAxisSize.min,
               children: [
                 DropdownButtonFormField<String>(
-                  value: category,
+                  initialValue: category,
                   decoration: const InputDecoration(labelText: 'খরচের ধরন'),
                   items: const [
                     DropdownMenuItem(value: 'পরিবহন', child: Text('পরিবহন')),
@@ -769,7 +767,7 @@ class _ProjectAccountsScreenState extends ConsumerState<ProjectAccountsScreen>
                 ),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
-                  value: method,
+                  initialValue: method,
                   decoration: const InputDecoration(labelText: 'পেমেন্ট মাধ্যম'),
                   items: const [
                     DropdownMenuItem(value: 'bank', child: Text('ব্যাংক')),

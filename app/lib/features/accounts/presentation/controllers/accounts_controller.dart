@@ -1,10 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/accounts_repository.dart';
 import '../../domain/models/wage_record.dart';
-import '../../domain/models/payment.dart';
 import '../../domain/models/material_item.dart';
 import '../../domain/models/expense_item.dart';
-import '../../domain/models/client_payment.dart';
 import '../../domain/models/bill_statement.dart';
 
 class ProjectAccountsState {

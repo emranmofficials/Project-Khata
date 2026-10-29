@@ -1,16 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../../../core/network/supabase_client.dart';
+import '../../auth/domain/models/app_user.dart';
 import '../domain/models/wage_record.dart';
 import '../domain/models/payment.dart';
 import '../domain/models/material_item.dart';
 import '../domain/models/expense_item.dart';
 import '../domain/models/bill_statement.dart';
-import '../../../auth/domain/models/app_user.dart';
 
 final accountsRepositoryProvider = Provider<AccountsRepository>((ref) {
-  final supabase = ref.watch(supabaseClientProvider);
-  return AccountsRepository(supabase);
+  return AccountsRepository(Supabase.instance.client);
 });
 
 class AccountsRepository {
