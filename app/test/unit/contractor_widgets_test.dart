@@ -1,0 +1,126 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:project_khata/core/theme/contractor_theme.dart';
+import 'package:project_khata/widgets/contractor_widgets.dart';
+
+void main() {
+  group('Contractor UI Widgets Tests (HeroSummaryCard & QuickAction)', () {
+    testWidgets('HeroSummaryCard renders title, amount, badgeText and subtitle',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ContractorTheme.getTheme(isDark: false),
+          home: const Scaffold(
+            body: HeroSummaryCard(
+              title: 'সর্বমোট প্রজেক্ট বাজেট',
+              amount: '৳ ২,৫০,০০০',
+              badgeText: '৩টি চলমান প্রজেক্ট',
+              subtitle: 'বাজেট নিয়ন্ত্রণ সন্তোষজনক',
+              secondaryText: 'প্রজেক্ট খাতা',
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('সর্বমোট প্রজেক্ট বাজেট'), findsOneWidget);
+      expect(find.text('৳ ২,৫০,০০০'), findsOneWidget);
+      expect(find.text('৩টি চলমান প্রজেক্ট'), findsOneWidget);
+      expect(find.text('বাজেট নিয়ন্ত্রণ সন্তোষজনক'), findsOneWidget);
+      expect(find.text('প্রজেক্ট খাতা'), findsOneWidget);
+    });
+
+    testWidgets('HeroSummaryCard responds to onTap event', (tester) async {
+      var tapped = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: HeroSummaryCard(
+              title: 'বাজেট',
+              amount: '৳ ১০০',
+              onTap: () => tapped = true,
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(HeroSummaryCard));
+      expect(tapped, isTrue);
+    });
+
+    testWidgets('QuickAction renders icon, label and handles tap event',
+        (tester) async {
+      var actionTapped = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: QuickAction(
+              icon: Icons.add_business_rounded,
+              label: 'নতুন প্রজেক্ট',
+              onTap: () => actionTapped = true,
+              badgeCount: 2,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('নতুন প্রজেক্ট'), findsOneWidget);
+      expect(find.byIcon(Icons.add_business_rounded), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
+
+      await tester.tap(find.byType(QuickAction));
+      expect(actionTapped, isTrue);
+    });
+
+    testWidgets(
+        'SectionTitleRow renders title and actionTitle, and handles tap',
+        (tester) async {
+      var seeAllTapped = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SectionTitleRow(
+              title: 'চলমান প্রজেক্ট',
+              actionTitle: 'সব দেখুন',
+              onActionTap: () => seeAllTapped = true,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('চলমান প্রজেক্ট'), findsOneWidget);
+      expect(find.text('সব দেখুন'), findsOneWidget);
+
+      await tester.tap(find.text('সব দেখুন'));
+      expect(seeAllTapped, isTrue);
+    });
+
+    testWidgets(
+        'IconTile renders icon, title, subtitle, and trailing title text',
+        (tester) async {
+      var tileTapped = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: IconTile(
+              icon: Icons.apartment_rounded,
+              title: 'মেঘনা ভিউ রেসিডেন্স',
+              subtitle: 'মিরপুর ১০, ঢাকা',
+              trailingTitle: '৳ ১,৫০,০০০',
+              trailingSubtitle: 'চলমান',
+              onTap: () => tileTapped = true,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byIcon(Icons.apartment_rounded), findsOneWidget);
+      expect(find.text('মেঘনা ভিউ রেসিডেন্স'), findsOneWidget);
+      expect(find.text('মিরপুর ১০, ঢাকা'), findsOneWidget);
+      expect(find.text('৳ ১,৫০,০০০'), findsOneWidget);
+      expect(find.text('চলমান'), findsOneWidget);
+
+      await tester.tap(find.byType(IconTile));
+      expect(tileTapped, isTrue);
+    });
+  });
+}
