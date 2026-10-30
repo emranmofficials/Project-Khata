@@ -169,8 +169,8 @@ class _ContractorRegisterScreenState
                     if (val == null || val.isEmpty) {
                       return AppStrings.fieldRequired;
                     }
-                    if (val.length < 6) {
-                      return AppStrings.passwordMinLength;
+                    if (val.length < 8) {
+                      return AppStrings.passwordMinLength8;
                     }
                     return null;
                   },

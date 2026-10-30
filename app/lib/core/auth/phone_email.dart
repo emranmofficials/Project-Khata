@@ -1,3 +1,5 @@
+import '../constants/app_strings.dart';
+
 /// ফোন নম্বর ও সিন্থেটিক ইমেইল রূপান্তর এবং যাচাই হেলপার (PRD Rule 2.0 & AGENTS.md)
 const String kMembersEmailDomain = 'members.projectkhata.app';
 
@@ -37,6 +39,28 @@ class PhoneEmailHelper {
     if (clean.length < 6) return clean;
     return clean.substring(clean.length - 6);
   }
+
+  /// নতুন পাসওয়ার্ড যাচাই (কমপক্ষে ৮ অক্ষর, প্রাথমিক পাসওয়ার্ড গ্রহণযোগ্য নয়)
+  static String? validateNewPassword({
+    required String? password,
+    String? mobile,
+  }) {
+    if (password == null || password.isEmpty) {
+      return AppStrings.fieldRequired;
+    }
+    if (mobile != null && mobile.trim().isNotEmpty) {
+      try {
+        final initial = getInitialPassword(mobile);
+        if (initial.isNotEmpty && password == initial) {
+          return AppStrings.passwordCannotBeInitial;
+        }
+      } catch (_) {}
+    }
+    if (password.length < 8) {
+      return AppStrings.passwordMinLength8;
+    }
+    return null;
+  }
 }
 
 /// টপ-লেভেল হেলপার ফাংশনসমূহ
@@ -48,3 +72,7 @@ String mobileToSyntheticEmail(String mobile) =>
 
 String getInitialPassword(String mobile) =>
     PhoneEmailHelper.getInitialPassword(mobile);
+
+String? validateNewPassword({required String? password, String? mobile}) =>
+    PhoneEmailHelper.validateNewPassword(password: password, mobile: mobile);
+

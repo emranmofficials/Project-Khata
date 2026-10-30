@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/auth/phone_email.dart';
 import '../controllers/auth_controller.dart';
 
 class ChangePasswordScreen extends ConsumerStatefulWidget {
@@ -29,6 +30,20 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
     super.dispose();
   }
 
+  String? _resolveUserMobile() {
+    final user = ref.read(authControllerProvider).value;
+    if (user?.mobile != null && user!.mobile!.isNotEmpty) {
+      return user.mobile;
+    }
+    if (user?.email != null) {
+      final match = RegExp(r'^(\d{11})@').firstMatch(user!.email!);
+      if (match != null) {
+        return match.group(1);
+      }
+    }
+    return null;
+  }
+
   Future<void> _handlePasswordChange() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
@@ -46,8 +61,8 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString().replaceAll('Exception: ', '')),
+          const SnackBar(
+            content: Text('পাসওয়ার্ড পরিবর্তন ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।'),
             backgroundColor: AppColors.error,
           ),
         );
@@ -67,6 +82,14 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
         appBar: AppBar(
           title: const Text(AppStrings.changePasswordRequiredTitle),
           automaticallyImplyLeading: false,
+          actions: [
+            IconButton(
+              tooltip: 'লগআউট',
+              icon: const Icon(Icons.logout),
+              onPressed: () =>
+                  ref.read(authControllerProvider.notifier).signOut(),
+            ),
+          ],
         ),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -111,13 +134,10 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                       ),
                     ),
                     validator: (val) {
-                      if (val == null || val.isEmpty) {
-                        return AppStrings.fieldRequired;
-                      }
-                      if (val.length < 6) {
-                        return AppStrings.passwordMinLength;
-                      }
-                      return null;
+                      return validateNewPassword(
+                        password: val,
+                        mobile: _resolveUserMobile(),
+                      );
                     },
                   ),
                   const SizedBox(height: 16),
