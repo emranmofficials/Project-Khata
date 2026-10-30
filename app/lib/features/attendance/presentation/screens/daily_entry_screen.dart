@@ -9,6 +9,7 @@ import '../controllers/attendance_controller.dart';
 import '../widgets/add_worker_dialog.dart';
 import '../widgets/geofence_status_badge.dart';
 import '../widgets/worker_attendance_card.dart';
+import '../../../../core/widgets/offline_sync_banner.dart';
 
 class DailyEntryScreen extends ConsumerStatefulWidget {
   final String? projectId;
@@ -129,6 +130,7 @@ class _DailyEntryScreenState extends ConsumerState<DailyEntryScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const OfflineSyncBanner(),
                   // ১. তারিখ নির্বাচন
                   Card(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

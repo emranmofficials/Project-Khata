@@ -8,6 +8,7 @@ import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../projects/presentation/controllers/project_controller.dart';
 import 'package:go_router/go_router.dart';
 import '../../../notifications/presentation/widgets/notification_badge_button.dart';
+import '../../../../core/widgets/offline_sync_banner.dart';
 
 class SupervisorDashboard extends ConsumerStatefulWidget {
   const SupervisorDashboard({super.key});
@@ -41,7 +42,12 @@ class _SupervisorDashboardState extends ConsumerState<SupervisorDashboard> {
           NotificationBadgeButton(color: Colors.white),
         ],
       ),
-      body: tabs[_currentIndex],
+      body: Column(
+        children: [
+          const OfflineSyncBanner(),
+          Expanded(child: tabs[_currentIndex]),
+        ],
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: (idx) => setState(() => _currentIndex = idx),

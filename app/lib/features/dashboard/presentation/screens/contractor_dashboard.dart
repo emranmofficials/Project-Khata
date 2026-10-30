@@ -11,6 +11,7 @@ import '../../../users/presentation/widgets/create_member_dialog.dart';
 import '../../../projects/domain/models/project.dart';
 import '../../../projects/presentation/controllers/project_controller.dart';
 import '../../../notifications/presentation/widgets/notification_badge_button.dart';
+import '../../../../core/widgets/offline_sync_banner.dart';
 
 class ContractorDashboard extends ConsumerStatefulWidget {
   const ContractorDashboard({super.key});
@@ -44,7 +45,12 @@ class _ContractorDashboardState extends ConsumerState<ContractorDashboard> {
           NotificationBadgeButton(color: Colors.white),
         ],
       ),
-      body: tabs[_currentIndex],
+      body: Column(
+        children: [
+          const OfflineSyncBanner(),
+          Expanded(child: tabs[_currentIndex]),
+        ],
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
         onDestinationSelected: (idx) => setState(() => _currentIndex = idx),

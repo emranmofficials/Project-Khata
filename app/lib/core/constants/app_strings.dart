@@ -109,4 +109,13 @@ class AppStrings {
   static const String statusSubmitted = 'জমা দেওয়া হয়েছে';
   static const String statusApproved = 'অনুমোদিত';
   static const String statusHandoverRequired = 'হস্তান্তর প্রয়োজন';
+
+  // Phase 6: Offline Resilience & Release
+  static const String offlineSyncTitle = 'অফলাইন সিঙ্ক';
+  static const String offlineSyncPending = 'অফলাইন এন্ট্রি সিঙ্ক বাকি';
+  static const String syncNow = 'সিঙ্ক করুন';
+  static const String syncingInProgress = 'সিঙ্ক হচ্ছে...';
+  static const String offlineModeNotice = 'ইন্টারনেট সংযোগ না থাকায় অফলাইনে সংরক্ষিত হয়েছে';
+  static const String appVersion = '১.০.০';
 }
+

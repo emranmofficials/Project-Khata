@@ -5,6 +5,7 @@ import '../../data/attendance_repository.dart';
 import '../../../auth/domain/models/app_user.dart';
 import '../../../projects/domain/models/project.dart';
 import '../../../../core/services/location_service.dart';
+import '../../../../core/network/offline_sync_manager.dart';
 
 class AttendanceEntryState {
   final bool isLoading;
@@ -61,9 +62,13 @@ class AttendanceEntryState {
 class AttendanceController extends StateNotifier<AttendanceEntryState> {
   final AttendanceRepository _repository;
   final LocationService _locationService;
+  final OfflineSyncManager? _offlineSyncManager;
 
-  AttendanceController(this._repository, this._locationService)
-      : super(AttendanceEntryState(entryDate: DateTime.now()));
+  AttendanceController(
+    this._repository,
+    this._locationService, [
+    this._offlineSyncManager,
+  ]) : super(AttendanceEntryState(entryDate: DateTime.now()));
 
   void initForProject(Project project, {AppUser? currentUser}) async {
     state = state.copyWith(
@@ -278,6 +283,44 @@ class AttendanceController extends StateNotifier<AttendanceEntryState> {
       );
       return true;
     } catch (e) {
+      final errStr = e.toString().toLowerCase();
+      final isNetworkIssue = errStr.contains('socket') ||
+          errStr.contains('network') ||
+          errStr.contains('connection') ||
+          errStr.contains('failed host lookup') ||
+          errStr.contains('clientexception') ||
+          errStr.contains('timeout');
+
+      if (isNetworkIssue && _offlineSyncManager != null) {
+        final offlineEntry = DailyEntry(
+          id: '',
+          organizationId: project.organizationId,
+          projectId: project.id,
+          supervisorId: supervisorId,
+          entryDate: state.entryDate,
+          workDescription: state.workDescription,
+          status: EntryStatus.draft,
+          notes: state.notes,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+
+        await _offlineSyncManager.enqueueDailyEntry(
+          entry: offlineEntry,
+          records: state.teamRecords,
+          projectName: project.name,
+        );
+
+        await _repository.clearLocalDraft(project.id);
+
+        state = state.copyWith(
+          isLoading: false,
+          successMessage:
+              'ইন্টারনেট সংযোগ নেই। এন্ট্রিটি অফলাইনে ডিভাইসে সংরক্ষিত হয়েছে এবং সংযোগ ফিরলে স্বয়ংক্রিয়ভাবে সিঙ্ক হবে।',
+        );
+        return true;
+      }
+
       state = state.copyWith(
         isLoading: false,
         errorMessage: 'সাবমিট ব্যর্থ: $e',
@@ -291,7 +334,8 @@ final attendanceControllerProvider =
     StateNotifierProvider<AttendanceController, AttendanceEntryState>((ref) {
   final repo = ref.watch(attendanceRepositoryProvider);
   final locationService = ref.watch(locationServiceProvider);
-  return AttendanceController(repo, locationService);
+  final syncManager = ref.watch(offlineSyncManagerProvider);
+  return AttendanceController(repo, locationService, syncManager);
 });
 
 // প্রোজেক্টের এন্ট্রি তালিকা প্রোভাইডার
