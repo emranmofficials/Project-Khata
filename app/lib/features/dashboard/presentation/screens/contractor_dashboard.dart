@@ -12,6 +12,7 @@ import '../../../projects/domain/models/project.dart';
 import '../../../projects/presentation/controllers/project_controller.dart';
 import '../../../notifications/presentation/widgets/notification_badge_button.dart';
 import '../../../../core/widgets/offline_sync_banner.dart';
+import 'dashboard_screen.dart';
 
 class ContractorDashboard extends ConsumerStatefulWidget {
   const ContractorDashboard({super.key});
@@ -27,9 +28,13 @@ class _ContractorDashboardState extends ConsumerState<ContractorDashboard> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(authControllerProvider).value;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final tabs = [
-      _buildOverviewTab(user),
+      DashboardScreen(
+        user: user,
+        onSwitchTab: (idx) => setState(() => _currentIndex = idx),
+      ),
       _buildProjectsTab(),
       _buildUsersTab(user),
       _buildAccountsTab(),
@@ -38,11 +43,23 @@ class _ContractorDashboardState extends ConsumerState<ContractorDashboard> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_getTitleForIndex(_currentIndex)),
-        backgroundColor: AppColors.contractorNavy,
-        foregroundColor: Colors.white,
-        actions: const [
-          NotificationBadgeButton(color: Colors.white),
+        title: Text(
+          _getTitleForIndex(_currentIndex),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: isDark ? Colors.white : AppColors.contractorNavy,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        foregroundColor: isDark ? Colors.white : AppColors.contractorNavy,
+        actions: [
+          NotificationBadgeButton(
+            color: isDark ? Colors.white : AppColors.contractorNavy,
+          ),
+          const SizedBox(width: 8),
         ],
       ),
       body: Column(
@@ -124,120 +141,6 @@ class _ContractorDashboardState extends ConsumerState<ContractorDashboard> {
       default:
         return AppStrings.appNameBangla;
     }
-  }
-
-  Widget _buildOverviewTab(UserProfile? user) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Welcome Banner
-          Card(
-            color: AppColors.contractorNavy,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'স্বাগতম, ${user?.name ?? ""}',
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  const Text(
-                    'আপনার প্রতিষ্ঠানের সকল প্রজেক্ট, হাজিরা ও হিসাব এখান থেকে পরিচালনা করুন।',
-                    style: TextStyle(color: Colors.white70, fontSize: 13),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 20),
-
-          // Quick Stats
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  title: 'চলমান প্রজেক্ট',
-                  value: BengaliFormatter.toBnNumber(
-                    ref.watch(projectsListProvider).valueOrNull?.length ?? 0,
-                  ),
-                  icon: Icons.business_rounded,
-                  color: AppColors.info,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildStatCard(
-                  title: 'আজকের হাজিরা',
-                  value: BengaliFormatter.toBnNumber(0),
-                  icon: Icons.how_to_reg_rounded,
-                  color: AppColors.success,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  title: 'মোট কর্মী',
-                  value: BengaliFormatter.toBnNumber(0),
-                  icon: Icons.groups_rounded,
-                  color: AppColors.workerIndigo,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildStatCard(
-                  title: 'আজকের এন্ট্রি',
-                  value: BengaliFormatter.toBnNumber(0),
-                  icon: Icons.edit_note_rounded,
-                  color: AppColors.supervisorAmber,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatCard({
-    required String title,
-    required String value,
-    required IconData icon,
-    required Color color,
-  }) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CircleAvatar(
-              backgroundColor: color.withValues(alpha: 0.15),
-              radius: 20,
-              child: Icon(icon, color: color, size: 22),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              value,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            Text(title, style: const TextStyle(fontSize: 13, color: Colors.grey)),
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildProjectsTab() {

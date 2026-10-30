@@ -1,3 +1,5 @@
+export 'contractor_strings.dart';
+
 class AppStrings {
   AppStrings._();
 
