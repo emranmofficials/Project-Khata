@@ -80,8 +80,8 @@ jobs:
       - name: Prepare Release Artifacts
         run: |
           mkdir -p release-assets
-          TAG_NAME="${{ github.ref_name }}"
-          if [ -z "$TAG_NAME" ] || [[ "$TAG_NAME" != v* ]]; then
+          TAG_NAME="${GITHUB_REF_NAME:-v1.0.0}"
+          if [[ "$TAG_NAME" != v* ]]; then
             TAG_NAME="v1.0.0"
           fi
           cp build/app/outputs/flutter-apk/app-release.apk "release-assets/ProjectKhata-${TAG_NAME}.apk"
@@ -103,24 +103,26 @@ jobs:
           path: app/release-assets/*.apk
           if-no-files-found: warn
 
+      - name: Upload Keystore Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-khata-persistent-keystore
+          path: app/android/app/project_khata.keystore
+          if-no-files-found: warn
+
       - name: Publish GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG_NAME="${{ github.ref_name }}"
-          if [ -z "$TAG_NAME" ] || [[ "$TAG_NAME" != v* ]]; then
+          TAG_NAME="${GITHUB_REF_NAME:-v1.0.0}"
+          if [[ "$TAG_NAME" != v* ]]; then
             TAG_NAME="v1.0.0"
           fi
-          
+
           # Delete existing release for this tag if exists, then create fresh release
           gh release delete "$TAG_NAME" -y 2>/dev/null || true
-          
+
           gh release create "$TAG_NAME" release-assets/* \
             --title "Project Khata $TAG_NAME" \
-            --notes "## প্রজেক্ট খাতা (Project Khata) $TAG_NAME
-
-### 🚀 অ্যাপ রিলিজ বিবরণ:
-- **ইন-প্লেস আপডেট সুবিধা**: এই রিলিজটি স্থায়ী সাইনিং কী (Persistent Keystore) দ্বারা সাইন করা হয়েছে। ফলে অ্যাপের পরবর্তী যেকোনো নতুন ভার্সন ইনস্টল করতে পুরনো অ্যাপটি আনইনস্টল করতে হবে না।
-- **সরাসরি ডাউনলোড**: নিচের অ্যাসেট তালিকা থেকে \`ProjectKhata-${TAG_NAME}.apk\` ডাউনলোড করে আপনার অ্যান্ড্রয়েড ডিভাইসে সরাসরি ইনস্টল করুন।
-- **গুগল প্লে স্টোর বান্ডেল**: \`ProjectKhata-${TAG_NAME}.aab\` ফাইলটি Google Play Console-এ আপলোডের জন্য প্রস্তুত।" \
+            --notes-file release_notes.md \
             --latest
