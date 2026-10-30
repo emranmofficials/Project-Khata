@@ -192,7 +192,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 if (val == null || val.trim().isEmpty) {
                                   return AppStrings.fieldRequired;
                                 }
-                                if (!RegExp(r'^01[3-9]\d{8}$').hasMatch(val.trim())) {
+                                if (!isValidBangladeshiMobile(val)) {
                                   return AppStrings.invalidMobile;
                                 }
                                 return null;

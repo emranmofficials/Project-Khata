@@ -199,7 +199,7 @@ void main() {
     });
 
     test('Bengali representation of offline sync notifications', () {
-      final pendingCount = 5;
+      const pendingCount = 5;
       final bnCount = BengaliFormatter.toBnNumber(pendingCount);
       expect(bnCount, '৫');
 
