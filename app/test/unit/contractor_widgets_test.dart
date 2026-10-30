@@ -197,7 +197,7 @@ void main() {
 
       expect(find.text('খসড়া পৃষ্ঠা'), findsOneWidget);
       expect(find.text('এই ফিচারটি শীঘ্রই আসছে'), findsOneWidget);
-      expect(find.byIcon(Icons.construction_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.construction_rounded), findsOneWidget);
     });
   });
 
