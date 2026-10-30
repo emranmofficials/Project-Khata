@@ -93,7 +93,7 @@ class _BillTemplateScreenState extends ConsumerState<BillTemplateScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                companyAsync.valueOrNull?.companyName ?? ContractorStrings.defaultCompanyName,
+                                companyAsync.valueOrNull?.name ?? ContractorStrings.defaultCompanyName,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,

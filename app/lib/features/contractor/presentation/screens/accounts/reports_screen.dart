@@ -5,7 +5,6 @@ import 'package:project_khata/core/constants/contractor_strings.dart';
 import 'package:project_khata/core/utils/bengali_formatter.dart';
 import 'package:project_khata/widgets/contractor_widgets.dart';
 import '../../contractor_providers.dart';
-import '../../../domain/models/contractor_models.dart';
 
 class ReportsScreen extends ConsumerStatefulWidget {
   const ReportsScreen({super.key});
@@ -107,25 +106,25 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                         child: Column(
                           children: [
                             _buildExpenseRow(
-                              title: 'উপকরণ ও মালামাল ক্রয়',
-                              amount: report.materialsCost,
+                              title: 'মোট প্রজেক্ট ব্যয়',
+                              amount: report.totalExpense,
                               icon: Icons.inventory_2_outlined,
                               color: const Color(0xFF2563EB),
                               isDark: isDark,
                             ),
                             const Divider(height: 20),
                             _buildExpenseRow(
-                              title: 'পরিশোধিত শ্রমিকের মজুরি',
-                              amount: report.paidWages,
-                              icon: Icons.groups_outlined,
+                              title: 'মোট প্রাপ্ত আয়',
+                              amount: report.totalIncome,
+                              icon: Icons.account_balance_wallet_outlined,
                               color: const Color(0xFF0F766E),
                               isDark: isDark,
                             ),
                             const Divider(height: 20),
                             _buildExpenseRow(
-                              title: 'সাইট অন-ডিমান্ড ও বিবিধ খরচ',
-                              amount: report.siteExpenses,
-                              icon: Icons.receipt_long_outlined,
+                              title: 'নিট স্থিতি (লাভ/উদ্বৃত্ত)',
+                              amount: report.netBalance,
+                              icon: Icons.trending_up_rounded,
                               color: const Color(0xFFD97706),
                               isDark: isDark,
                             ),

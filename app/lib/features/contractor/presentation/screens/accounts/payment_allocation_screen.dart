@@ -330,10 +330,10 @@ class _PaymentAllocationScreenState extends ConsumerState<PaymentAllocationScree
                     children: payments.take(5).map((p) {
                       return IconTile(
                         icon: Icons.receipt_long_rounded,
-                        title: p.recipientName,
+                        title: p.payeeName,
                         subtitle: '${BengaliFormatter.formatDate(p.paymentDate)} • ${p.method}',
                         trailingTitle: BengaliFormatter.toCurrency(p.amount),
-                        trailingSubtitle: p.status,
+                        trailingSubtitle: 'পরিশোধিত',
                       );
                     }).toList(),
                   );

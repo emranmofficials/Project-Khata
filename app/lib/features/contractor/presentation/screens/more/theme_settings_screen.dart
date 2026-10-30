@@ -19,7 +19,7 @@ class _ThemeSettingsScreenState extends State<ThemeSettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          ContractorStrings.themeTitle,
+          ContractorStrings.themeSettingsTitle,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),

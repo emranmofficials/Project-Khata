@@ -19,7 +19,7 @@ class _LanguageSettingsScreenState extends State<LanguageSettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          ContractorStrings.languageTitle,
+          ContractorStrings.languageSettingsTitle,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
