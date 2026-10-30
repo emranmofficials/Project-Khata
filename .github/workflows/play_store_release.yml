@@ -1,0 +1,83 @@
+name: Build & Release Google Play AAB
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build_release:
+    name: Build Release AAB & APK
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Free Disk Space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+          df -h
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Setup Environment File
+        run: cp .env.example .env
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Configure Keystore from Secrets
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > android/upload-keystore.jks
+            echo "storePassword=$KEYSTORE_PASSWORD" > android/key.properties
+            echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
+            echo "keyAlias=${KEY_ALIAS:-upload}" >> android/key.properties
+            echo "storeFile=upload-keystore.jks" >> android/key.properties
+            echo "Keystore successfully configured."
+          else
+            echo "No KEYSTORE_BASE64 secret provided. Proceeding with fallback signing."
+          fi
+
+      - name: Build Android App Bundle (AAB)
+        run: flutter build appbundle --release --android-skip-build-dependency-validation
+
+      - name: Build Release APK
+        run: flutter build apk --release --android-skip-build-dependency-validation
+
+      - name: Upload Release AAB Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-khata-release-aab
+          path: app/build/app/outputs/bundle/release/app-release.aab
+          if-no-files-found: warn
+
+      - name: Upload Release APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-khata-release-apk
+          path: app/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: warn
