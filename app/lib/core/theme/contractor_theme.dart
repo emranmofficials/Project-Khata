@@ -8,12 +8,12 @@ class ContractorTheme {
   static const Color primaryNavy = Color(0xFF1E3A8A);
   static const Color darkPrimaryNavy = Color(0xFF93A8F4);
   static const Color accentNavy = Color(0xFF2563EB);
-  static const Color lightBg = Color(0xFFF8FAFC);
-  static const Color darkBg = Color(0xFF0F172A);
+  static const Color lightBg = Color(0xFFF5F7FB);
+  static const Color darkBg = Color(0xFF0B1220);
   static const Color lightSurface = Colors.white;
-  static const Color darkSurface = Color(0xFF1E293B);
-  static const Color lightBorderColor = Color(0xFFE2E8F0);
-  static const Color darkBorderColor = Color(0xFF334155);
+  static const Color darkSurface = Color(0xFF131C2E);
+  static const Color lightBorderColor = Color(0xFFE8ECF4);
+  static const Color darkBorderColor = Color(0xFF1F2A40);
 
   static ThemeData getTheme({required bool isDark}) {
     final baseColorScheme = isDark
@@ -85,26 +85,26 @@ class ContractorTheme {
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(color: borderColor),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(color: borderColor),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(
             color: isDark ? darkPrimaryNavy : primaryNavy,
             width: 1.8,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: AppColors.error),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: AppColors.error, width: 1.8),
         ),
         hintStyle: TextStyle(
@@ -152,14 +152,14 @@ class ContractorTheme {
         }),
       ),
 
-      // 5. বোতাম থিম: উচ্চতা ৫২, radius 16, সেফ টাইপোগ্রাফি
+      // 5. বোতাম থিম: উচ্চতা ৫২, radius 14, সেফ টাইপোগ্রাফি
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: isDark ? darkPrimaryNavy : primaryNavy,
           foregroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
           minimumSize: const Size.fromHeight(52),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
           ),
           textStyle: textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
@@ -174,7 +174,7 @@ class ContractorTheme {
           minimumSize: const Size.fromHeight(52),
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
           ),
           textStyle: textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
@@ -191,7 +191,7 @@ class ContractorTheme {
           ),
           minimumSize: const Size.fromHeight(48),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
           ),
           textStyle: textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w600,
