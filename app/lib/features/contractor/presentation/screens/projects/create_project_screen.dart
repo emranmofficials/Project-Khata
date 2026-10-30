@@ -5,7 +5,6 @@ import 'package:project_khata/core/auth/phone_email.dart';
 import 'package:project_khata/core/constants/app_colors.dart';
 import 'package:project_khata/core/constants/app_strings.dart';
 import 'package:project_khata/core/constants/contractor_routes.dart';
-import 'package:project_khata/core/constants/contractor_strings.dart';
 import 'package:project_khata/widgets/contractor_widgets.dart';
 import '../../contractor_providers.dart';
 import '../../../domain/models/contractor_models.dart';

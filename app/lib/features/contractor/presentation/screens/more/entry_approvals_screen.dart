@@ -62,7 +62,7 @@ class _EntryApprovalsScreenState extends ConsumerState<EntryApprovalsScreen>
       onRefresh: () async => ref.invalidate(approvalsProvider(type)),
       child: approvalsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(ContractorStrings.errorOccurred)),
+        error: (e, _) => const Center(child: Text(ContractorStrings.errorOccurred)),
         data: (approvals) {
           if (approvals.isEmpty) {
             return ListView(

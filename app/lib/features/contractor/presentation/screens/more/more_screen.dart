@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:project_khata/core/constants/app_colors.dart';
 import 'package:project_khata/core/constants/contractor_routes.dart';
 import 'package:project_khata/core/constants/contractor_strings.dart';
-import '../../../auth/presentation/controllers/auth_controller.dart';
+import 'package:project_khata/features/auth/presentation/controllers/auth_controller.dart';
 import '../../contractor_providers.dart';
 
 class MoreScreen extends ConsumerWidget {

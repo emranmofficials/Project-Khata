@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/contractor_strings.dart';
+import 'package:project_khata/core/constants/contractor_strings.dart';
 
 class ContractorShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;

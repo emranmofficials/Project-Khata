@@ -74,7 +74,7 @@ class ContractorDashboardScreen extends ConsumerWidget {
               children: [
                 const Icon(Icons.error_outline, size: 48, color: AppColors.error),
                 const SizedBox(height: 12),
-                Text(ContractorStrings.errorOccurred),
+                const Text(ContractorStrings.errorOccurred),
                 const SizedBox(height: 12),
                 FilledButton(
                   onPressed: () => ref.invalidate(dashboardSummaryProvider),
@@ -153,7 +153,7 @@ class ContractorDashboardScreen extends ConsumerWidget {
                         child: CircularProgressIndicator(),
                       ),
                     ),
-                    error: (_, __) => Text(ContractorStrings.errorOccurred),
+                    error: (_, __) => const Text(ContractorStrings.errorOccurred),
                     data: (projects) {
                       if (projects.isEmpty) {
                         return EmptyState(
@@ -196,7 +196,7 @@ class ContractorDashboardScreen extends ConsumerWidget {
                         child: CircularProgressIndicator(),
                       ),
                     ),
-                    error: (_, __) => Text(ContractorStrings.errorOccurred),
+                    error: (_, __) => const Text(ContractorStrings.errorOccurred),
                     data: (entries) {
                       if (entries.isEmpty) {
                         return const EmptyState(
