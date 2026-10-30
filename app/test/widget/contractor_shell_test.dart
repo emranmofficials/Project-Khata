@@ -80,6 +80,89 @@ void main() {
       expect(find.text(ContractorStrings.more), findsOneWidget);
     });
 
+    testWidgets('Tapping each of the 5 tabs switches branch content', (tester) async {
+      final testRouter = GoRouter(
+        initialLocation: '/contractor',
+        routes: [
+          StatefulShellRoute.indexedStack(
+            builder: (context, state, navigationShell) {
+              return ContractorShell(navigationShell: navigationShell);
+            },
+            branches: [
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: '/contractor',
+                    builder: (context, state) => const Scaffold(body: Text('হোম স্ক্রিন কন্টেন্ট')),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: '/contractor/projects',
+                    builder: (context, state) => const Scaffold(body: Text('প্রজেক্ট স্ক্রিন কন্টেন্ট')),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: '/contractor/workers',
+                    builder: (context, state) => const Scaffold(body: Text('শ্রমিক স্ক্রিন কন্টেন্ট')),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: '/contractor/accounts',
+                    builder: (context, state) => const Scaffold(body: Text('হিসাব স্ক্রিন কন্টেন্ট')),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: '/contractor/more',
+                    builder: (context, state) => const Scaffold(body: Text('আরও স্ক্রিন কন্টেন্ট')),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp.router(
+            theme: ContractorTheme.getTheme(isDark: false),
+            routerConfig: testRouter,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('হোম স্ক্রিন কন্টেন্ট'), findsOneWidget);
+
+      await tester.tap(find.text(ContractorStrings.projects));
+      await tester.pumpAndSettle();
+      expect(find.text('প্রজেক্ট স্ক্রিন কন্টেন্ট'), findsOneWidget);
+
+      await tester.tap(find.text(ContractorStrings.workersTab));
+      await tester.pumpAndSettle();
+      expect(find.text('শ্রমিক স্ক্রিন কন্টেন্ট'), findsOneWidget);
+
+      await tester.tap(find.text(ContractorStrings.accounts));
+      await tester.pumpAndSettle();
+      expect(find.text('হিসাব স্ক্রিন কন্টেন্ট'), findsOneWidget);
+
+      await tester.tap(find.text(ContractorStrings.more));
+      await tester.pumpAndSettle();
+      expect(find.text('আরও স্ক্রিন কন্টেন্ট'), findsOneWidget);
+    });
+
     testWidgets('ContractorCreateProjectScreen validates invalid mobile number', (tester) async {
       await tester.pumpWidget(
         ProviderScope(

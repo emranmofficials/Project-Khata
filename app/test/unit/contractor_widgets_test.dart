@@ -181,5 +181,44 @@ void main() {
       expect(find.textContaining('মোট আয়:'), findsOneWidget);
       expect(find.textContaining('ব্যয়:'), findsOneWidget);
     });
+
+    testWidgets('EmptyState.placeholder renders title, subtitle and icon', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ContractorTheme.getTheme(isDark: false),
+          home: const Scaffold(
+            body: EmptyState.placeholder(
+              title: 'খসড়া পৃষ্ঠা',
+              subtitle: 'এই ফিচারটি শীঘ্রই আসছে',
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('খসড়া পৃষ্ঠা'), findsOneWidget);
+      expect(find.text('এই ফিচারটি শীঘ্রই আসছে'), findsOneWidget);
+      expect(find.byIcon(Icons.construction_outlined), findsOneWidget);
+    });
+  });
+
+  group('Contractor Helper Functions Unit Tests', () {
+    test('toBn(\'12\') returns \'১২\' and handles numbers correctly', () {
+      expect(toBn('12'), '১২');
+      expect(toBn(12), '১২');
+      expect(toBn('100 মিটার'), '১০০ মিটার');
+      expect(toBn(null), '');
+    });
+
+    test('greetingByHour returns appropriate greeting based on hour', () {
+      final morning = DateTime(2026, 1, 1, 8, 0); // 8 AM -> শুভ সকাল
+      final afternoon = DateTime(2026, 1, 1, 13, 0); // 1 PM -> শুভ দুপুর
+      final evening = DateTime(2026, 1, 1, 19, 0); // 7 PM -> শুভ সন্ধ্যা
+      final night = DateTime(2026, 1, 1, 23, 0); // 11 PM -> শুভ সন্ধ্যা
+
+      expect(greetingByHour(morning), 'শুভ সকাল');
+      expect(greetingByHour(afternoon), 'শুভ দুপুর');
+      expect(greetingByHour(evening), 'শুভ সন্ধ্যা');
+      expect(greetingByHour(night), 'শুভ সন্ধ্যা');
+    });
   });
 }
