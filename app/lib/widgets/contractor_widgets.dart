@@ -508,3 +508,257 @@ class IconTile extends StatelessWidget {
     );
   }
 }
+
+/// ৫. StatusChip: স্ট্যাটাস ব্যাজ উইজেট
+class StatusChip extends StatelessWidget {
+  final String label;
+  final Color? color;
+  final Color? backgroundColor;
+
+  const StatusChip({
+    super.key,
+    required this.label,
+    this.color,
+    this.backgroundColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final effectiveColor = color ?? AppColors.contractorNavy;
+    final effectiveBg = backgroundColor ?? effectiveColor.withValues(alpha: 0.1);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: effectiveBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: effectiveColor.withValues(alpha: 0.2), width: 1),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: effectiveColor,
+        ),
+      ),
+    );
+  }
+}
+
+/// ৬. EmptyState: তালিকা খালি থাকলে ক্লিন আইকন ও বার্তা
+class EmptyState extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final String? actionLabel;
+  final VoidCallback? onActionTap;
+
+  const EmptyState({
+    super.key,
+    required this.icon,
+    required this.title,
+    this.subtitle,
+    this.actionLabel,
+    this.onActionTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(28.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : AppColors.contractorNavy.withValues(alpha: 0.08),
+              ),
+              child: Icon(
+                icon,
+                size: 34,
+                color: isDark ? Colors.white70 : AppColors.contractorNavy,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (subtitle != null) ...[
+              const SizedBox(height: 6),
+              Text(
+                subtitle!,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDark
+                      ? AppColors.darkTextSecondary
+                      : AppColors.lightTextSecondary,
+                ),
+              ),
+            ],
+            if (actionLabel != null && onActionTap != null) ...[
+              const SizedBox(height: 18),
+              OutlinedButton(
+                onPressed: onActionTap,
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(actionLabel!),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// ৭. KpiCard: ২০ px গোল কোণ কার্ড মেট্রিক প্রদর্শনের জন্য
+class KpiCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final String? subtitle;
+  final IconData icon;
+  final Color? iconColor;
+  final VoidCallback? onTap;
+
+  const KpiCard({
+    super.key,
+    required this.title,
+    required this.value,
+    this.subtitle,
+    required this.icon,
+    this.iconColor,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final effectiveColor = iconColor ?? AppColors.contractorNavy;
+
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: isDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.lightTextSecondary,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: effectiveColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(icon, size: 18, color: effectiveColor),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              if (subtitle != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  subtitle!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.lightTextSecondary,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// ৮. toBn: সংখ্যাকে বাংলা ডিজিটে রূপান্তর
+String toBn(dynamic value) {
+  if (value == null) return '';
+  final str = value.toString();
+  const enToBn = {
+    '0': '০',
+    '1': '১',
+    '2': '২',
+    '3': '৩',
+    '4': '৪',
+    '5': '৫',
+    '6': '৬',
+    '7': '৭',
+    '8': '৮',
+    '9': '৯',
+  };
+  final buffer = StringBuffer();
+  for (int i = 0; i < str.length; i++) {
+    final char = str[i];
+    buffer.write(enToBn[char] ?? char);
+  }
+  return buffer.toString();
+}
+
+/// ৯. requiredValidator: খালি ফিল্ড ভ্যালিডেশন
+String? requiredValidator(String? value, [String message = 'এই তথ্যটি দেওয়া আবশ্যক']) {
+  if (value == null || value.trim().isEmpty) {
+    return message;
+  }
+  return null;
+}
+
+/// ১০. greetingByHour: সময়ভিত্তিক বাংলা অভিবাদন
+String greetingByHour(DateTime time) {
+  final hour = time.hour;
+  if (hour >= 4 && hour < 12) {
+    return ContractorStrings.greetingMorning;
+  } else if (hour >= 12 && hour < 17) {
+    return ContractorStrings.greetingAfternoon;
+  } else {
+    return ContractorStrings.greetingEvening;
+  }
+}
