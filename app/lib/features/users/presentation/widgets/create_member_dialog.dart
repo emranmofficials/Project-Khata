@@ -35,6 +35,9 @@ class _CreateMemberDialogState extends ConsumerState<CreateMemberDialog> {
 
     try {
       final repo = ref.read(authRepositoryProvider);
+      if (repo == null) {
+        throw Exception('সার্ভিস প্রস্তুত নয়');
+      }
       await repo.createMember(
         name: _nameController.text.trim(),
         mobile: _mobileController.text.trim(),
