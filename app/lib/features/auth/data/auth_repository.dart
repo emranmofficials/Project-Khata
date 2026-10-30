@@ -29,29 +29,47 @@ class AuthRepository {
       throw const AuthException('রেজিস্ট্রেশন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।');
     }
 
-    // 2. Create Organization
-    final orgResponse = await _client.from('organizations').insert({
-      'name': organizationName.trim(),
-      'address': address?.trim(),
-      'phone': phone?.trim(),
-      'owner_id': user.id,
-    }).select().single();
+    // সেশন নিশ্চিত করা
+    if (_client.auth.currentSession == null) {
+      await _client.auth.signInWithPassword(
+        email: email.trim(),
+        password: password,
+      );
+    }
 
-    final orgId = orgResponse['id'] as String;
+    // 2 & 3. পরমাণুকভাবে প্রতিষ্ঠান ও প্রোফাইল তৈরি (RPC অথবা সরাসরি ইনসার্ট)
+    try {
+      final rpcRes = await _client.rpc('register_contractor', params: {
+        'p_org_name': organizationName.trim(),
+        'p_org_address': address?.trim(),
+        'p_org_phone': phone?.trim(),
+        'p_name': name.trim(),
+      });
+      return UserProfile.fromJson(rpcRes as Map<String, dynamic>);
+    } catch (_) {
+      // RPC ব্যর্থ হলে সরাসরি ইনসার্ট ফলব্যাক
+      final orgResponse = await _client.from('organizations').insert({
+        'name': organizationName.trim(),
+        'address': address?.trim(),
+        'phone': phone?.trim(),
+        'owner_id': user.id,
+      }).select().single();
 
-    // 3. Create Contractor Profile
-    final profileResponse = await _client.from('profiles').insert({
-      'id': user.id,
-      'organization_id': orgId,
-      'role': 'contractor',
-      'name': name.trim(),
-      'email': email.trim(),
-      'mobile': phone?.trim(),
-      'must_change_password': false,
-      'status': 'active',
-    }).select().single();
+      final orgId = orgResponse['id'] as String;
 
-    return UserProfile.fromJson(profileResponse);
+      final profileResponse = await _client.from('profiles').insert({
+        'id': user.id,
+        'organization_id': orgId,
+        'role': 'contractor',
+        'name': name.trim(),
+        'email': email.trim(),
+        'mobile': phone?.trim(),
+        'must_change_password': false,
+        'status': 'active',
+      }).select().single();
+
+      return UserProfile.fromJson(profileResponse);
+    }
   }
 
   /// Contractor Login via Email & Password
