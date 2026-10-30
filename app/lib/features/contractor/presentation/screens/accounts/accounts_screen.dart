@@ -310,8 +310,6 @@ class AccountsScreen extends ConsumerWidget {
     required Color color,
     required VoidCallback onTap,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Card(
       child: InkWell(
         onTap: onTap,
