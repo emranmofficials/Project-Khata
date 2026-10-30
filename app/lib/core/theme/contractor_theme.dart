@@ -13,7 +13,7 @@ class ContractorTheme {
 
   static ThemeData getTheme({required bool isDark}) {
     final baseColorScheme = isDark
-        ? ColorScheme.dark(
+        ? const ColorScheme.dark(
             primary: primaryNavy,
             secondary: accentNavy,
             surface: AppColors.darkSurface,
@@ -21,7 +21,7 @@ class ContractorTheme {
             onPrimary: Colors.white,
             onSurface: AppColors.darkTextPrimary,
           )
-        : ColorScheme.light(
+        : const ColorScheme.light(
             primary: primaryNavy,
             secondary: accentNavy,
             surface: Colors.white,

@@ -226,9 +226,7 @@ class DashboardScreen extends ConsumerWidget {
                       trailingTitle: project.budget != null
                           ? BengaliFormatter.toCurrency(project.budget!)
                           : null,
-                      trailingSubtitle: project.status == 'active'
-                          ? ContractorStrings.activeStatus
-                          : project.status,
+                      trailingSubtitle: project.status.displayName,
                       trailingColor: AppColors.contractorNavy,
                       onTap: () => context.push(
                         '/project-details',
@@ -321,11 +319,11 @@ class DashboardScreen extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 3),
-                      Text(
+                      const Text(
                         ContractorStrings.alertReviewEntries,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
