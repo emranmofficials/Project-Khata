@@ -10,7 +10,6 @@ import '../../features/auth/presentation/screens/create_organization_screen.dart
 import '../../features/auth/presentation/screens/member_login_screen.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/dashboard/presentation/screens/client_dashboard.dart';
-import '../../features/contractor/domain/models/contractor_models.dart' show MemberRole;
 import '../../features/contractor/presentation/contractor_shell.dart';
 import '../../features/contractor/presentation/screens/contractor_screens.dart';
 import '../../features/dashboard/presentation/screens/supervisor_dashboard.dart';
