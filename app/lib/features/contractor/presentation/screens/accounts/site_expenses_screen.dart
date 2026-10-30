@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/contractor_strings.dart';
-import '../../../../core/utils/bengali_formatter.dart';
-import '../../../../widgets/contractor_widgets.dart';
+import 'package:project_khata/core/constants/app_colors.dart';
+import 'package:project_khata/core/constants/contractor_strings.dart';
+import 'package:project_khata/core/utils/bengali_formatter.dart';
+import 'package:project_khata/widgets/contractor_widgets.dart';
 import '../../contractor_providers.dart';
 
 class SiteExpensesScreen extends ConsumerStatefulWidget {

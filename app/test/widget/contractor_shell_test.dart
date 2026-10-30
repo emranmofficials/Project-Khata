@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:project_khata/core/constants/app_strings.dart';
-import 'package:project_khata/core/constants/contractor_strings.dart';
 import 'package:project_khata/core/theme/contractor_theme.dart';
 import 'package:project_khata/features/contractor/presentation/contractor_shell.dart';
 import 'package:project_khata/features/contractor/presentation/screens/projects/create_project_screen.dart';
@@ -101,7 +100,7 @@ void main() {
       await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -600));
       await tester.pumpAndSettle();
 
-      final saveButton = find.widgetWithText(ElevatedButton, ContractorStrings.saveProject);
+      final saveButton = find.widgetWithText(FilledButton, ContractorStrings.createNewProject);
       expect(saveButton, findsOneWidget);
       await tester.tap(saveButton);
       await tester.pumpAndSettle();

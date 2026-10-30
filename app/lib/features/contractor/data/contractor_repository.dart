@@ -10,6 +10,8 @@ abstract class ContractorRepository {
 
   Future<ProjectDetails> getProjectDetails(String id);
 
+  Future<List<ClientInfo>> getClients();
+
   Future<ProjectDetails> createProject(NewProjectInput input);
 
   Future<ProjectDetails> updateProject(UpdateProjectInput input);

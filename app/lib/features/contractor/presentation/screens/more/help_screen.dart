@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/contractor_strings.dart';
+import 'package:project_khata/core/constants/contractor_strings.dart';
 
 class HelpScreen extends StatelessWidget {
   const HelpScreen({super.key});

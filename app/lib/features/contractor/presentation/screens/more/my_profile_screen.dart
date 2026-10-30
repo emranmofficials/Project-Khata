@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/contractor_strings.dart';
+import 'package:project_khata/core/constants/app_colors.dart';
+import 'package:project_khata/core/constants/contractor_strings.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 
 class MyProfileScreen extends ConsumerWidget {

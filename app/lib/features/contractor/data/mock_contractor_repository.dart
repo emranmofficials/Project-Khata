@@ -416,6 +416,11 @@ class MockContractorRepository implements ContractorRepository {
   }
 
   @override
+  Future<List<ClientInfo>> getClients() async {
+    return List.unmodifiable(_clients);
+  }
+
+  @override
   Future<ProjectDetails> createProject(NewProjectInput input) async {
     // 1. Client auto-linking logic:
     // If mobile already exists in the organization, link to that existing client

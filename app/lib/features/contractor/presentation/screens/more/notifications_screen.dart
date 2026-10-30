@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/contractor_strings.dart';
-import '../../../../widgets/contractor_widgets.dart';
+import 'package:project_khata/core/constants/contractor_strings.dart';
+import 'package:project_khata/widgets/contractor_widgets.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});

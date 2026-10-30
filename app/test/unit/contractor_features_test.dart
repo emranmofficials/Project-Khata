@@ -62,7 +62,7 @@ void main() {
       const newMobile = '01799998877';
 
       final project = await repo.createProject(
-        NewProjectInput(
+        const NewProjectInput(
           name: 'পদ্মা টাওয়ার',
           type: ProjectType.contract,
           address: 'মতিঝিল, ঢাকা',
@@ -113,14 +113,14 @@ void main() {
     });
 
     test('unassignSupervisor adds handover_required approval entry', () async {
-      final approvalsBefore = await repo.getPendingApprovals();
+      final approvalsBefore = await repo.getApprovals();
       final handoverCountBefore = approvalsBefore
           .where((a) => a.type == ApprovalType.handoverRequired)
           .length;
 
       await repo.unassignSupervisor('proj-1', 'sup-1');
 
-      final approvalsAfter = await repo.getPendingApprovals();
+      final approvalsAfter = await repo.getApprovals();
       final handoverAfter = approvalsAfter
           .where((a) => a.type == ApprovalType.handoverRequired)
           .toList();

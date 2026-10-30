@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/contractor_routes.dart';
-import '../../../../core/constants/contractor_strings.dart';
+import 'package:project_khata/core/constants/app_colors.dart';
+import 'package:project_khata/core/constants/contractor_routes.dart';
+import 'package:project_khata/core/constants/contractor_strings.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../contractor_providers.dart';
 

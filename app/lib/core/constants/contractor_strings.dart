@@ -14,6 +14,20 @@ class ContractorStrings {
   static const String greetingEvening = 'শুভ সন্ধ্যা';
   static const String defaultUserName = 'ঠিকাদার';
 
+  // Legacy Dashboard compatibility getters
+  static const String goodMorning = greetingMorning;
+  static const String goodNoon = 'শুভ দুপুর';
+  static const String goodAfternoon = greetingAfternoon;
+  static const String goodEvening = greetingEvening;
+  static const String totalBudget = 'সর্বমোট প্রজেক্ট বাজেট';
+  static const String activeProjectsCount = 'চলমান প্রজেক্ট';
+  static const String quickActionDailyEntry = 'দৈনিক হাজিরা';
+  static const String quickActionAccounts = 'হিসাব খাতা';
+  static const String quickActionAddMember = 'সদস্য যোগ';
+  static const String ongoingProjects = 'চলমান প্রজেক্ট';
+  static const String todayAttendance = 'আজকের কাজের সারাংশ';
+  static const String saveProject = 'প্রজেক্ট সংরক্ষণ করুন';
+
   // Home Dashboard
   static const String workersPresentToday = 'আজ উপস্থিত শ্রমিক';
   static const String activeProjectsTitle = 'চলমান প্রজেক্ট';
