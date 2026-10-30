@@ -53,7 +53,8 @@ class NotificationsController extends StateNotifier<NotificationsState> {
 
   NotificationsController(this._repository, this._userId)
       : super(const NotificationsState(isLoading: true)) {
-    if (_userId != null && _userId!.isNotEmpty) {
+    final uid = _userId;
+    if (uid != null && uid.isNotEmpty) {
       _loadNotifications();
       _subscribeRealtime();
     } else {
@@ -62,16 +63,18 @@ class NotificationsController extends StateNotifier<NotificationsState> {
   }
 
   Future<void> _loadNotifications() async {
-    if (_userId == null) return;
+    final uid = _userId;
+    if (uid == null) return;
     state = state.copyWith(isLoading: true);
-    final items = await _repository.getNotifications(_userId!);
+    final items = await _repository.getNotifications(uid);
     state = state.copyWith(isLoading: false, notifications: items);
   }
 
   void _subscribeRealtime() {
-    if (_userId == null) return;
+    final uid = _userId;
+    if (uid == null) return;
     _subscription?.cancel();
-    _subscription = _repository.streamNotifications(_userId!).listen((items) {
+    _subscription = _repository.streamNotifications(uid).listen((items) {
       state = state.copyWith(notifications: items);
     }, onError: (_) {
       // Handled silently
@@ -95,11 +98,12 @@ class NotificationsController extends StateNotifier<NotificationsState> {
   }
 
   Future<void> markAllAsRead() async {
-    if (_userId == null) return;
+    final uid = _userId;
+    if (uid == null) return;
     final updated = state.notifications.map((n) => n.copyWith(isRead: true)).toList();
     state = state.copyWith(notifications: updated);
 
-    await _repository.markAllAsRead(_userId!);
+    await _repository.markAllAsRead(uid);
   }
 
   Future<void> deleteNotification(String notificationId) async {
