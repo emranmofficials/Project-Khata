@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:project_khata/core/constants/contractor_routes.dart';
 import 'package:project_khata/core/constants/contractor_strings.dart';
 import 'package:project_khata/widgets/contractor_widgets.dart';
 
@@ -24,6 +25,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
+          // ভাষা সেটিংস সাব-পেজ লিঙ্ক
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.language_rounded),
+              title: const Text(ContractorStrings.languageSettingsTitle),
+              trailing: const Icon(Icons.chevron_right_rounded),
+              onTap: () => context.push(ContractorRoutes.languageSettings),
+            ),
+          ),
+          const SizedBox(height: 10),
+          // থিম সেটিংস সাব-পেজ লিঙ্ক
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.palette_outlined),
+              title: const Text(ContractorStrings.themeSettingsTitle),
+              trailing: const Icon(Icons.chevron_right_rounded),
+              onTap: () => context.push(ContractorRoutes.themeSettings),
+            ),
+          ),
+          const SizedBox(height: 16),
           // ভাষা ও সংখ্যা ফরম্যাট
           Card(
             child: Column(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:project_khata/core/constants/contractor_routes.dart';
 import 'package:project_khata/core/constants/contractor_strings.dart';
 
 class HelpScreen extends StatelessWidget {
@@ -8,15 +10,14 @@ class HelpScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(ContractorStrings.helpAndInfo),
+        title: const Text(ContractorStrings.helpTitle),
       ),
-      body: Padding(
+      body: ListView(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 20),
-            Container(
+        children: [
+          const SizedBox(height: 12),
+          Center(
+            child: Container(
               width: 80,
               height: 80,
               decoration: BoxDecoration(
@@ -29,39 +30,56 @@ class HelpScreen extends StatelessWidget {
                 color: Color(0xFF1E3A8A),
               ),
             ),
-            const SizedBox(height: 16),
-            const Text(
+          ),
+          const SizedBox(height: 16),
+          const Center(
+            child: Text(
               'Project Khata (প্রজেক্ট খাতা)',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 4),
-            const Text(
-              'ভার্সন ২.১ (বিল্ড ৪৭)',
+          ),
+          const SizedBox(height: 4),
+          const Center(
+            child: Text(
+              'ভার্সন ২.১',
               style: TextStyle(color: Colors.grey, fontSize: 13),
             ),
-            const SizedBox(height: 24),
-            const Card(
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: Icon(Icons.support_agent_rounded),
-                      title: Text('সহায়তা ও যোগাযোগ'),
-                      subtitle: Text('support@projectkhata.app\n+880 1700-000000'),
-                    ),
-                    Divider(),
-                    ListTile(
-                      leading: Icon(Icons.verified_user_outlined),
-                      title: Text('গোপনীয়তা নীতি ও শর্তাবলী'),
-                      subtitle: Text('https://projectkhata.app/privacy'),
-                    ),
-                  ],
+          ),
+          const SizedBox(height: 24),
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.info_outline_rounded),
+                  title: const Text(ContractorStrings.appVersionTitle),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => context.push(ContractorRoutes.appVersion),
                 ),
-              ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.support_agent_rounded),
+                  title: const Text(ContractorStrings.supportContactTitle),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => context.push(ContractorRoutes.supportContact),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.verified_user_outlined),
+                  title: const Text(ContractorStrings.privacyPolicyTitle),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => context.push(ContractorRoutes.privacyPolicy),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.receipt_long_rounded),
+                  title: const Text(ContractorStrings.billTemplateTitle),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => context.push(ContractorRoutes.billTemplate),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

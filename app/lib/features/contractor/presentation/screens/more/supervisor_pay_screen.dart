@@ -6,6 +6,8 @@ import 'package:project_khata/widgets/contractor_widgets.dart';
 import '../../contractor_providers.dart';
 import '../../../domain/models/contractor_models.dart';
 
+typedef SupervisorPaySettingsScreen = SupervisorPayScreen;
+
 class SupervisorPayScreen extends ConsumerWidget {
   const SupervisorPayScreen({super.key});
 

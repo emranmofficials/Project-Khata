@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:project_khata/core/constants/app_colors.dart';
+import 'package:project_khata/core/constants/contractor_routes.dart';
 import 'package:project_khata/core/constants/contractor_strings.dart';
 import 'package:project_khata/features/auth/presentation/controllers/auth_controller.dart';
 import '../../contractor_providers.dart';
@@ -149,7 +151,7 @@ class MyProfileScreen extends ConsumerWidget {
                 leading: const Icon(Icons.lock_reset_rounded, color: AppColors.contractorNavy),
                 title: const Text('পাসওয়ার্ড পরিবর্তন করুন'),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => _showChangePasswordDialog(context, ref),
+                onTap: () => context.push(ContractorRoutes.changePassword),
               ),
             ),
           ],
