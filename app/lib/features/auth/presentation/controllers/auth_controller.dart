@@ -3,8 +3,12 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/auth_repository.dart';
 import '../../domain/models/app_user.dart';
 
-final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  return AuthRepository(Supabase.instance.client);
+final authRepositoryProvider = Provider<AuthRepository?>((ref) {
+  try {
+    return AuthRepository(Supabase.instance.client);
+  } catch (_) {
+    return null;
+  }
 });
 
 final authControllerProvider =
@@ -23,7 +27,7 @@ final needsOrganizationProvider = Provider<bool>((ref) {
 });
 
 class AuthController extends StateNotifier<AsyncValue<UserProfile?>> {
-  final AuthRepository _repository;
+  final AuthRepository? _repository;
   bool _needsOrganization = false;
 
   bool get needsOrganization => _needsOrganization;
@@ -33,14 +37,20 @@ class AuthController extends StateNotifier<AsyncValue<UserProfile?>> {
   }
 
   Future<void> _init() async {
-    final user = _repository.currentUser;
+    final repo = _repository;
+    if (repo == null) {
+      _needsOrganization = false;
+      state = const AsyncValue.data(null);
+      return;
+    }
+    final user = repo.currentUser;
     if (user == null) {
       _needsOrganization = false;
       state = const AsyncValue.data(null);
       return;
     }
     try {
-      final profile = await _repository.getUserProfile(user.id);
+      final profile = await repo.getUserProfile(user.id);
       if (profile == null) {
         _needsOrganization = true;
         state = const AsyncValue.data(null);
@@ -58,9 +68,11 @@ class AuthController extends StateNotifier<AsyncValue<UserProfile?>> {
     required String email,
     required String password,
   }) async {
+    final repo = _repository;
+    if (repo == null) throw const AuthException('সার্ভিস প্রস্তুত নয়');
     state = const AsyncValue.loading();
     try {
-      final profile = await _repository.loginWithEmail(
+      final profile = await repo.loginWithEmail(
         email: email,
         password: password,
       );
@@ -82,14 +94,16 @@ class AuthController extends StateNotifier<AsyncValue<UserProfile?>> {
     required String mobile,
     required String password,
   }) async {
+    final repo = _repository;
+    if (repo == null) throw const AuthException('সার্ভিস প্রস্তুত নয়');
     state = const AsyncValue.loading();
     try {
-      final profile = await _repository.loginWithMobile(
+      final profile = await repo.loginWithMobile(
         mobile: mobile,
         password: password,
       );
       if (profile == null) {
-        await _repository.signOut();
+        await repo.signOut();
         _needsOrganization = false;
         throw const AuthException(
             'আপনার কোনো প্রোফাইল পাওয়া যায়নি। অনুগ্রহ করে ঠিকাদারের সাথে যোগাযোগ করুন।');
@@ -111,9 +125,11 @@ class AuthController extends StateNotifier<AsyncValue<UserProfile?>> {
     String? address,
     String? phone,
   }) async {
+    final repo = _repository;
+    if (repo == null) throw const AuthException('সার্ভিস প্রস্তুত নয়');
     state = const AsyncValue.loading();
     try {
-      final profile = await _repository.registerContractor(
+      final profile = await repo.registerContractor(
         name: name,
         email: email,
         password: password,
@@ -130,10 +146,12 @@ class AuthController extends StateNotifier<AsyncValue<UserProfile?>> {
   }
 
   Future<void> updatePassword(String newPassword) async {
+    final repo = _repository;
+    if (repo == null) throw const AuthException('সার্ভিস প্রস্তুত নয়');
     final current = state.value;
     state = const AsyncValue.loading();
     try {
-      final updated = await _repository.updatePassword(newPassword: newPassword);
+      final updated = await repo.updatePassword(newPassword: newPassword);
       _needsOrganization = false;
       state = AsyncValue.data(updated);
     } catch (e, st) {
@@ -144,8 +162,11 @@ class AuthController extends StateNotifier<AsyncValue<UserProfile?>> {
   }
 
   Future<void> signOut() async {
+    final repo = _repository;
     _needsOrganization = false;
-    await _repository.signOut();
+    if (repo != null) {
+      await repo.signOut();
+    }
     state = const AsyncValue.data(null);
   }
 }
