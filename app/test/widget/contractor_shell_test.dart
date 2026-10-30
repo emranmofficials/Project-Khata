@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:project_khata/core/constants/app_strings.dart';
+import 'package:project_khata/core/constants/contractor_strings.dart';
 import 'package:project_khata/core/theme/contractor_theme.dart';
 import 'package:project_khata/features/contractor/presentation/contractor_shell.dart';
 import 'package:project_khata/features/contractor/presentation/screens/home/dashboard_screen.dart';
@@ -212,7 +213,7 @@ void main() {
       // 2. Greeting Header
       expect(find.byIcon(Icons.calendar_today_rounded), findsOneWidget);
       expect(find.text('ঢাকা, সদর দপ্তর'), findsOneWidget);
-      expect(find.textContaining('ঠিকাদার সাহেব'), findsOneWidget);
+      expect(find.textContaining(ContractorStrings.defaultUserName), findsOneWidget);
 
       // 3. Quick Actions
       expect(find.text('নতুন প্রজেক্ট তৈরি করুন'), findsOneWidget);
