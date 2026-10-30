@@ -71,7 +71,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                     children: [
                       // Hero কার্ড
                       HeroSummaryCard(
-                        title: 'হিসাব ও আর্থিক প্রতিবেদন ($_selectedPeriod)',
+                        title: 'আর্থিক প্রতিবেদন',
                         amount: BengaliFormatter.toCurrency(report.totalIncome),
                         subtitle: 'মোট ব্যয়: ${BengaliFormatter.toCurrency(report.totalExpense)}',
                         badgeText: 'নিট লাভ: ${BengaliFormatter.toCurrency(report.netBalance)}',
