@@ -8,9 +8,6 @@ import 'package:project_khata/core/utils/bengali_formatter.dart';
 import 'package:project_khata/widgets/contractor_widgets.dart';
 import '../../contractor_providers.dart';
 import '../../../domain/models/contractor_models.dart';
-
-typedef ProjectDetailsScreen = ContractorProjectDetailsScreen;
-
 class ContractorProjectDetailsScreen extends ConsumerStatefulWidget {
   final String projectId;
 

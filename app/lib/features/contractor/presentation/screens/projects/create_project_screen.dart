@@ -8,9 +8,6 @@ import 'package:project_khata/core/constants/contractor_routes.dart';
 import 'package:project_khata/widgets/contractor_widgets.dart';
 import '../../contractor_providers.dart';
 import '../../../domain/models/contractor_models.dart';
-
-typedef CreateProjectScreen = ContractorCreateProjectScreen;
-
 class ContractorCreateProjectScreen extends ConsumerStatefulWidget {
   const ContractorCreateProjectScreen({super.key});
 

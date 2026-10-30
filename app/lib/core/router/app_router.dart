@@ -126,7 +126,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: '/contractor',
-                builder: (context, state) => const DashboardScreen(),
+                builder: (context, state) => const ContractorDashboardScreen(),
               ),
             ],
           ),
@@ -139,13 +139,13 @@ final routerProvider = Provider<GoRouter>((ref) {
                 routes: [
                   GoRoute(
                     path: 'new',
-                    builder: (context, state) => const CreateProjectScreen(),
+                    builder: (context, state) => const ContractorCreateProjectScreen(),
                   ),
                   GoRoute(
                     path: ':id',
                     builder: (context, state) {
                       final id = state.pathParameters['id'] ?? '';
-                      return ProjectDetailsScreen(projectId: id);
+                      return ContractorProjectDetailsScreen(projectId: id);
                     },
                     routes: [
                       GoRoute(
@@ -221,7 +221,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                     path: 'projects/:id',
                     builder: (context, state) {
                       final id = state.pathParameters['id'] ?? '';
-                      return ProjectAccountsScreen(projectId: id);
+                      return ContractorProjectAccountsScreen(projectId: id);
                     },
                   ),
                   GoRoute(
