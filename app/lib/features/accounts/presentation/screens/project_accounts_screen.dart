@@ -8,6 +8,8 @@ import '../../../projects/domain/models/project.dart';
 import '../controllers/accounts_controller.dart';
 import '../../domain/models/material_item.dart';
 import '../../domain/models/expense_item.dart';
+import '../../domain/models/bill_statement.dart';
+import 'package:flutter/services.dart';
 
 class ProjectAccountsScreen extends ConsumerStatefulWidget {
   final Project project;
@@ -29,7 +31,7 @@ class _ProjectAccountsScreenState extends ConsumerState<ProjectAccountsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 6, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(projectAccountsControllerProvider(widget.project.id).notifier)
@@ -74,6 +76,7 @@ class _ProjectAccountsScreenState extends ConsumerState<ProjectAccountsScreen>
             Tab(text: 'মালামাল'),
             Tab(text: 'সাইট খরচ'),
             Tab(text: 'প্রাপ্ত বিল'),
+            Tab(text: 'বিল স্টেটমেন্ট'),
           ],
         ),
       ),
@@ -87,6 +90,7 @@ class _ProjectAccountsScreenState extends ConsumerState<ProjectAccountsScreen>
                 _buildMaterialsTab(state, controller, isContractor || isSupervisor || isClient),
                 _buildExpensesTab(state, controller, isContractor || isSupervisor),
                 _buildClientPaymentsTab(state, controller, isContractor),
+                _buildStatementsTab(state, controller, isContractor, isClient, budgetOrValue),
               ],
             ),
     );
@@ -825,18 +829,376 @@ class _ProjectAccountsScreenState extends ConsumerState<ProjectAccountsScreen>
     );
   }
 
-  // Send Statement Dialog & Snapshot Lock
-  void _showSendStatementDialog(
-      BuildContext context, ProjectAccountsState state, ProjectAccountsController controller) {
-    final totalWages = state.wages.fold<double>(0.0, (s, w) => s + w.totalEarned);
-    final count = state.wages.length;
+  // 6. Bill Statements Tab
+  Widget _buildStatementsTab(
+    ProjectAccountsState state,
+    ProjectAccountsController controller,
+    bool isContractor,
+    bool isClient,
+    double budgetOrValue,
+  ) {
+    final statements = state.statements;
+
+    return Column(
+      children: [
+        if (isContractor)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            color: AppColors.primary.withValues(alpha: 0.05),
+            child: Row(
+              children: [
+                const Icon(Icons.lock_clock_outlined, color: AppColors.primary, size: 20),
+                const SizedBox(width: 8),
+                const Expanded(
+                  child: Text(
+                    'স্টেটমেন্ট পাঠালে হিসাব স্ন্যাপশট লক হয়ে ক্লায়েন্ট দেখতে পাবে।',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => _showGenerateStatementDialog(
+                    context,
+                    state,
+                    controller,
+                    budgetOrValue,
+                  ),
+                  icon: const Icon(Icons.add, size: 16),
+                  label: const Text('নতুন স্টেটমেন্ট'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    visualDensity: VisualDensity.compact,
+                    textStyle: const TextStyle(fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        Expanded(
+          child: statements.isEmpty
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.receipt_long_outlined, size: 56, color: Colors.grey.shade400),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'কোনো বিল স্টেটমেন্ট তৈরি করা হয়নি',
+                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          isContractor
+                              ? 'নতুন স্টেটমেন্ট তৈরি করে ক্লায়েন্টকে পাঠান।'
+                              : 'ঠিকাদার কর্তৃক প্রেরিত স্টেটমেন্ট এখানে সংরক্ষিত থাকবে।',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: statements.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final item = statements[index];
+                    return Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                          color: item.isLocked ? Colors.green.shade300 : Colors.grey.shade300,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: (item.isLocked ? Colors.green : Colors.blue)
+                                        .withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    item.isLocked ? 'লক ও প্রেরিত' : 'খসড়া',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                      color: item.isLocked ? Colors.green.shade800 : Colors.blue.shade800,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade100,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    item.preset == 'weekly'
+                                        ? 'সাপ্তাহিক'
+                                        : item.preset == 'monthly'
+                                            ? 'মাসিক'
+                                            : 'কাস্টম',
+                                    style: const TextStyle(fontSize: 11, color: Colors.black87),
+                                  ),
+                                ),
+                                const Spacer(),
+                                Text(
+                                  BengaliFormatter.toRelativeTime(item.createdAt),
+                                  style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'সময়কাল: ${BengaliFormatter.formatDate(item.periodFrom)} হতে ${BengaliFormatter.formatDate(item.periodTo)}',
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                            ),
+                            if (item.sentToClientAt != null) ...[
+                              const SizedBox(height: 4),
+                              Text(
+                                'প্রেরিত: ${BengaliFormatter.formatDate(item.sentToClientAt!)}',
+                                style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                              ),
+                            ],
+                            const SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                OutlinedButton.icon(
+                                  onPressed: () => _showStatementReportDialog(context, item),
+                                  icon: const Icon(Icons.visibility_outlined, size: 16),
+                                  label: const Text('রিপোর্ট ও কপি'),
+                                  style: OutlinedButton.styleFrom(
+                                    visualDensity: VisualDensity.compact,
+                                    textStyle: const TextStyle(fontSize: 12),
+                                  ),
+                                ),
+                                if (isContractor && !item.isLocked) ...[
+                                  const SizedBox(width: 8),
+                                  ElevatedButton.icon(
+                                    onPressed: () => _confirmLockAndSend(
+                                      context,
+                                      item,
+                                      controller,
+                                      budgetOrValue,
+                                      state,
+                                    ),
+                                    icon: const Icon(Icons.send, size: 16),
+                                    label: const Text('লক ও পাঠান'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green,
+                                      foregroundColor: Colors.white,
+                                      visualDensity: VisualDensity.compact,
+                                      textStyle: const TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+
+  void _showStatementReportDialog(BuildContext context, BillStatement item) {
+    final report = item.toFormattedReport(
+      projectName: widget.project.name,
+      clientName: widget.project.clientName,
+    );
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('ক্লায়েন্টকে খতিয়ান পাঠান'),
+        title: const Text('বিল স্টেটমেন্ট রিপোর্ট'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: SelectableText(
+              report,
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('বন্ধ করুন'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () async {
+              await Clipboard.setData(ClipboardData(text: report));
+              if (ctx.mounted) {
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('রিপোর্ট ক্লিপবোর্ডে কপি করা হয়েছে!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
+            },
+            icon: const Icon(Icons.copy, size: 16),
+            label: const Text('রিপোর্ট কপি করুন'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showGenerateStatementDialog(
+    BuildContext context,
+    ProjectAccountsState state,
+    ProjectAccountsController controller,
+    double budgetOrValue,
+  ) {
+    String preset = 'weekly';
+    DateTime from = DateTime.now().subtract(const Duration(days: 7));
+    DateTime to = DateTime.now();
+    bool sendImmediately = true;
+    final user = ref.read(currentUserProvider).value;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: const Text('বিল স্টেটমেন্ট তৈরি করুন'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DropdownButtonFormField<String>(
+                  initialValue: preset,
+                  decoration: const InputDecoration(labelText: 'সময়কাল প্রিসেট'),
+                  items: const [
+                    DropdownMenuItem(value: 'weekly', child: Text('সাপ্তাহিক (গত ৭ দিন)')),
+                    DropdownMenuItem(value: 'monthly', child: Text('মাসিক (চলতি মাস)')),
+                    DropdownMenuItem(value: 'custom', child: Text('কাস্টম তারিখ-পরিসর')),
+                  ],
+                  onChanged: (v) {
+                    if (v == null) return;
+                    setDialogState(() {
+                      preset = v;
+                      final now = DateTime.now();
+                      if (preset == 'weekly') {
+                        from = now.subtract(const Duration(days: 7));
+                        to = now;
+                      } else if (preset == 'monthly') {
+                        from = DateTime(now.year, now.month, 1);
+                        to = now;
+                      }
+                    });
+                  },
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'সময়সীমা: ${BengaliFormatter.formatDate(from)} হতে ${BengaliFormatter.formatDate(to)}',
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                ),
+                const SizedBox(height: 12),
+                CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
+                  value: sendImmediately,
+                  title: const Text('তৈরি করে সরাসরি ক্লায়েন্টকে পাঠান ও লক করুন', style: TextStyle(fontSize: 13)),
+                  onChanged: (v) => setDialogState(() => sendImmediately = v ?? true),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('বাতিল'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (user == null) return;
+
+                final snapshot = {
+                  'project_id': widget.project.id,
+                  'project_name': widget.project.name,
+                  'generated_at': DateTime.now().toIso8601String(),
+                  'period_from': from.toIso8601String().split('T').first,
+                  'period_to': to.toIso8601String().split('T').first,
+                  'summary': {
+                    'total_budget': budgetOrValue,
+                    'total_client_paid': state.summary?.totalClientPaid ?? 0,
+                    'client_due': state.summary?.clientDue ?? 0,
+                    'total_project_expenses': state.summary?.totalProjectExpenses ?? 0,
+                    'total_wages_earned': state.summary?.totalWagesEarned ?? 0,
+                    'total_wages_paid': state.summary?.totalWagesPaid ?? 0,
+                    'total_materials_cost': state.summary?.totalMaterialsCost ?? 0,
+                    'total_expenses_cost': state.summary?.totalExpensesCost ?? 0,
+                  },
+                };
+
+                final stmt = BillStatement(
+                  id: '',
+                  organizationId: widget.project.organizationId,
+                  projectId: widget.project.id,
+                  periodFrom: from,
+                  periodTo: to,
+                  preset: preset,
+                  generatedBy: user.id,
+                  sentToClientAt: sendImmediately ? DateTime.now() : null,
+                  isLocked: sendImmediately,
+                  lockedSnapshot: sendImmediately ? snapshot : null,
+                  createdAt: DateTime.now(),
+                );
+
+                final ok = await controller.createBillStatement(stmt);
+                if (ok && ctx.mounted) {
+                  Navigator.pop(ctx);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        sendImmediately
+                            ? 'স্টেটমেন্ট তৈরি ও ক্লায়েন্টকে সফলভাবে পাঠানো হয়েছে!'
+                            : 'স্টেটমেন্ট খসড়া হিসেবে তৈরি হয়েছে।',
+                      ),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              },
+              child: const Text('তৈরি করুন'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _confirmLockAndSend(
+    BuildContext context,
+    BillStatement item,
+    ProjectAccountsController controller,
+    double budgetOrValue,
+    ProjectAccountsState state,
+  ) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('ক্লায়েন্টকে স্টেটমেন্ট পাঠান'),
         content: Text(
-          'বর্তমান ফিল্টারে ${BengaliFormatter.toBnNumber(count)} টি হাজিরা রেকর্ড রয়েছে (মোট মজুরি: ${BengaliFormatter.toCurrency(totalWages)})।\n\nপাঠানোর মুহূর্তে একটি স্ন্যাপশট লক হবে, যাতে পরে হিসাব সংশোধন হলেও ক্লায়েন্টের কপি অপরিবর্তিত থাকে। আপনি কি নিশ্চিত?',
+          'সময়কাল: ${BengaliFormatter.formatDate(item.periodFrom)} হতে ${BengaliFormatter.formatDate(item.periodTo)}\n\nপাঠানোর মুহূর্তে একটি স্ন্যাপশট লক হবে, যাতে পরে হিসাব পরিবর্তন হলেও ক্লায়েন্টের কপি অপরিবর্তিত থাকে। আপনি কি নিশ্চিত?',
         ),
         actions: [
           TextButton(
@@ -844,19 +1206,49 @@ class _ProjectAccountsScreenState extends ConsumerState<ProjectAccountsScreen>
             child: const Text('বাতিল'),
           ),
           ElevatedButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('খতিয়ান স্ন্যাপশট সংরক্ষিত ও ক্লায়েন্টকে পাঠানো হয়েছে!'),
-                  backgroundColor: Colors.green,
-                ),
-              );
+            onPressed: () async {
+              final snapshot = {
+                'project_id': widget.project.id,
+                'project_name': widget.project.name,
+                'generated_at': DateTime.now().toIso8601String(),
+                'period_from': item.periodFrom.toIso8601String().split('T').first,
+                'period_to': item.periodTo.toIso8601String().split('T').first,
+                'summary': {
+                  'total_budget': budgetOrValue,
+                  'total_client_paid': state.summary?.totalClientPaid ?? 0,
+                  'client_due': state.summary?.clientDue ?? 0,
+                  'total_project_expenses': state.summary?.totalProjectExpenses ?? 0,
+                  'total_wages_earned': state.summary?.totalWagesEarned ?? 0,
+                  'total_wages_paid': state.summary?.totalWagesPaid ?? 0,
+                  'total_materials_cost': state.summary?.totalMaterialsCost ?? 0,
+                  'total_expenses_cost': state.summary?.totalExpensesCost ?? 0,
+                },
+              };
+
+              final ok = await controller.lockAndSendStatement(item.id, snapshot);
+              if (ok && ctx.mounted) {
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('স্টেটমেন্ট লক ও ক্লায়েন্টকে সফলভাবে পাঠানো হয়েছে!'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
             },
-            child: const Text('পাঠান ও লক করুন'),
+            child: const Text('লক ও পাঠান'),
           ),
         ],
       ),
     );
   }
+
+  // Send Statement Dialog & Snapshot Lock from Ledger Tab
+  void _showSendStatementDialog(
+      BuildContext context, ProjectAccountsState state, ProjectAccountsController controller) {
+    final budgetOrValue = widget.project.budget ??
+        ((widget.project.ratePerSqft ?? 0.0) * (widget.project.totalSqft ?? 0.0));
+    _showGenerateStatementDialog(context, state, controller, budgetOrValue);
+  }
 }
+

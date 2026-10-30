@@ -194,6 +194,18 @@ class ProjectAccountsController extends StateNotifier<ProjectAccountsState> {
     }
   }
 
+  Future<bool> createBillStatement(BillStatement statement) async {
+    try {
+      await _repo.createBillStatement(statement);
+      final list = await _repo.getBillStatements(_projectId);
+      state = state.copyWith(statements: list);
+      return true;
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
+      return false;
+    }
+  }
+
   Future<bool> lockAndSendStatement(
     String statementId,
     Map<String, dynamic> snapshot,

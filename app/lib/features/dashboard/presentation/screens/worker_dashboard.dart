@@ -6,6 +6,7 @@ import '../../../auth/domain/models/app_user.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../attendance/presentation/screens/attendance_history_screen.dart';
 import '../../../accounts/presentation/screens/worker_wage_history_screen.dart';
+import '../../../notifications/presentation/widgets/notification_badge_button.dart';
 
 class WorkerDashboard extends ConsumerStatefulWidget {
   const WorkerDashboard({super.key});
@@ -32,6 +33,9 @@ class _WorkerDashboardState extends ConsumerState<WorkerDashboard> {
         title: Text(_getTitleForIndex(_currentIndex)),
         backgroundColor: AppColors.workerIndigo,
         foregroundColor: Colors.white,
+        actions: const [
+          NotificationBadgeButton(color: Colors.white),
+        ],
       ),
       body: tabs[_currentIndex],
       bottomNavigationBar: NavigationBar(

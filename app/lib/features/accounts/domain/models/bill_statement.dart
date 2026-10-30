@@ -65,6 +65,37 @@ class BillStatement {
       'file_url': fileUrl,
     };
   }
+
+  String toFormattedReport({String? projectName, String? clientName}) {
+    final buffer = StringBuffer();
+    buffer.writeln('=========================================');
+    buffer.writeln('প্রজেক্ট খাতা — প্রজেক্ট বিল স্টেটমেন্ট');
+    buffer.writeln('=========================================');
+    buffer.writeln('প্রজেক্ট: ${projectName ?? this.projectName ?? ""}');
+    if (clientName != null) buffer.writeln('ক্লায়েন্ট: $clientName');
+    buffer.writeln('সময়কাল: ${periodFrom.toIso8601String().split('T').first} হতে ${periodTo.toIso8601String().split('T').first}');
+    buffer.writeln('স্ট্যাটাস: ${isLocked ? "লক ও ক্লায়েন্টকে প্রেরিত" : "খসড়া"}');
+    buffer.writeln('তৈরির তারিখ: ${createdAt.toIso8601String().split('T').first}');
+    buffer.writeln('-----------------------------------------');
+
+    if (lockedSnapshot != null && lockedSnapshot!.isNotEmpty) {
+      final s = lockedSnapshot!;
+      if (s.containsKey('summary')) {
+        final sum = s['summary'] as Map<String, dynamic>;
+        buffer.writeln('হিসাব সারসংক্ষেপ:');
+        buffer.writeln('  মোট চুক্তি/বাজেট: ৳ ${sum['total_budget'] ?? 0}');
+        buffer.writeln('  ক্লায়েন্ট পরিশোধ: ৳ ${sum['total_client_paid'] ?? 0}');
+        buffer.writeln('  বর্তমান ক্লায়েন্ট বাকি: ৳ ${sum['client_due'] ?? 0}');
+        buffer.writeln('  মোট খরচ: ৳ ${sum['total_project_expenses'] ?? 0}');
+        buffer.writeln('    - মোট মজুরি অর্জিত: ৳ ${sum['total_wages_earned'] ?? 0}');
+        buffer.writeln('    - মজুরি পরিশোধিত: ৳ ${sum['total_wages_paid'] ?? 0}');
+        buffer.writeln('    - মোট মালামাল খরচ: ৳ ${sum['total_materials_cost'] ?? 0}');
+        buffer.writeln('    - মোট সাইট খরচ: ৳ ${sum['total_expenses_cost'] ?? 0}');
+      }
+    }
+    buffer.writeln('=========================================');
+    return buffer.toString();
+  }
 }
 
 class ProjectAccountsSummary {

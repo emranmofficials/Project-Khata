@@ -61,4 +61,27 @@ class BengaliFormatter {
 
   /// Formats square feet
   static String toSqft(num sqft) => '${toBnNumber(sqft)} বর্গফুট';
+
+  /// Formats relative time in Bengali (e.g. এইমাত্র, ৫ মিনিট আগে, ২ ঘণ্টা আগে, গতকাল)
+  static String formatRelativeTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inSeconds < 60) {
+      return 'এইমাত্র';
+    } else if (difference.inMinutes < 60) {
+      return '${toBnNumber(difference.inMinutes)} মিনিট আগে';
+    } else if (difference.inHours < 24 && now.day == dateTime.day) {
+      return '${toBnNumber(difference.inHours)} ঘণ্টা আগে';
+    } else if (difference.inDays == 1 || (difference.inHours < 48 && now.day != dateTime.day)) {
+      return 'গতকাল';
+    } else if (difference.inDays < 7) {
+      return '${toBnNumber(difference.inDays)} দিন আগে';
+    } else {
+      return formatDate(dateTime);
+    }
+  }
+
+  /// Alias for formatRelativeTime
+  static String toRelativeTime(DateTime dateTime) => formatRelativeTime(dateTime);
 }

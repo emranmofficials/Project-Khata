@@ -10,6 +10,7 @@ import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../users/presentation/widgets/create_member_dialog.dart';
 import '../../../projects/domain/models/project.dart';
 import '../../../projects/presentation/controllers/project_controller.dart';
+import '../../../notifications/presentation/widgets/notification_badge_button.dart';
 
 class ContractorDashboard extends ConsumerStatefulWidget {
   const ContractorDashboard({super.key});
@@ -39,6 +40,9 @@ class _ContractorDashboardState extends ConsumerState<ContractorDashboard> {
         title: Text(_getTitleForIndex(_currentIndex)),
         backgroundColor: AppColors.contractorNavy,
         foregroundColor: Colors.white,
+        actions: const [
+          NotificationBadgeButton(color: Colors.white),
+        ],
       ),
       body: tabs[_currentIndex],
       bottomNavigationBar: NavigationBar(

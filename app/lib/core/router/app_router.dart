@@ -19,6 +19,7 @@ import '../../features/attendance/presentation/screens/attendance_history_screen
 import '../../features/accounts/presentation/screens/project_accounts_screen.dart';
 import '../../features/accounts/presentation/screens/organization_payments_screen.dart';
 import '../../features/accounts/presentation/screens/worker_wage_history_screen.dart';
+import '../../features/notifications/presentation/screens/notification_center_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authControllerProvider);
@@ -123,6 +124,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/worker-wages',
         builder: (context, state) => const WorkerWageHistoryScreen(),
+      ),
+      GoRoute(
+        path: '/notifications',
+        builder: (context, state) => const NotificationCenterScreen(),
       ),
     ],
   );

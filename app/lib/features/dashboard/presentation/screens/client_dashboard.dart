@@ -8,6 +8,7 @@ import '../../../auth/presentation/controllers/auth_controller.dart';
 import '../../../projects/domain/models/project.dart';
 import '../../../projects/presentation/controllers/project_controller.dart';
 import 'package:go_router/go_router.dart';
+import '../../../notifications/presentation/widgets/notification_badge_button.dart';
 
 class ClientDashboard extends ConsumerStatefulWidget {
   const ClientDashboard({super.key});
@@ -35,6 +36,9 @@ class _ClientDashboardState extends ConsumerState<ClientDashboard> {
         title: Text(_getTitleForIndex(_currentIndex)),
         backgroundColor: AppColors.clientTeal,
         foregroundColor: Colors.white,
+        actions: const [
+          NotificationBadgeButton(color: Colors.white),
+        ],
       ),
       body: tabs[_currentIndex],
       bottomNavigationBar: NavigationBar(
