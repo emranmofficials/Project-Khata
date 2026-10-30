@@ -15,6 +15,38 @@ class ContractorStrings {
   static const String accounts = tabAccounts;
   static const String more = tabMore;
 
+  // Legacy & Compatibility Aliases
+  static const String goodMorning = 'শুভ সকাল';
+  static const String goodNoon = 'শুভ দুপুর';
+  static const String goodAfternoon = 'শুভ দুপুর';
+  static const String goodEvening = 'শুভ সন্ধ্যা';
+  static const String createNewProject = 'নতুন প্রজেক্ট তৈরি';
+  static const String addNewWorker = 'নতুন শ্রমিক যোগ';
+  static const String addNewSupervisor = 'নতুন সুপারভাইজার যোগ';
+  static const String initialPasswordNotice = 'প্রাথমিক পাসওয়ার্ড: মোবাইলের শেষ ৬টি সংখ্যা';
+  static const String resetPassword = 'পাসওয়ার্ড রিসেট';
+  static const String quickActionDailyEntry = 'দৈনিক এন্ট্রি';
+  static const String quickActionAccounts = 'হিসাব';
+  static const String quickActionAddMember = 'সদস্য যোগ';
+  static const String ongoingProjects = 'চলমান প্রজেক্ট';
+  static const String todayAttendance = 'আজকের হাজিরা';
+  static const String activeProjectsTitle = 'চলমান প্রজেক্ট';
+  static const String accountsDashboard = 'হিসাব ড্যাশবোর্ড';
+  static const String appSettings = 'অ্যাপ সেটিংস';
+  static const String auditLog = 'অডিট লগ';
+  static const String cancel = 'বাতিল করুন';
+  static const String companyProfile = 'প্রতিষ্ঠানের প্রোফাইল';
+  static const String designationsAndRates = 'পদ ও মজুরি হার';
+  static const String editProject = 'প্রজেক্ট সম্পাদনা';
+  static const String entryApprovals = 'এন্ট্রি অনুমোদন';
+  static const String helpAndInfo = 'সহায়তা ও তথ্য';
+  static const String logout = 'লগআউট';
+  static const String myProfile = 'ব্যক্তিগত প্রোফাইল';
+  static const String notifications = 'নোটিফিকেশন';
+  static const String retry = 'আবার চেষ্টা করুন';
+  static const String saveChanges = 'সংরক্ষণ করুন';
+  static const String supervisorPaySettings = 'সুপারভাইজার দৈনিক মজুরি';
+
   // Greetings
   static const String greetingMorning = 'শুভ সকাল';
   static const String greetingAfternoon = 'শুভ দুপুর';
