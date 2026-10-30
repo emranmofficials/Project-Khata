@@ -44,8 +44,7 @@ class _WorkersScreenState extends ConsumerState<WorkersScreen>
     final designationsAsync = ref.watch(designationsProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(ContractorStrings.workersTab),
+      appBar: ContractorAppBar(
         bottom: TabBar(
           controller: _tabController,
           tabs: const [

@@ -86,3 +86,8 @@ final todayEntriesProvider = FutureProvider.autoDispose<List<EntryPreview>>((ref
   final repo = ref.watch(contractorRepositoryProvider);
   return repo.getEntries();
 });
+
+final projectEntriesProvider = FutureProvider.autoDispose.family<List<EntryPreview>, String>((ref, projectId) async {
+  final repo = ref.watch(contractorRepositoryProvider);
+  return repo.getEntries(projectId: projectId);
+});

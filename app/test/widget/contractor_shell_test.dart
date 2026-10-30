@@ -8,6 +8,13 @@ import 'package:project_khata/core/theme/contractor_theme.dart';
 import 'package:project_khata/features/contractor/presentation/contractor_shell.dart';
 import 'package:project_khata/features/contractor/presentation/screens/home/dashboard_screen.dart';
 import 'package:project_khata/features/contractor/presentation/screens/projects/create_project_screen.dart';
+import 'package:project_khata/features/contractor/presentation/screens/projects/projects_screen.dart';
+import 'package:project_khata/features/contractor/presentation/screens/workers/workers_screen.dart';
+import 'package:project_khata/features/contractor/presentation/screens/accounts/accounts_screen.dart';
+import 'package:project_khata/features/contractor/presentation/screens/more/more_screen.dart';
+import 'package:project_khata/features/contractor/presentation/screens/accounts/reports_screen.dart';
+import 'package:project_khata/features/contractor/presentation/screens/accounts/payment_allocation_screen.dart';
+import 'package:project_khata/features/contractor/presentation/widgets/contractor_app_bar.dart';
 
 void main() {
   group('Contractor UI Widget Tests', () {
@@ -219,6 +226,85 @@ void main() {
       expect(find.text('নতুন প্রজেক্ট তৈরি করুন'), findsOneWidget);
       expect(find.text('শ্রমিক যোগ'), findsOneWidget);
       expect(find.text('হিসাব খাতা'), findsOneWidget);
+    });
+
+    testWidgets('Main screens render unified ContractorAppBar with branding', (tester) async {
+      // ProjectsScreen
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            theme: ContractorTheme.getTheme(isDark: false),
+            home: const ProjectsScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(ContractorAppBar), findsOneWidget);
+      expect(find.text('প্রজেক্ট খাতা'), findsOneWidget);
+
+      // WorkersScreen
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            theme: ContractorTheme.getTheme(isDark: false),
+            home: const WorkersScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(ContractorAppBar), findsOneWidget);
+      expect(find.text('শ্রমিক তালিকা'), findsOneWidget);
+
+      // AccountsScreen
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            theme: ContractorTheme.getTheme(isDark: false),
+            home: const AccountsScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(ContractorAppBar), findsOneWidget);
+
+      // MoreScreen
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            theme: ContractorTheme.getTheme(isDark: false),
+            home: const MoreScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(ContractorAppBar), findsOneWidget);
+    });
+
+    testWidgets('ReportsScreen and PaymentAllocationScreen render completely', (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            theme: ContractorTheme.getTheme(isDark: false),
+            home: const ReportsScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(ContractorStrings.reportsTitle), findsOneWidget);
+      expect(find.text('PDF ডাউনলোড'), findsOneWidget);
+      expect(find.text('Excel এক্সপোর্ট'), findsOneWidget);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            theme: ContractorTheme.getTheme(isDark: false),
+            home: const PaymentAllocationScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(ContractorStrings.paymentAllocationTitle), findsOneWidget);
+      expect(find.text('পেমেন্ট বরাদ্দ নিশ্চিত করুন'), findsOneWidget);
     });
   });
 }

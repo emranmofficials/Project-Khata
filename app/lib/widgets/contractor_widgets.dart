@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
 import '../core/constants/contractor_strings.dart';
 import '../core/utils/bengali_formatter.dart';
+export '../features/contractor/presentation/widgets/contractor_app_bar.dart';
 
 /// ১. HeroSummaryCard: রেফারেন্স কার্ড স্টাইলে নেভি গ্রেডিয়েন্ট, ব্যালেন্স/বাজেট ও ট্রেন্ড ব্যাজ
 class HeroSummaryCard extends StatelessWidget {

@@ -5,6 +5,7 @@ import 'package:project_khata/core/constants/app_colors.dart';
 import 'package:project_khata/core/constants/contractor_routes.dart';
 import 'package:project_khata/core/constants/contractor_strings.dart';
 import 'package:project_khata/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:project_khata/widgets/contractor_widgets.dart';
 import '../../contractor_providers.dart';
 
 class MoreScreen extends ConsumerWidget {
@@ -42,9 +43,7 @@ class MoreScreen extends ConsumerWidget {
     final companyName = summaryAsync.valueOrNull?.companyName ?? ContractorStrings.defaultCompanyName;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(ContractorStrings.more),
-      ),
+      appBar: const ContractorAppBar(),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         children: [

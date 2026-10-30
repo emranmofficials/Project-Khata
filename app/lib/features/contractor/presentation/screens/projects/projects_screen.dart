@@ -33,12 +33,7 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          ContractorStrings.projects,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
+      appBar: const ContractorAppBar(),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(ContractorRoutes.projectNew),
         backgroundColor: isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy,
@@ -50,7 +45,32 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
         ),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+            child: Row(
+              children: [
+                Text(
+                  ContractorStrings.projects,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : AppColors.contractorNavy,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  'মোট: ${toBn(projectsAsync.valueOrNull?.length ?? 0)}টি',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
           // সার্চ বার
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),

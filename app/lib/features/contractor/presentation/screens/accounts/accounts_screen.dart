@@ -17,9 +17,7 @@ class AccountsScreen extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(ContractorStrings.accountsDashboard),
-      ),
+      appBar: const ContractorAppBar(),
       body: RefreshIndicator(
         onRefresh: () async => ref.invalidate(accountsSummaryProvider),
         child: reportAsync.when(
@@ -32,6 +30,19 @@ class AccountsScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    children: [
+                      Text(
+                        ContractorStrings.accountsDashboard,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : AppColors.contractorNavy,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
                   // ১. HeroSummaryCard: মোট আয় ও নেট অবস্থা
                   HeroSummaryCard(
                     title: ContractorStrings.totalIncome,
