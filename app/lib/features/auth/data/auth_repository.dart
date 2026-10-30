@@ -74,7 +74,7 @@ class AuthRepository {
   }
 
   /// Contractor Login via Email & Password
-  Future<UserProfile> loginWithEmail({
+  Future<UserProfile?> loginWithEmail({
     required String email,
     required String password,
   }) async {
@@ -93,7 +93,7 @@ class AuthRepository {
 
   /// Member Login (Client, Supervisor, Worker) via Mobile & Password
   /// Uses synthetic email: {mobile}@members.projectkhata.app
-  Future<UserProfile> loginWithMobile({
+  Future<UserProfile?> loginWithMobile({
     required String mobile,
     required String password,
   }) async {
@@ -113,13 +113,14 @@ class AuthRepository {
   }
 
   /// Fetches UserProfile from public.profiles
-  Future<UserProfile> getUserProfile(String userId) async {
+  Future<UserProfile?> getUserProfile(String userId) async {
     final response = await _client
         .from('profiles')
         .select()
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
+    if (response == null) return null;
     return UserProfile.fromJson(response);
   }
 

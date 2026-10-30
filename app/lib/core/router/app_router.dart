@@ -4,8 +4,11 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/domain/models/app_user.dart';
 import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../features/auth/presentation/screens/change_password_screen.dart';
+import '../../features/auth/presentation/screens/contractor_login_screen.dart';
 import '../../features/auth/presentation/screens/contractor_register_screen.dart';
+import '../../features/auth/presentation/screens/create_organization_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
+import '../../features/auth/presentation/screens/member_login_screen.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/dashboard/presentation/screens/client_dashboard.dart';
 import '../../features/dashboard/presentation/screens/contractor_dashboard.dart';
@@ -23,6 +26,7 @@ import '../../features/notifications/presentation/screens/notification_center_sc
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authControllerProvider);
+  final needsOrg = ref.watch(needsOrganizationProvider);
 
   return GoRouter(
     initialLocation: '/',
@@ -30,22 +34,44 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (authState.isLoading) return '/';
 
       final user = authState.value;
-      final isLoggingIn = state.matchedLocation == '/login';
-      final isRegistering = state.matchedLocation == '/register-contractor';
+      final matchedLoc = state.matchedLocation;
+      final isLoggingIn = matchedLoc.startsWith('/login');
+      final isRegistering = matchedLoc == '/register-contractor';
+      final isCreatingOrg = matchedLoc == '/create-organization';
+      final isChangingPassword = matchedLoc == '/change-password';
 
-      // Not logged in
+      // 1. Contractor has Supabase account but no organization/profile yet
+      if (needsOrg) {
+        return isCreatingOrg ? null : '/create-organization';
+      }
+
+      // 2. Not logged in
       if (user == null) {
-        if (isRegistering) return null;
-        return isLoggingIn ? null : '/login';
+        if (isRegistering || isLoggingIn) return null;
+        return '/login/member';
       }
 
-      // Mandatory Password Change
+      // 3. Mandatory Password Change Guard
       if (user.mustChangePassword) {
-        return '/change-password';
+        return isChangingPassword ? null : '/change-password';
       }
 
-      // If already logged in and navigating to auth screens, redirect to role dashboard
-      if (isLoggingIn || isRegistering || state.matchedLocation == '/' || state.matchedLocation == '/change-password') {
+      // 4. If password change is done, do not allow staying on /change-password
+      if (isChangingPassword) {
+        switch (user.role) {
+          case UserRole.contractor:
+            return '/contractor';
+          case UserRole.client:
+            return '/client';
+          case UserRole.supervisor:
+            return '/supervisor';
+          case UserRole.worker:
+            return '/worker';
+        }
+      }
+
+      // 5. If logged in and navigating to auth/splash/create-org screens, redirect to role dashboard
+      if (isLoggingIn || isRegistering || isCreatingOrg || matchedLoc == '/') {
         switch (user.role) {
           case UserRole.contractor:
             return '/contractor';
@@ -67,7 +93,19 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/login',
-        builder: (context, state) => const LoginScreen(),
+        redirect: (_, __) => '/login/member',
+      ),
+      GoRoute(
+        path: '/login/member',
+        builder: (context, state) => const MemberLoginScreen(),
+      ),
+      GoRoute(
+        path: '/login/contractor',
+        builder: (context, state) => const ContractorLoginScreen(),
+      ),
+      GoRoute(
+        path: '/create-organization',
+        builder: (context, state) => const CreateOrganizationScreen(),
       ),
       GoRoute(
         path: '/register-contractor',

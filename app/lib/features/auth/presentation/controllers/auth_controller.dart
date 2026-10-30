@@ -17,8 +17,16 @@ final currentUserProvider = Provider<AsyncValue<UserProfile?>>((ref) {
   return ref.watch(authControllerProvider);
 });
 
+final needsOrganizationProvider = Provider<bool>((ref) {
+  ref.watch(authControllerProvider);
+  return ref.read(authControllerProvider.notifier).needsOrganization;
+});
+
 class AuthController extends StateNotifier<AsyncValue<UserProfile?>> {
   final AuthRepository _repository;
+  bool _needsOrganization = false;
+
+  bool get needsOrganization => _needsOrganization;
 
   AuthController(this._repository) : super(const AsyncValue.loading()) {
     _init();
@@ -27,13 +35,21 @@ class AuthController extends StateNotifier<AsyncValue<UserProfile?>> {
   Future<void> _init() async {
     final user = _repository.currentUser;
     if (user == null) {
+      _needsOrganization = false;
       state = const AsyncValue.data(null);
       return;
     }
     try {
       final profile = await _repository.getUserProfile(user.id);
-      state = AsyncValue.data(profile);
+      if (profile == null) {
+        _needsOrganization = true;
+        state = const AsyncValue.data(null);
+      } else {
+        _needsOrganization = false;
+        state = AsyncValue.data(profile);
+      }
     } catch (e, st) {
+      _needsOrganization = false;
       state = AsyncValue.error(e, st);
     }
   }
@@ -48,8 +64,15 @@ class AuthController extends StateNotifier<AsyncValue<UserProfile?>> {
         email: email,
         password: password,
       );
-      state = AsyncValue.data(profile);
+      if (profile == null) {
+        _needsOrganization = true;
+        state = const AsyncValue.data(null);
+      } else {
+        _needsOrganization = false;
+        state = AsyncValue.data(profile);
+      }
     } catch (e, st) {
+      _needsOrganization = false;
       state = AsyncValue.error(e, st);
       rethrow;
     }
@@ -65,8 +88,16 @@ class AuthController extends StateNotifier<AsyncValue<UserProfile?>> {
         mobile: mobile,
         password: password,
       );
+      if (profile == null) {
+        await _repository.signOut();
+        _needsOrganization = false;
+        throw const AuthException(
+            'আপনার কোনো প্রোফাইল পাওয়া যায়নি। অনুগ্রহ করে ঠিকাদারের সাথে যোগাযোগ করুন।');
+      }
+      _needsOrganization = false;
       state = AsyncValue.data(profile);
     } catch (e, st) {
+      _needsOrganization = false;
       state = AsyncValue.error(e, st);
       rethrow;
     }
@@ -90,6 +121,7 @@ class AuthController extends StateNotifier<AsyncValue<UserProfile?>> {
         address: address,
         phone: phone,
       );
+      _needsOrganization = false;
       state = AsyncValue.data(profile);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -102,6 +134,7 @@ class AuthController extends StateNotifier<AsyncValue<UserProfile?>> {
     state = const AsyncValue.loading();
     try {
       final updated = await _repository.updatePassword(newPassword: newPassword);
+      _needsOrganization = false;
       state = AsyncValue.data(updated);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -111,6 +144,7 @@ class AuthController extends StateNotifier<AsyncValue<UserProfile?>> {
   }
 
   Future<void> signOut() async {
+    _needsOrganization = false;
     await _repository.signOut();
     state = const AsyncValue.data(null);
   }
