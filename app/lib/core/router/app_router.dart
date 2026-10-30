@@ -121,16 +121,16 @@ final routerProvider = Provider<GoRouter>((ref) {
           return ContractorShell(navigationShell: navigationShell);
         },
         branches: [
-          // Branch 1: Home
+          // শাখা ১: হোম
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: '/contractor',
-                builder: (context, state) => const ContractorDashboardScreen(),
+                builder: (context, state) => const DashboardScreen(),
               ),
             ],
           ),
-          // Branch 2: Projects
+          // শাখা ২: প্রজেক্ট
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -139,14 +139,13 @@ final routerProvider = Provider<GoRouter>((ref) {
                 routes: [
                   GoRoute(
                     path: 'new',
-                    builder: (context, state) =>
-                        const ContractorCreateProjectScreen(),
+                    builder: (context, state) => const CreateProjectScreen(),
                   ),
                   GoRoute(
                     path: ':id',
                     builder: (context, state) {
                       final id = state.pathParameters['id'] ?? '';
-                      return ContractorProjectDetailsScreen(projectId: id);
+                      return ProjectDetailsScreen(projectId: id);
                     },
                     routes: [
                       GoRoute(
@@ -156,24 +155,40 @@ final routerProvider = Provider<GoRouter>((ref) {
                           return ProjectEditScreen(projectId: id);
                         },
                       ),
+                      GoRoute(
+                        path: 'entries',
+                        builder: (context, state) {
+                          final id = state.pathParameters['id'] ?? '';
+                          return ProjectEntriesScreen(projectId: id);
+                        },
+                      ),
                     ],
                   ),
                 ],
               ),
             ],
           ),
-          // Branch 3: Workers
+          // শাখা ৩: শ্রমিক
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: '/contractor/workers',
-                builder: (context, state) => const WorkersScreen(),
+                builder: (context, state) => const WorkersContainerScreen(),
                 routes: [
                   GoRoute(
                     path: 'new',
-                    builder: (context, state) => const AddMemberScreen(
-                      initialRole: MemberRole.worker,
-                    ),
+                    builder: (context, state) => const NewWorkerScreen(),
+                  ),
+                  GoRoute(
+                    path: 'supervisors/new',
+                    builder: (context, state) => const NewSupervisorScreen(),
+                  ),
+                  GoRoute(
+                    path: 'supervisors/:id',
+                    builder: (context, state) {
+                      final id = state.pathParameters['id'] ?? '';
+                      return SupervisorDetailsScreen(supervisorId: id);
+                    },
                   ),
                   GoRoute(
                     path: ':id',
@@ -181,25 +196,21 @@ final routerProvider = Provider<GoRouter>((ref) {
                       final id = state.pathParameters['id'] ?? '';
                       return WorkerDetailsScreen(workerId: id);
                     },
+                    routes: [
+                      GoRoute(
+                        path: 'edit',
+                        builder: (context, state) {
+                          final id = state.pathParameters['id'] ?? '';
+                          return WorkerEditScreen(workerId: id);
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
-              GoRoute(
-                path: '/contractor/supervisors/new',
-                builder: (context, state) => const AddMemberScreen(
-                  initialRole: MemberRole.supervisor,
-                ),
-              ),
-              GoRoute(
-                path: '/contractor/supervisors/:id',
-                builder: (context, state) {
-                  final id = state.pathParameters['id'] ?? '';
-                  return SupervisorDetailsScreen(supervisorId: id);
-                },
-              ),
             ],
           ),
-          // Branch 4: Accounts
+          // শাখা ৪: হিসাব
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -210,7 +221,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                     path: 'projects/:id',
                     builder: (context, state) {
                       final id = state.pathParameters['id'] ?? '';
-                      return ContractorProjectAccountsScreen(projectId: id);
+                      return ProjectAccountsScreen(projectId: id);
                     },
                   ),
                   GoRoute(
@@ -220,11 +231,17 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'payments',
                     builder: (context, state) => const PaymentsScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'allocate',
+                        builder: (context, state) =>
+                            const PaymentAllocationScreen(),
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: 'client-payments',
-                    builder: (context, state) =>
-                        const ClientPaymentsScreen(),
+                    builder: (context, state) => const ClientPaymentsScreen(),
                   ),
                   GoRoute(
                     path: 'materials',
@@ -236,14 +253,17 @@ final routerProvider = Provider<GoRouter>((ref) {
                   ),
                   GoRoute(
                     path: 'bill-statements',
-                    builder: (context, state) =>
-                        const BillStatementsScreen(),
+                    builder: (context, state) => const BillStatementsScreen(),
+                  ),
+                  GoRoute(
+                    path: 'reports',
+                    builder: (context, state) => const ReportsScreen(),
                   ),
                 ],
               ),
             ],
           ),
-          // Branch 5: More
+          // শাখা ৫: আরও
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -252,32 +272,32 @@ final routerProvider = Provider<GoRouter>((ref) {
                 routes: [
                   GoRoute(
                     path: 'approvals',
-                    builder: (context, state) =>
-                        const EntryApprovalsScreen(),
+                    builder: (context, state) => const EntryApprovalsScreen(),
                   ),
                   GoRoute(
                     path: 'company',
-                    builder: (context, state) =>
-                        const CompanyProfileScreen(),
+                    builder: (context, state) => const CompanyProfileScreen(),
                   ),
                   GoRoute(
                     path: 'designations',
-                    builder: (context, state) =>
-                        const DesignationsScreen(),
+                    builder: (context, state) => const DesignationsScreen(),
                   ),
                   GoRoute(
                     path: 'supervisor-pay',
                     builder: (context, state) =>
-                        const SupervisorPayScreen(),
+                        const SupervisorPaySettingsScreen(),
                   ),
                   GoRoute(
                     path: 'profile',
                     builder: (context, state) => const MyProfileScreen(),
                   ),
                   GoRoute(
+                    path: 'change-password',
+                    builder: (context, state) => const ChangePasswordScreen(),
+                  ),
+                  GoRoute(
                     path: 'notifications',
-                    builder: (context, state) =>
-                        const NotificationsScreen(),
+                    builder: (context, state) => const NotificationsScreen(),
                   ),
                   GoRoute(
                     path: 'audit-log',
@@ -286,10 +306,43 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'settings',
                     builder: (context, state) => const SettingsScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'language',
+                        builder: (context, state) =>
+                            const LanguageSettingsScreen(),
+                      ),
+                      GoRoute(
+                        path: 'theme',
+                        builder: (context, state) =>
+                            const ThemeSettingsScreen(),
+                      ),
+                    ],
                   ),
                   GoRoute(
                     path: 'help',
                     builder: (context, state) => const HelpScreen(),
+                    routes: [
+                      GoRoute(
+                        path: 'version',
+                        builder: (context, state) => const AppVersionScreen(),
+                      ),
+                      GoRoute(
+                        path: 'privacy',
+                        builder: (context, state) =>
+                            const PrivacyPolicyScreen(),
+                      ),
+                      GoRoute(
+                        path: 'bill-template',
+                        builder: (context, state) =>
+                            const BillTemplateScreen(),
+                      ),
+                      GoRoute(
+                        path: 'support',
+                        builder: (context, state) =>
+                            const SupportContactScreen(),
+                      ),
+                    ],
                   ),
                 ],
               ),
