@@ -14,8 +14,16 @@ class AppStrings {
 
   // Login & Registration
   static const String loginTitle = 'লগইন করুন';
+  static const String contractorLoginTitle = 'ঠিকাদার লগইন';
+  static const String contractorLoginSubtitle =
+      'আপনার নিবন্ধিত ইমেইল ও পাসওয়ার্ড দিয়ে প্রবেশ করুন।';
+  static const String memberLoginTitle = 'ইউজার লগইন';
+  static const String memberLoginSubtitle =
+      'ক্লায়েন্ট, সুপারভাইজার ও শ্রমিকদের জন্য মোবাইল লগইন।';
   static const String mobileLoginTab = 'মোবাইল নম্বর';
   static const String contractorLoginTab = 'ঠিকাদার (ইমেইল)';
+  static const String switchToMemberLogin = 'অন্যান্য ইউজার লগইন (মোবাইল নম্বর)';
+  static const String switchToContractorLogin = 'ঠিকাদার লগইন (ইমেইল)';
   static const String mobileLabel = 'মোবাইল নম্বর';
   static const String mobileHint = '০১XXXXXXXXX';
   static const String emailLabel = 'ইমেইল এড্রেস';
@@ -31,6 +39,14 @@ class AppStrings {
   static const String phoneLabel = 'যোগাযোগের মোবাইল নম্বর';
   static const String forgotPassword = 'পাসওয়ার্ড ভুলে গেছেন?';
   static const String resetPassword = 'পাসওয়ার্ড রিসেট করুন';
+  static const String invalidCredentials = 'ভুল ইমেইল/মোবাইল বা পাসওয়ার্ড।';
+  static const String loginFailedGeneral =
+      'লগইন ব্যর্থ হয়েছে। তথ্য পরীক্ষা করে আবার চেষ্টা করুন।';
+  static const String initialPasswordNotice =
+      'প্রাথমিক পাসওয়ার্ড আপনার মোবাইলের শেষ ৬ সংখ্যা।';
+  static const String createOrganizationTitle = 'প্রতিষ্ঠান তৈরি করুন';
+  static const String createOrganizationNotice =
+      'আপনার কোনো সক্রিয় প্রতিষ্ঠান পাওয়া যায়নি। অনুগ্রহ করে প্রতিষ্ঠান তৈরি করুন।';
 
   // Password Change
   static const String changePasswordRequiredTitle = 'নতুন পাসওয়ার্ড সেট করুন';
@@ -39,6 +55,9 @@ class AppStrings {
   static const String newPasswordLabel = 'নতুন পাসওয়ার্ড';
   static const String confirmPasswordLabel = 'নতুন পাসওয়ার্ড পুনরায় লিখুন';
   static const String updatePasswordButton = 'পাসওয়ার্ড পরিবর্তন ও চালিয়ে যান';
+  static const String passwordMinLength8 = 'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে';
+  static const String passwordCannotBeInitial =
+      'প্রাথমিক পাসওয়ার্ড (মোবাইলের শেষ ৬ সংখ্যা) নতুন পাসওয়ার্ড হিসেবে গ্রহণযোগ্য নয়';
 
   // Nav Tabs - Contractor
   static const String tabDashboard = 'ড্যাশবোর্ড';
