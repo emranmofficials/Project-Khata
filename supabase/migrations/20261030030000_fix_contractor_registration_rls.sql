@@ -1,9 +1,14 @@
 -- Fix contractor registration: profiles insert policy & atomic registration function
 
--- 1. Add insert policy on profiles for self registration
+-- 1. Add insert and select policy on profiles for self registration & lookup
 drop policy if exists profiles_insert_self on public.profiles;
 create policy profiles_insert_self on public.profiles
   for insert with check (id = auth.uid());
+
+drop policy if exists profiles_select_same_org on public.profiles;
+drop policy if exists profiles_select on public.profiles;
+create policy profiles_select on public.profiles
+  for select using (id = auth.uid() or organization_id = public.current_org_id());
 
 -- 2. Verify organizations insert policy
 drop policy if exists org_insert_owner on public.organizations;
