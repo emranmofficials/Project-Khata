@@ -37,15 +37,106 @@ class MoreScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final summaryAsync = ref.watch(dashboardSummaryProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final pendingCount = summaryAsync.valueOrNull?.pendingApprovalsCount ?? 0;
+    final companyName = summaryAsync.valueOrNull?.companyName ?? ContractorStrings.defaultCompanyName;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text(ContractorStrings.more),
       ),
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         children: [
+          // প্রফেশনাল প্রোফাইল সামারি কার্ড
+          Container(
+            padding: const EdgeInsets.all(16),
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1E293B) : Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                width: 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const LinearGradient(
+                      colors: [
+                        AppColors.contractorNavy,
+                        Color(0xFF2563EB),
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.contractorNavy.withValues(alpha: 0.25),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.business_rounded,
+                      color: Colors.white,
+                      size: 26,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              companyName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            Icons.verified_rounded,
+                            size: 16,
+                            color: isDark ? const Color(0xFF93A8F4) : const Color(0xFF2563EB),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        'প্রজেক্ট খাতা ঠিকাদার • সংস্করণ ১.০.০',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
           // ১. এন্ট্রি অনুমোদন
           _buildListTile(
             context,
@@ -126,7 +217,14 @@ class MoreScreen extends ConsumerWidget {
           // ১০. লগআউট
           Card(
             child: ListTile(
-              leading: const Icon(Icons.logout_rounded, color: AppColors.error),
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.error.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.logout_rounded, color: AppColors.error, size: 20),
+              ),
               title: const Text(
                 ContractorStrings.logout,
                 style: TextStyle(
@@ -134,6 +232,7 @@ class MoreScreen extends ConsumerWidget {
                   color: AppColors.error,
                 ),
               ),
+              trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.error, size: 20),
               onTap: () => _confirmLogout(context, ref),
             ),
           ),
@@ -150,21 +249,32 @@ class MoreScreen extends ConsumerWidget {
     int? badgeCount,
     required VoidCallback onTap,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
       child: ListTile(
         onTap: onTap,
-        leading: Icon(icon, color: AppColors.contractorNavy),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: primaryColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: primaryColor, size: 22),
+        ),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (badgeCount != null && badgeCount > 0)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: Colors.red,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   badgeCount.toString(),
@@ -172,7 +282,11 @@ class MoreScreen extends ConsumerWidget {
                 ),
               ),
             const SizedBox(width: 4),
-            const Icon(Icons.chevron_right, color: Colors.grey),
+            Icon(
+              Icons.chevron_right_rounded,
+              color: isDark ? Colors.white38 : Colors.grey,
+              size: 20,
+            ),
           ],
         ),
       ),

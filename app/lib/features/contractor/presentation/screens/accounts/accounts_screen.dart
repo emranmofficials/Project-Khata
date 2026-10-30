@@ -14,6 +14,7 @@ class AccountsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final reportAsync = ref.watch(accountsSummaryProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
@@ -23,7 +24,7 @@ class AccountsScreen extends ConsumerWidget {
         onRefresh: () async => ref.invalidate(accountsSummaryProvider),
         child: reportAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text(ContractorStrings.errorOccurred)),
+          error: (e, _) => const Center(child: Text(ContractorStrings.errorOccurred)),
           data: (report) {
             return SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -40,9 +41,17 @@ class AccountsScreen extends ConsumerWidget {
                     secondaryText: 'বকেয়া মজুরি: ${BengaliFormatter.toCurrency(report.totalPendingWages)}',
                   ),
 
+                  const SizedBox(height: 16),
+
+                  // ২. FinancialRatioBar: আয় বনাম ব্যয়ের ভিজ্যুয়াল রেশিও বার
+                  FinancialRatioBar(
+                    income: report.totalIncome,
+                    expense: report.totalExpense,
+                  ),
+
                   const SizedBox(height: 24),
 
-                  // সাব-স্ক্রিনের নেভিগেশন গ্রিড / লিস্ট
+                  // ৩. সাব-স্ক্রিনের নেভিগেশন গ্রিড / লিস্ট
                   const Text(
                     'হিসাবের খাত সমূহ',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -103,7 +112,7 @@ class AccountsScreen extends ConsumerWidget {
                           context,
                           title: ContractorStrings.siteExpensesTitle,
                           icon: Icons.receipt_long_rounded,
-                          color: const Color(0xFFC2410C),
+                          color: const Color(0xFF7C3AED),
                           onTap: () => context.push(ContractorRoutes.siteExpenses),
                         ),
                       ),
@@ -112,23 +121,24 @@ class AccountsScreen extends ConsumerWidget {
                         child: _buildAccountActionCard(
                           context,
                           title: ContractorStrings.billStatementsTitle,
-                          icon: Icons.document_scanner_rounded,
-                          color: const Color(0xFF4338CA),
+                          icon: Icons.description_rounded,
+                          color: const Color(0xFF0284C7),
                           onTap: () => context.push(ContractorRoutes.billStatements),
                         ),
                       ),
                     ],
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 28),
 
-                  // ২. প্রজেক্ট অনুযায়ী তালিকা
+                  // ৪. প্রজেক্ট অনুযায়ী হিসাবের ব্রেকডাউন
                   const Text(
                     ContractorStrings.projectAccountsBreakdown,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
                   ...report.projectBreakdowns.map((p) {
+                    final netVal = p.totalIncome - p.totalExpense;
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
                       child: InkWell(
@@ -141,6 +151,15 @@ class AccountsScreen extends ConsumerWidget {
                             children: [
                               Row(
                                 children: [
+                                  Container(
+                                    width: 10,
+                                    height: 10,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
                                       p.projectName,
@@ -150,14 +169,21 @@ class AccountsScreen extends ConsumerWidget {
                                   const Icon(Icons.chevron_right, size: 20, color: Colors.grey),
                                 ],
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 12),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      const Text('মোট আয়', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                                      Text(
+                                        'মোট আয়',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
                                       Text(
                                         BengaliFormatter.toCurrency(p.totalIncome),
                                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
@@ -167,7 +193,14 @@ class AccountsScreen extends ConsumerWidget {
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      const Text('মোট ব্যয়', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                                      Text(
+                                        'মোট ব্যয়',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
                                       Text(
                                         BengaliFormatter.toCurrency(p.totalExpense),
                                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
@@ -177,13 +210,22 @@ class AccountsScreen extends ConsumerWidget {
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      const Text('বাকি/পাওনা', style: TextStyle(fontSize: 11, color: Colors.grey)),
                                       Text(
-                                        BengaliFormatter.toCurrency(p.pendingDues),
-                                        style: const TextStyle(
+                                        'নেট ব্যালেন্স',
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        BengaliFormatter.toCurrency(netVal),
+                                        style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 13,
-                                          color: AppColors.contractorNavy,
+                                          color: netVal >= 0
+                                              ? (isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy)
+                                              : AppColors.error,
                                         ),
                                       ),
                                     ],
@@ -197,33 +239,55 @@ class AccountsScreen extends ConsumerWidget {
                     );
                   }),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
 
-                  // ডোনাট চার্ট প্লেসহোল্ডার
+                  // ৫. প্রজেক্টভিত্তিক ব্যয় অ্যানালিটিক্স
                   Card(
                     child: Padding(
-                      padding: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(18),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Row(
+                          Row(
                             children: [
-                              Icon(Icons.pie_chart_outline_rounded, color: AppColors.contractorNavy),
-                              SizedBox(width: 8),
-                              Text(
-                                ContractorStrings.projectExpenseShare,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              Icon(
+                                Icons.bar_chart_rounded,
+                                size: 20,
+                                color: isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy,
+                              ),
+                              const SizedBox(width: 8),
+                              const Text(
+                                'প্রজেক্টভিত্তিক ব্যয় বণ্টন',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                               ),
                             ],
                           ),
                           const SizedBox(height: 16),
-                          Container(
-                            height: 120,
-                            alignment: Alignment.center,
-                            child: const Text(
-                              'প্রজেক্টভিত্তিক ব্যয় বিশ্লেষণ চার্ট (পরের ধাপে যুক্ত হবে)',
-                              style: TextStyle(color: Colors.grey, fontSize: 13),
+                          if (report.totalExpense > 0)
+                            ...report.projectBreakdowns.map((p) {
+                              final ratio = (p.totalExpense / report.totalExpense).clamp(0.0, 1.0);
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 12.0),
+                                child: ProjectProgressBar(
+                                  progress: ratio,
+                                  label: p.projectName,
+                                  percentageText: BengaliFormatter.toCurrency(p.totalExpense),
+                                  height: 6,
+                                ),
+                              );
+                            })
+                          else
+                            Container(
+                              height: 80,
+                              alignment: Alignment.center,
+                              child: Text(
+                                'এখনও কোনো ব্যয়ের রেকর্ড নেই',
+                                style: TextStyle(
+                                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                                  fontSize: 13,
+                                ),
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),
@@ -246,6 +310,8 @@ class AccountsScreen extends ConsumerWidget {
     required Color color,
     required VoidCallback onTap,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Card(
       child: InkWell(
         onTap: onTap,
@@ -258,8 +324,8 @@ class AccountsScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(icon, color: color, size: 24),
               ),

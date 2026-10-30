@@ -8,25 +8,27 @@ class ContractorTheme {
   static const Color primaryNavy = Color(0xFF1E3A8A);
   static const Color darkPrimaryNavy = Color(0xFF93A8F4);
   static const Color accentNavy = Color(0xFF2563EB);
-  static const Color lightBg = Color(0xFFF5F7FB);
-  static const Color darkBg = Color(0xFF0B1220);
-  static const Color lightBorderColor = Color(0xFFE8ECF4);
-  static const Color darkBorderColor = Color(0xFF1F2A40);
+  static const Color lightBg = Color(0xFFF8FAFC);
+  static const Color darkBg = Color(0xFF0F172A);
+  static const Color lightSurface = Colors.white;
+  static const Color darkSurface = Color(0xFF1E293B);
+  static const Color lightBorderColor = Color(0xFFE2E8F0);
+  static const Color darkBorderColor = Color(0xFF334155);
 
   static ThemeData getTheme({required bool isDark}) {
     final baseColorScheme = isDark
         ? const ColorScheme.dark(
             primary: darkPrimaryNavy,
             secondary: accentNavy,
-            surface: Color(0xFF131D31),
+            surface: darkSurface,
             error: AppColors.error,
-            onPrimary: Color(0xFF0B1220),
+            onPrimary: Color(0xFF0F172A),
             onSurface: Colors.white,
           )
         : const ColorScheme.light(
             primary: primaryNavy,
             secondary: accentNavy,
-            surface: Colors.white,
+            surface: lightSurface,
             error: AppColors.error,
             onPrimary: Colors.white,
             onSurface: AppColors.lightTextPrimary,
@@ -46,9 +48,10 @@ class ContractorTheme {
       scaffoldBackgroundColor: isDark ? darkBg : lightBg,
       textTheme: textTheme,
 
-      // 1. AppBar: স্বচ্ছ ও বড় শিরোনাম (22, w700), কোনো tint নেই
+      // 1. AppBar: স্বচ্ছ ও বড় শিরোনাম (22, w700), কোনো ব্যাকগ্রাউন্ড রঙ বা টিন্ট নেই
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
@@ -62,9 +65,9 @@ class ContractorTheme {
         ),
       ),
 
-      // 2. কার্ড: ২০ px গোল কোণ ও হালকা বর্ডার (#E8ECF4 / ডার্কে #1F2A40), কোনো শ্যাডো নেই
+      // 2. কার্ড: ২০ px গোল কোণ ও পরিষ্কার ১ px বর্ডার, প্রিমিয়াম সফট এলিভেশন
       cardTheme: CardThemeData(
-        color: isDark ? const Color(0xFF131D31) : Colors.white,
+        color: isDark ? darkSurface : lightSurface,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
@@ -75,41 +78,50 @@ class ContractorTheme {
         ),
       ),
 
-      // 3. ইনপুট: filled, radius 14
+      // 3. ইনপুট ফিল্ড: filled, radius 16, প্রিমিয়াম ফোকাস বর্ডার
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: isDark ? const Color(0xFF131D31) : Colors.white,
+        fillColor: isDark ? darkSurface : lightSurface,
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            const EdgeInsets.symmetric(horizontal: 18, vertical: 15),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: borderColor),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: borderColor),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(
             color: isDark ? darkPrimaryNavy : primaryNavy,
-            width: 2,
+            width: 1.8,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AppColors.error),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: AppColors.error, width: 1.8),
+        ),
+        hintStyle: TextStyle(
+          fontSize: 14,
+          color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
         ),
       ),
 
-      // 4. NavigationBar: উচ্চতা 72, লেবেল সবসময়, সক্রিয় লেবেল w600
+      // 4. NavigationBar: উচ্চতা 72, আধুনিক ইন্ডিকেটর শেপ
       navigationBarTheme: NavigationBarThemeData(
         height: 72,
-        backgroundColor: isDark ? const Color(0xFF131D31) : Colors.white,
+        backgroundColor: isDark ? darkSurface : lightSurface,
         elevation: 0,
-        indicatorColor: (isDark ? darkPrimaryNavy : primaryNavy).withValues(alpha: 0.15),
+        surfaceTintColor: Colors.transparent,
+        indicatorColor: (isDark ? darkPrimaryNavy : primaryNavy).withValues(alpha: 0.12),
         indicatorShape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
         ),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
@@ -140,14 +152,14 @@ class ContractorTheme {
         }),
       ),
 
-      // 5. FilledButton: উচ্চতা ৫২, radius 14
+      // 5. বোতাম থিম: উচ্চতা ৫২, radius 16, সেফ টাইপোগ্রাফি
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: isDark ? darkPrimaryNavy : primaryNavy,
-          foregroundColor: isDark ? const Color(0xFF0B1220) : Colors.white,
+          foregroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
           minimumSize: const Size.fromHeight(52),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
           ),
           textStyle: textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
@@ -158,16 +170,42 @@ class ContractorTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: isDark ? darkPrimaryNavy : primaryNavy,
-          foregroundColor: isDark ? const Color(0xFF0B1220) : Colors.white,
+          foregroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
           minimumSize: const Size.fromHeight(52),
           elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
           ),
           textStyle: textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),
+      ),
+
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: isDark ? darkPrimaryNavy : primaryNavy,
+          side: BorderSide(
+            color: (isDark ? darkPrimaryNavy : primaryNavy).withValues(alpha: 0.4),
+            width: 1.2,
+          ),
+          minimumSize: const Size.fromHeight(48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          textStyle: textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+
+      chipTheme: ChipThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        side: BorderSide(color: borderColor),
+        selectedColor: (isDark ? darkPrimaryNavy : primaryNavy).withValues(alpha: 0.12),
+        backgroundColor: isDark ? darkSurface : lightSurface,
       ),
     );
   }

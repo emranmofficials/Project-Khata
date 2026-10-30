@@ -218,7 +218,7 @@ class _WorkersScreenState extends ConsumerState<WorkersScreen>
                         height: 8,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: m.isActive ? Colors.green : Colors.grey,
+                          color: m.isActive ? const Color(0xFF2563EB) : Colors.grey,
                         ),
                       ),
                       const SizedBox(width: 4),
@@ -226,7 +226,8 @@ class _WorkersScreenState extends ConsumerState<WorkersScreen>
                         m.isActive ? ContractorStrings.activeBadge : ContractorStrings.inactiveBadge,
                         style: TextStyle(
                           fontSize: 10,
-                          color: m.isActive ? Colors.green : Colors.grey,
+                          fontWeight: FontWeight.w600,
+                          color: m.isActive ? const Color(0xFF2563EB) : Colors.grey,
                         ),
                       ),
                     ],

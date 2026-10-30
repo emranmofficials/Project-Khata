@@ -122,5 +122,64 @@ void main() {
       await tester.tap(find.byType(IconTile));
       expect(tileTapped, isTrue);
     });
+
+    testWidgets('ProjectProgressBar renders label and percentage text', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: ProjectProgressBar(
+              progress: 0.75,
+              label: 'কাজের অগ্রগতি',
+              percentageText: '৭৫%',
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('কাজের অগ্রগতি'), findsOneWidget);
+      expect(find.text('৭৫%'), findsOneWidget);
+    });
+
+    testWidgets('ModernOverviewStrip renders active projects, workers and approvals', (tester) async {
+      var projectTapped = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ModernOverviewStrip(
+              activeProjects: 4,
+              workersPresent: 28,
+              pendingApprovals: 3,
+              onProjectsTap: () => projectTapped = true,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('৪টি'), findsOneWidget);
+      expect(find.text('২৮ জন'), findsOneWidget);
+      expect(find.text('৩টি'), findsOneWidget);
+      expect(find.text('চলমান প্রজেক্ট'), findsOneWidget);
+      expect(find.text('আজ উপস্থিত'), findsOneWidget);
+      expect(find.text('অনুমোদন বাকি'), findsOneWidget);
+
+      await tester.tap(find.text('৪টি'));
+      expect(projectTapped, isTrue);
+    });
+
+    testWidgets('FinancialRatioBar renders income and expense amounts', (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: FinancialRatioBar(
+              income: 500000,
+              expense: 350000,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.textContaining('মোট আয়:'), findsOneWidget);
+      expect(find.textContaining('ব্যয়:'), findsOneWidget);
+    });
   });
 }

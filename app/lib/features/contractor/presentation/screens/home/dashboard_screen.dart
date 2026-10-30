@@ -21,6 +21,41 @@ class ContractorDashboardScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Center(
+            child: Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: const LinearGradient(
+                  colors: [
+                    AppColors.contractorNavy,
+                    Color(0xFF2563EB),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.contractorNavy.withValues(alpha: 0.25),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Center(
+                child: Text(
+                  'খাতা',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
         title: summaryAsync.when(
           data: (summary) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,18 +63,32 @@ class ContractorDashboardScreen extends ConsumerWidget {
               Text(
                 greetingByHour(DateTime.now()),
                 style: TextStyle(
-                  fontSize: 13,
+                  fontSize: 12,
                   fontWeight: FontWeight.normal,
                   color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                 ),
               ),
               const SizedBox(height: 2),
-              Text(
-                summary.companyName,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                children: [
+                  Flexible(
+                    child: Text(
+                      summary.companyName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.verified_rounded,
+                    size: 16,
+                    color: isDark ? const Color(0xFF93A8F4) : const Color(0xFF2563EB),
+                  ),
+                ],
               ),
             ],
           ),
@@ -53,9 +102,36 @@ class ContractorDashboardScreen extends ConsumerWidget {
           ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none_rounded),
-            onPressed: () => context.push(ContractorRoutes.notifications),
+          summaryAsync.when(
+            data: (summary) => Stack(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.notifications_none_rounded),
+                  onPressed: () => context.push(ContractorRoutes.notifications),
+                ),
+                if (summary.pendingApprovalsCount > 0)
+                  Positioned(
+                    right: 12,
+                    top: 12,
+                    child: Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFF59E0B),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            loading: () => IconButton(
+              icon: const Icon(Icons.notifications_none_rounded),
+              onPressed: () => context.push(ContractorRoutes.notifications),
+            ),
+            error: (_, __) => IconButton(
+              icon: const Icon(Icons.notifications_none_rounded),
+              onPressed: () => context.push(ContractorRoutes.notifications),
+            ),
           ),
           const SizedBox(width: 8),
         ],
@@ -90,7 +166,7 @@ class ContractorDashboardScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 1. HeroSummaryCard: আজ উপস্থিত শ্রমিক
+                  // ১. HeroSummaryCard: আজ উপস্থিত শ্রমিক ও ব্যালেন্স
                   HeroSummaryCard(
                     title: ContractorStrings.workersPresentToday,
                     amount: '${toBn(summary.workersPresentToday)} জন',
@@ -100,9 +176,21 @@ class ContractorDashboardScreen extends ConsumerWidget {
                     onTap: () => context.go(ContractorRoutes.workers),
                   ),
 
+                  const SizedBox(height: 16),
+
+                  // ২. ModernOverviewStrip: ৩টি দ্রুত পরিসংখ্যান এক নজরে
+                  ModernOverviewStrip(
+                    activeProjects: summary.activeProjectsCount,
+                    workersPresent: summary.workersPresentToday,
+                    pendingApprovals: summary.pendingApprovalsCount,
+                    onProjectsTap: () => context.go(ContractorRoutes.projects),
+                    onWorkersTap: () => context.go(ContractorRoutes.workers),
+                    onApprovalsTap: () => context.push(ContractorRoutes.approvals),
+                  ),
+
                   const SizedBox(height: 24),
 
-                  // 2. QuickActions (৪টি বোতাম)
+                  // ৩. QuickActions (৪টি আধুনিক অ্যাকশন বাটন)
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,15 +219,15 @@ class ContractorDashboardScreen extends ConsumerWidget {
                     ],
                   ),
 
-                  // 3. সতর্কতা কার্ড (যদি শূন্যের বেশি হয়)
+                  // ৪. সতর্কতা কার্ড (যদি শূন্যের বেশি হয়)
                   if (summary.handoverRequiredCount > 0 || summary.pendingApprovalsCount > 0) ...[
                     const SizedBox(height: 24),
                     _buildAlertCard(context, summary, isDark),
                   ],
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 28),
 
-                  // 4. চলমান প্রজেক্ট তালিকা
+                  // ৫. চলমান প্রজেক্ট তালিকা
                   SectionTitleRow(
                     title: ContractorStrings.activeProjectsTitle,
                     actionTitle: ContractorStrings.seeAll,
@@ -172,7 +260,7 @@ class ContractorDashboardScreen extends ConsumerWidget {
                             subtitle: '${p.clientName} • ${toBn(p.workerCount)} জন শ্রমিক',
                             trailingTitle: p.budget != null ? BengaliFormatter.toCurrency(p.budget!) : null,
                             trailingSubtitle: p.status.displayName,
-                            trailingColor: AppColors.contractorNavy,
+                            trailingColor: isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy,
                             onTap: () => context.push(ContractorRoutes.projectDetailsPath(p.id)),
                           );
                         }).toList(),
@@ -180,9 +268,9 @@ class ContractorDashboardScreen extends ConsumerWidget {
                     },
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 28),
 
-                  // 5. আজকের এন্ট্রি
+                  // ৬. আজকের এন্ট্রি তালিকা
                   SectionTitleRow(
                     title: ContractorStrings.todayEntries,
                     actionTitle: ContractorStrings.seeAll,
@@ -211,7 +299,7 @@ class ContractorDashboardScreen extends ConsumerWidget {
                             title: e.projectName,
                             subtitle: 'সুপারভাইজার: ${e.supervisorName} • ${toBn(e.workerCount)} জন',
                             trailingSubtitle: e.status,
-                            trailingColor: AppColors.contractorNavy,
+                            trailingColor: isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy,
                             onTap: () => context.push(ContractorRoutes.approvals),
                           );
                         }).toList(),
@@ -237,7 +325,7 @@ class ContractorDashboardScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF261D11) : const Color(0xFFFEF3C7),
+        color: isDark ? const Color(0xFF2E200B) : const Color(0xFFFEF3C7),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark ? const Color(0xFF78350F) : const Color(0xFFFDE68A),
@@ -249,12 +337,12 @@ class ContractorDashboardScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.amber.shade700.withValues(alpha: 0.15),
+              color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
-            child: Icon(
+            child: const Icon(
               Icons.warning_amber_rounded,
-              color: isDark ? Colors.amber.shade300 : Colors.amber.shade800,
+              color: Color(0xFFD97706),
               size: 24,
             ),
           ),
@@ -268,23 +356,36 @@ class ContractorDashboardScreen extends ConsumerWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.amber.shade200 : Colors.amber.shade900,
+                    color: isDark ? const Color(0xFFFDE68A) : const Color(0xFF92400E),
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'পর্যালোচনা করতে ট্যাপ করুন (${toBn(summary.pendingApprovalsCount)}টি অনুমোদন বাকি)',
+                  summary.handoverRequiredCount > 0
+                      ? '${toBn(summary.handoverRequiredCount)}টি প্রজেক্ট হস্তান্তরের সময় হয়েছে'
+                      : '${toBn(summary.pendingApprovalsCount)}টি এন্ট্রি অনুমোদনের অপেক্ষায় আছে',
                   style: TextStyle(
                     fontSize: 12,
-                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                    color: isDark ? Colors.white70 : const Color(0xFF78350F),
                   ),
                 ),
               ],
             ),
           ),
           TextButton(
-            onPressed: () => context.push(ContractorRoutes.approvals),
-            child: const Text('দেখুন'),
+            onPressed: () {
+              if (summary.pendingApprovalsCount > 0) {
+                context.push(ContractorRoutes.approvals);
+              } else {
+                context.go(ContractorRoutes.projects);
+              }
+            },
+            child: Text(
+              summary.pendingApprovalsCount > 0
+                  ? ContractorStrings.approve
+                  : 'দেখুন',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),

@@ -98,7 +98,7 @@ class _ContractProjectDetailsScreenState extends ConsumerState<ContractorProject
                               title: Text(sup.name),
                               subtitle: Text(toBn(sup.mobile)),
                               trailing: isAssigned
-                                  ? const Icon(Icons.check_circle, color: Colors.green)
+                                  ? const Icon(Icons.check_circle, color: Color(0xFF2563EB))
                                   : OutlinedButton(
                                       onPressed: () async {
                                         Navigator.pop(ctx);

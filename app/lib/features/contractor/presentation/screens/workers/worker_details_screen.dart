@@ -212,7 +212,7 @@ class WorkerDetailsScreen extends ConsumerWidget {
                               const SizedBox(height: 6),
                               StatusChip(
                                 label: worker.isActive ? 'সক্রিয় কর্মী' : 'নিষ্ক্রিয়',
-                                color: worker.isActive ? Colors.green : Colors.grey,
+                                color: worker.isActive ? const Color(0xFF2563EB) : Colors.grey,
                               ),
                             ],
                           ),
@@ -272,7 +272,7 @@ class WorkerDetailsScreen extends ConsumerWidget {
                     return Card(
                       margin: const EdgeInsets.only(bottom: 8),
                       child: ListTile(
-                        leading: const Icon(Icons.check_circle_outline, color: Colors.green),
+                        leading: const Icon(Icons.check_circle_outline, color: Color(0xFF2563EB)),
                         title: Text(att.projectName),
                         subtitle: Text(
                           '${toBn(att.workDate.day)}/${toBn(att.workDate.month)}/${toBn(att.workDate.year)} • ওভারটাইম: ${toBn(att.overtimeHours.round())} ঘণ্টা',

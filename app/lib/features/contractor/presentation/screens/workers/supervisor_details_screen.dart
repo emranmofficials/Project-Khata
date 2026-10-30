@@ -121,7 +121,7 @@ class SupervisorDetailsScreen extends ConsumerWidget {
                               const SizedBox(height: 6),
                               StatusChip(
                                 label: supervisor.isActive ? 'সক্রিয় সুপারভাইজার' : 'নিষ্ক্রিয়',
-                                color: supervisor.isActive ? Colors.green : Colors.grey,
+                                color: supervisor.isActive ? const Color(0xFF2563EB) : Colors.grey,
                               ),
                             ],
                           ),
@@ -217,7 +217,7 @@ class SupervisorDetailsScreen extends ConsumerWidget {
                       child: ListTile(
                         leading: const Icon(Icons.apartment_rounded, color: AppColors.contractorNavy),
                         title: Text(pId == 'proj-1' ? 'মেঘনা ভিউ রেসিডেন্স' : (pId == 'proj-2' ? 'কর্ণফুলী কমপ্লেক্স' : 'পদ্মা সেতু সাইট')),
-                        trailing: const Icon(Icons.check_circle, color: Colors.green, size: 18),
+                        trailing: const Icon(Icons.check_circle, color: Color(0xFF2563EB), size: 18),
                       ),
                     );
                   }),

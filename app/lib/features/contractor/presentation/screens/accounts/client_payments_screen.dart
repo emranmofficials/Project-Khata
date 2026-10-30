@@ -156,7 +156,7 @@ class _ClientPaymentsScreenState extends ConsumerState<ClientPaymentsScreen> {
                           ),
                           trailing: Text(
                             BengaliFormatter.toCurrency(p.amount),
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.green),
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xFF2563EB)),
                           ),
                         ),
                       );

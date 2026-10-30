@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_colors.dart';
 import '../core/constants/contractor_strings.dart';
+import '../core/utils/bengali_formatter.dart';
 
 /// ১. HeroSummaryCard: রেফারেন্স কার্ড স্টাইলে নেভি গ্রেডিয়েন্ট, ব্যালেন্স/বাজেট ও ট্রেন্ড ব্যাজ
 class HeroSummaryCard extends StatelessWidget {
@@ -32,21 +33,21 @@ class HeroSummaryCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20), // ২০ px গোল কোণ
+        borderRadius: BorderRadius.circular(22),
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
             AppColors.contractorNavy, // #1E3A8A নেভি
-            Color(0xFF172554), // গাঢ় নেভি
-            Color(0xFF0F172A), // ডিপ নেভি স্লেট (কোনো সবুজ নয়)
+            Color(0xFF172554), // ডিপ নেভি
+            Color(0xFF0F172A), // ডিপ স্লেট নেভি (কোনো সবুজ নয়)
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.contractorNavy.withValues(alpha: 0.18),
-            offset: const Offset(0, 8),
-            blurRadius: 20,
+            color: AppColors.contractorNavy.withValues(alpha: 0.22),
+            offset: const Offset(0, 10),
+            blurRadius: 24,
             spreadRadius: -4,
           ),
         ],
@@ -55,31 +56,41 @@ class HeroSummaryCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(22),
           child: Stack(
             children: [
-              // ব্যাকগ্রাউন্ড ওয়াটারমার্ক / অলঙ্করণ সার্কেল (বাইরের কোনো ছবি বা ইউআরএল নয়)
+              // ব্যাকগ্রাউন্ড ওয়াটারমার্ক / অলঙ্করণ আলো (বাইরের কোনো ছবি বা নেটওয়ার্ক নয়)
               Positioned(
-                right: -24,
-                top: -24,
+                right: -20,
+                top: -20,
                 child: Container(
-                  width: 140,
-                  height: 140,
+                  width: 150,
+                  height: 150,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.05),
+                    gradient: RadialGradient(
+                      colors: [
+                        Colors.white.withValues(alpha: 0.08),
+                        Colors.white.withValues(alpha: 0.0),
+                      ],
+                    ),
                   ),
                 ),
               ),
               Positioned(
-                right: 32,
-                bottom: -40,
+                right: 40,
+                bottom: -35,
                 child: Container(
-                  width: 110,
-                  height: 110,
+                  width: 120,
+                  height: 120,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.03),
+                    gradient: RadialGradient(
+                      colors: [
+                        const Color(0xFF38BDF8).withValues(alpha: 0.06),
+                        Colors.transparent,
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -90,18 +101,31 @@ class HeroSummaryCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // টাইটেল রো এবং অপশনাল অ্যাকশন বাটন
+                    // টাইটেল রো এবং অপশনাল অ্যাকশন বাটন / সেকেন্ডারি ট্যাগ
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          title,
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.85),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 0.2,
-                          ),
+                        Row(
+                          children: [
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Color(0xFF60A5FA),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              title,
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.88),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                          ],
                         ),
                         if (actionIcon != null)
                           IconButton(
@@ -117,6 +141,10 @@ class HeroSummaryCard extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.15),
+                                width: 0.8,
+                              ),
                             ),
                             child: Text(
                               secondaryText!,
@@ -129,14 +157,14 @@ class HeroSummaryCard extends StatelessWidget {
                           ),
                       ],
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 12),
 
                     // বড় অ্যামাউন্ট টাইপোগ্রাফি
                     Text(
                       amount,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 28,
+                        fontSize: 30,
                         fontWeight: FontWeight.bold,
                         letterSpacing: -0.5,
                       ),
@@ -152,16 +180,20 @@ class HeroSummaryCard extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 5),
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.15),
+                                color: Colors.white.withValues(alpha: 0.16),
                                 borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.2),
+                                  width: 0.8,
+                                ),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
                                     badgeIcon ?? Icons.trending_up_rounded,
-                                    color: Colors.white,
-                                    size: 14,
+                                    color: const Color(0xFF93C5FD),
+                                    size: 15,
                                   ),
                                   const SizedBox(width: 5),
                                   Text(
@@ -176,7 +208,7 @@ class HeroSummaryCard extends StatelessWidget {
                               ),
                             ),
                           if (badgeText != null && subtitle != null)
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 10),
                           if (subtitle != null)
                             Expanded(
                               child: Text(
@@ -184,7 +216,7 @@ class HeroSummaryCard extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.75),
+                                  color: Colors.white.withValues(alpha: 0.8),
                                   fontSize: 12,
                                 ),
                               ),
@@ -202,7 +234,7 @@ class HeroSummaryCard extends StatelessWidget {
   }
 }
 
-/// ২. QuickAction: রেফারেন্স অনুযায়ী সার্কুলার অ্যাকশন বাটন ও নিচে লেবেল
+/// ২. QuickAction: সার্কুলার/স্কোয়ার্কেল অ্যাকশন বাটন ও নিচে লেবেল
 class QuickAction extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -223,15 +255,19 @@ class QuickAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final effectiveBgColor = backgroundColor ??
-        AppColors.contractorNavy.withValues(alpha: 0.08);
-    final effectiveIconColor = iconColor ?? AppColors.contractorNavy;
+        (isDark
+            ? const Color(0xFF1E293B)
+            : AppColors.contractorNavy.withValues(alpha: 0.08));
+    final effectiveIconColor = iconColor ??
+        (isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy);
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(18),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -243,7 +279,20 @@ class QuickAction extends StatelessWidget {
                   height: 56,
                   decoration: BoxDecoration(
                     color: effectiveBgColor,
-                    shape: BoxShape.circle,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: isDark
+                          ? const Color(0xFF334155)
+                          : const Color(0xFFE2E8F0),
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: effectiveIconColor.withValues(alpha: 0.06),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: Center(
                     child: Icon(
@@ -255,17 +304,21 @@ class QuickAction extends StatelessWidget {
                 ),
                 if (badgeCount != null && badgeCount! > 0)
                   Positioned(
-                    right: -2,
-                    top: -2,
+                    right: -4,
+                    top: -4,
                     child: Container(
                       padding: const EdgeInsets.all(4),
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         color: AppColors.error,
                         shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isDark ? const Color(0xFF0F172A) : Colors.white,
+                          width: 2,
+                        ),
                       ),
                       constraints: const BoxConstraints(
-                        minWidth: 18,
-                        minHeight: 18,
+                        minWidth: 20,
+                        minHeight: 20,
                       ),
                       child: Text(
                         '$badgeCount',
@@ -286,9 +339,10 @@ class QuickAction extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : AppColors.lightTextPrimary,
               ),
             ),
           ],
@@ -322,13 +376,26 @@ class SectionTitleRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white : AppColors.darkTextPrimary,
-            ),
+          Row(
+            children: [
+              Container(
+                width: 4,
+                height: 18,
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : AppColors.darkTextPrimary,
+                ),
+              ),
+            ],
           ),
           if (trailing != null)
             trailing!
@@ -343,17 +410,17 @@ class SectionTitleRow extends StatelessWidget {
                   children: [
                     Text(
                       actionTitle ?? ContractorStrings.seeAll,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.contractorNavy,
+                        color: isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy,
                       ),
                     ),
                     const SizedBox(width: 3),
-                    const Icon(
+                    Icon(
                       Icons.arrow_forward_rounded,
                       size: 14,
-                      color: AppColors.contractorNavy,
+                      color: isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy,
                     ),
                   ],
                 ),
@@ -365,7 +432,7 @@ class SectionTitleRow extends StatelessWidget {
   }
 }
 
-/// ৪. IconTile: গোল কোণযুক্ত কার্ড ও আইকন বক্স সহ লিস্ট টাইল (ট্রানজ্যাকশন/প্রজেক্ট স্টাইল)
+/// ৪. IconTile: গোল কোণযুক্ত কার্ড ও আইকন বক্স সহ লিস্ট টাইল
 class IconTile extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -395,7 +462,8 @@ class IconTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final effectiveIconColor = iconColor ?? AppColors.contractorNavy;
+    final effectiveIconColor = iconColor ??
+        (isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy);
     final effectiveIconBg = iconBackgroundColor ??
         effectiveIconColor.withValues(alpha: 0.1);
     final borderColor = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
@@ -403,9 +471,16 @@ class IconTile extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.darkCard : Colors.white,
-        borderRadius: BorderRadius.circular(20), // ২০ px গোল কোণ
-        border: Border.all(color: borderColor, width: 1), // হালকা বর্ডার (ছায়া নয়)
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: borderColor, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Material(
         color: Colors.transparent,
@@ -416,7 +491,7 @@ class IconTile extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
-                // আইকন কনটেইনার (রেফারেন্স স্টাইল)
+                // আইকন কনটেইনার
                 Container(
                   width: 48,
                   height: 48,
@@ -482,22 +557,32 @@ class IconTile extends StatelessWidget {
                       ),
                       if (trailingSubtitle != null) ...[
                         const SizedBox(height: 3),
-                        Text(
-                          trailingSubtitle!,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: isDark
-                                ? AppColors.darkTextSecondary
-                                : AppColors.lightTextSecondary,
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: (isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy)
+                                .withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            trailingSubtitle!,
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: isDark
+                                  ? const Color(0xFF93A8F4)
+                                  : AppColors.contractorNavy,
+                            ),
                           ),
                         ),
                       ],
                     ],
                   )
                 else
-                  const Icon(
+                  Icon(
                     Icons.chevron_right_rounded,
-                    color: Colors.grey,
+                    color: isDark ? Colors.white38 : Colors.grey,
                     size: 22,
                   ),
               ],
@@ -509,7 +594,324 @@ class IconTile extends StatelessWidget {
   }
 }
 
-/// ৫. StatusChip: স্ট্যাটাস ব্যাজ উইজেট
+/// ৫. ProjectProgressBar: অ্যানিমেটেড প্রগ্রেস বার
+class ProjectProgressBar extends StatelessWidget {
+  final double progress; // 0.0 to 1.0
+  final String? label;
+  final String? percentageText;
+  final Color? color;
+  final double height;
+
+  const ProjectProgressBar({
+    super.key,
+    required this.progress,
+    this.label,
+    this.percentageText,
+    this.color,
+    this.height = 8,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final clamped = progress.clamp(0.0, 1.0);
+    final activeColor = color ??
+        (isDark ? const Color(0xFF93A8F4) : const Color(0xFF2563EB));
+    final trackColor = isDark
+        ? const Color(0xFF334155)
+        : const Color(0xFFE2E8F0);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (label != null || percentageText != null) ...[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (label != null)
+                Text(
+                  label!,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: isDark
+                        ? AppColors.darkTextSecondary
+                        : AppColors.lightTextSecondary,
+                  ),
+                ),
+              Text(
+                percentageText ?? '${toBn((clamped * 100).toInt())}%',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: activeColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+        ],
+        Stack(
+          children: [
+            Container(
+              height: height,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: trackColor,
+                borderRadius: BorderRadius.circular(height / 2),
+              ),
+            ),
+            FractionallySizedBox(
+              widthFactor: clamped,
+              child: Container(
+                height: height,
+                decoration: BoxDecoration(
+                  color: activeColor,
+                  borderRadius: BorderRadius.circular(height / 2),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+/// ৬. ModernOverviewStrip: ড্যাশবোর্ডের ৩টি দ্রুত পরিসংখ্যান এক নজরে
+class ModernOverviewStrip extends StatelessWidget {
+  final int activeProjects;
+  final int workersPresent;
+  final int pendingApprovals;
+  final VoidCallback? onProjectsTap;
+  final VoidCallback? onWorkersTap;
+  final VoidCallback? onApprovalsTap;
+
+  const ModernOverviewStrip({
+    super.key,
+    required this.activeProjects,
+    required this.workersPresent,
+    required this.pendingApprovals,
+    this.onProjectsTap,
+    this.onWorkersTap,
+    this.onApprovalsTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final borderColor = isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: borderColor, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildItem(
+              context,
+              icon: Icons.apartment_rounded,
+              count: '${toBn(activeProjects)}টি',
+              label: 'চলমান প্রজেক্ট',
+              color: isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy,
+              onTap: onProjectsTap,
+            ),
+          ),
+          Container(
+            height: 36,
+            width: 1,
+            color: borderColor,
+          ),
+          Expanded(
+            child: _buildItem(
+              context,
+              icon: Icons.people_alt_rounded,
+              count: '${toBn(workersPresent)} জন',
+              label: 'আজ উপস্থিত',
+              color: const Color(0xFF2563EB),
+              onTap: onWorkersTap,
+            ),
+          ),
+          Container(
+            height: 36,
+            width: 1,
+            color: borderColor,
+          ),
+          Expanded(
+            child: _buildItem(
+              context,
+              icon: Icons.fact_check_rounded,
+              count: '${toBn(pendingApprovals)}টি',
+              label: 'অনুমোদন বাকি',
+              color: pendingApprovals > 0 ? const Color(0xFFF59E0B) : Colors.grey,
+              onTap: onApprovalsTap,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildItem(
+    BuildContext context, {
+    required IconData icon,
+    required String count,
+    required String label,
+    required Color color,
+    VoidCallback? onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: 16, color: color),
+                const SizedBox(width: 5),
+                Text(
+                  count,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : AppColors.darkTextPrimary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                color: isDark
+                    ? AppColors.darkTextSecondary
+                    : AppColors.lightTextSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// ৭. FinancialRatioBar: আয় ও ব্যয়ের আধুনিক রেশিও বার
+class FinancialRatioBar extends StatelessWidget {
+  final double income;
+  final double expense;
+
+  const FinancialRatioBar({
+    super.key,
+    required this.income,
+    required this.expense,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final total = income + expense;
+    final incomeRatio = total > 0 ? (income / total).clamp(0.05, 0.95) : 0.5;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'মোট আয়: ${BengaliFormatter.toCurrency(income)}',
+                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF59E0B),
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'ব্যয়: ${BengaliFormatter.toCurrency(expense)}',
+                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: SizedBox(
+              height: 10,
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: (incomeRatio * 100).toInt(),
+                    child: Container(
+                      color: isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy,
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  Expanded(
+                    flex: ((1 - incomeRatio) * 100).toInt(),
+                    child: Container(
+                      color: const Color(0xFFF59E0B),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// ৮. StatusChip: স্ট্যাটাস ব্যাজ উইজেট
 class StatusChip extends StatelessWidget {
   final String label;
   final Color? color;
@@ -546,7 +948,7 @@ class StatusChip extends StatelessWidget {
   }
 }
 
-/// ৬. EmptyState: তালিকা খালি থাকলে ক্লিন আইকন ও বার্তা
+/// ৯. EmptyState: তালিকা খালি থাকলে ক্লিন আইকন ও বার্তা
 class EmptyState extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -630,7 +1032,7 @@ class EmptyState extends StatelessWidget {
   }
 }
 
-/// ৭. KpiCard: ২০ px গোল কোণ কার্ড মেট্রিক প্রদর্শনের জন্য
+/// ১০. KpiCard: ২০ px গোল কোণ কার্ড মেট্রিক প্রদর্শনের জন্য
 class KpiCard extends StatelessWidget {
   final String title;
   final String value;
@@ -719,7 +1121,7 @@ class KpiCard extends StatelessWidget {
   }
 }
 
-/// ৮. toBn: সংখ্যাকে বাংলা ডিজিটে রূপান্তর
+/// ১১. toBn: সংখ্যাকে বাংলা ডিজিটে রূপান্তর
 String toBn(dynamic value) {
   if (value == null) return '';
   final str = value.toString();
@@ -743,7 +1145,7 @@ String toBn(dynamic value) {
   return buffer.toString();
 }
 
-/// ৯. requiredValidator: খালি ফিল্ড ভ্যালিডেশন
+/// ১২. requiredValidator: খালি ফিল্ড ভ্যালিডেশন
 String? requiredValidator(String? value, [String message = 'এই তথ্যটি দেওয়া আবশ্যক']) {
   if (value == null || value.trim().isEmpty) {
     return message;
@@ -751,7 +1153,7 @@ String? requiredValidator(String? value, [String message = 'এই তথ্য�
   return null;
 }
 
-/// ১০. greetingByHour: সময়ভিত্তিক বাংলা অভিবাদন
+/// ১৩. greetingByHour: সময়ভিত্তিক বাংলা অভিবাদন
 String greetingByHour(DateTime time) {
   final hour = time.hour;
   if (hour >= 4 && hour < 12) {

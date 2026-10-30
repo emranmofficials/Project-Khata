@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:project_khata/core/constants/app_colors.dart';
 import 'package:project_khata/core/constants/contractor_routes.dart';
 import 'package:project_khata/core/constants/contractor_strings.dart';
 import 'package:project_khata/core/utils/bengali_formatter.dart';
@@ -29,6 +30,7 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
   @override
   Widget build(BuildContext context) {
     final projectsAsync = ref.watch(projectsProvider(_selectedStatus));
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
@@ -39,8 +41,13 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(ContractorRoutes.projectNew),
+        backgroundColor: isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy,
+        foregroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
         icon: const Icon(Icons.add_rounded),
-        label: const Text(ContractorStrings.createNewProject),
+        label: const Text(
+          ContractorStrings.createNewProject,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       body: Column(
         children: [
@@ -109,6 +116,7 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Text(ContractorStrings.errorOccurred),
+                      const SizedBox(height: 12),
                       FilledButton(
                         onPressed: () => ref.invalidate(projectsProvider(_selectedStatus)),
                         child: const Text(ContractorStrings.retry),
@@ -158,13 +166,43 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
                               children: [
                                 Row(
                                   children: [
+                                    Container(
+                                      width: 44,
+                                      height: 44,
+                                      decoration: BoxDecoration(
+                                        color: (isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy)
+                                            .withValues(alpha: 0.12),
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                      child: Icon(
+                                        Icons.apartment_rounded,
+                                        size: 24,
+                                        color: isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
                                     Expanded(
-                                      child: Text(
-                                        p.name,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            p.name,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 2),
+                                          Text(
+                                            'ক্লায়েন্ট: ${p.clientName} (${toBn(p.clientMobile)})',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: isDark
+                                                  ? AppColors.darkTextSecondary
+                                                  : AppColors.lightTextSecondary,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     StatusChip(
@@ -173,36 +211,58 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  'ক্লায়েন্ট: ${p.clientName} (${toBn(p.clientMobile)})',
-                                  style: const TextStyle(fontSize: 13),
+                                const SizedBox(height: 12),
+                                // প্রজেক্ট প্রগ্রেস বার
+                                ProjectProgressBar(
+                                  progress: p.status == ProjectStatus.completed ? 1.0 : 0.65,
+                                  label: 'কাজের অগ্রগতি',
+                                  percentageText: p.status == ProjectStatus.completed ? '১০০%' : '৬৫%',
+                                  height: 6,
                                 ),
-                                const SizedBox(height: 4),
+                                const SizedBox(height: 12),
                                 Row(
                                   children: [
-                                    Text(
-                                      'ধরন: ${p.type.displayName}',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey.shade600,
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                      decoration: BoxDecoration(
+                                        color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        p.type.displayName,
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w500,
+                                          color: isDark ? Colors.white70 : Colors.black87,
+                                        ),
                                       ),
                                     ),
                                     const Spacer(),
-                                    Text(
-                                      'শ্রমিক: ${toBn(p.workerCount)} জন',
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.people_outline_rounded,
+                                          size: 15,
+                                          color: isDark ? Colors.white60 : Colors.grey.shade600,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          '${toBn(p.workerCount)} জন',
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     if (p.budget != null) ...[
-                                      const SizedBox(width: 12),
+                                      const SizedBox(width: 14),
                                       Text(
                                         BengaliFormatter.toCurrency(p.budget!),
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontSize: 13,
                                           fontWeight: FontWeight.bold,
+                                          color: isDark ? const Color(0xFF93A8F4) : AppColors.contractorNavy,
                                         ),
                                       ),
                                     ],

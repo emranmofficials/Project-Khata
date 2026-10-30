@@ -82,7 +82,7 @@ class _SiteExpensesScreenState extends ConsumerState<SiteExpensesScreen> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             if (exp.isApproved)
-                              const StatusChip(label: 'অনুমোদিত', color: Colors.green)
+                              const StatusChip(label: 'অনুমোদিত', color: Color(0xFF2563EB))
                             else ...[
                               OutlinedButton(
                                 style: OutlinedButton.styleFrom(foregroundColor: AppColors.error),
