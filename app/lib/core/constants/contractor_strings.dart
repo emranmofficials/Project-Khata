@@ -13,6 +13,8 @@ class ContractorStrings {
   static const String greetingAfternoon = 'শুভ দুপুর';
   static const String greetingEvening = 'শুভ সন্ধ্যা';
   static const String defaultUserName = 'ঠিকাদার';
+  static const String defaultCompanyName = 'প্রজেক্ট খাতা বিল্ডার্স';
+  static const String approve = 'অনুমোদন';
 
   // Legacy Dashboard compatibility getters
   static const String goodMorning = greetingMorning;
