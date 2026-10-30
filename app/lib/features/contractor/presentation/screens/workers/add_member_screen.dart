@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_khata/core/auth/phone_email.dart';
 import 'package:project_khata/core/constants/app_colors.dart';
 import 'package:project_khata/core/constants/app_strings.dart';
-import 'package:project_khata/core/constants/contractor_strings.dart';
 import 'package:project_khata/widgets/contractor_widgets.dart';
 import '../../contractor_providers.dart';
 import '../../../domain/models/contractor_models.dart';
@@ -106,9 +105,9 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
+                      const Text(
                         '(${ContractorStrings.initialPasswordNotice})',
-                        style: const TextStyle(fontSize: 11, color: Colors.grey),
+                        style: TextStyle(fontSize: 11, color: Colors.grey),
                       ),
                     ],
                   ),
@@ -219,7 +218,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                 error: (_, __) => const Text('পদ লোড করা যায়নি'),
                 data: (designations) {
                   return DropdownButtonFormField<String>(
-                    value: _selectedDesignationId,
+                    initialValue: _selectedDesignationId,
                     hint: const Text('পদ নির্বাচন করুন'),
                     items: designations.map((d) {
                       return DropdownMenuItem(
@@ -291,7 +290,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                         width: 20,
                         child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                       )
-                    : Text('সংরক্ষণ করুন'),
+                    : const Text('সংরক্ষণ করুন'),
               ),
             ],
           ),

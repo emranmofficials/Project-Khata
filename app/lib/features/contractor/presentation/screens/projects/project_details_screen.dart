@@ -79,7 +79,7 @@ class _ContractProjectDetailsScreenState extends ConsumerState<ContractorProject
                   Expanded(
                     child: supervisorsAsync.when(
                       loading: () => const Center(child: CircularProgressIndicator()),
-                      error: (_, __) => Center(child: Text(ContractorStrings.errorOccurred)),
+                      error: (_, __) => const Center(child: Text(ContractorStrings.errorOccurred)),
                       data: (supervisors) {
                         if (supervisors.isEmpty) {
                           return const Center(child: Text('কোনো সুপারভাইজার পাওয়া যায়নি'));

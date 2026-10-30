@@ -67,6 +67,9 @@ class PhoneEmailHelper {
 bool isValidBangladeshiMobile(String? phone) =>
     PhoneEmailHelper.isValidBangladeshiMobile(phone);
 
+String cleanMobile(String phone) =>
+    PhoneEmailHelper.cleanMobile(phone);
+
 String mobileToSyntheticEmail(String mobile) =>
     PhoneEmailHelper.toSyntheticEmail(mobile);
 

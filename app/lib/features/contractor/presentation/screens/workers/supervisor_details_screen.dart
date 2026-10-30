@@ -27,7 +27,7 @@ class SupervisorDetailsScreen extends ConsumerWidget {
               width: double.maxFinite,
               child: projectsAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (_, __) => Center(child: Text(ContractorStrings.errorOccurred)),
+                error: (_, __) => const Center(child: Text(ContractorStrings.errorOccurred)),
                 data: (projects) {
                   return ListView.builder(
                     shrinkWrap: true,
@@ -141,14 +141,14 @@ class SupervisorDetailsScreen extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(color: const Color(0xFFBFDBFE)),
                   ),
-                  child: Row(
+                  child: const Row(
                     children: [
-                      const Icon(Icons.info_outline, size: 20, color: AppColors.contractorNavy),
-                      const SizedBox(width: 10),
+                      Icon(Icons.info_outline, size: 20, color: AppColors.contractorNavy),
+                      SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           ContractorStrings.supervisorNoSalaryNotice,
-                          style: const TextStyle(fontSize: 12, color: AppColors.contractorNavy),
+                          style: TextStyle(fontSize: 12, color: AppColors.contractorNavy),
                         ),
                       ),
                     ],

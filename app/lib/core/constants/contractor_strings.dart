@@ -66,6 +66,9 @@ class ContractorStrings {
   static const String editProject = 'প্রজেক্ট সম্পাদনা';
   static const String projectName = 'প্রজেক্টের নাম';
   static const String projectType = 'প্রজেক্টের ধরন';
+  static const String projectTypeSqft = 'স্কয়ার ফিট';
+  static const String projectTypeContract = 'চুক্তি ভিত্তিক';
+  static const String projectTypeDaily = 'রোজ ভিত্তিক';
   static const String projectAddress = 'সাইট ঠিকানা';
   static const String projectLocation = 'সাইট লোকেশন';
   static const String projectLocationRequired = 'সাইট লোকেশন নির্বাচন বাধ্যতামূলক';

@@ -108,7 +108,7 @@ class _ProjectsScreenState extends ConsumerState<ProjectsScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(ContractorStrings.errorOccurred),
+                      const Text(ContractorStrings.errorOccurred),
                       FilledButton(
                         onPressed: () => ref.invalidate(projectsProvider(_selectedStatus)),
                         child: const Text(ContractorStrings.retry),

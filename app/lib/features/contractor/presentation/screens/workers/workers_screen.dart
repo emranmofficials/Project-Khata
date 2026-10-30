@@ -147,7 +147,7 @@ class _WorkersScreenState extends ConsumerState<WorkersScreen>
       onRefresh: () async => ref.invalidate(membersProvider(role)),
       child: membersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(ContractorStrings.errorOccurred)),
+        error: (e, _) => const Center(child: Text(ContractorStrings.errorOccurred)),
         data: (allMembers) {
           var members = allMembers;
 
