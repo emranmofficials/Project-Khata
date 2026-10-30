@@ -51,6 +51,9 @@ class ContractorRoutes {
   static const String designations = '/contractor/more/designations';
   static const String supervisorPay = '/contractor/more/supervisor-pay';
   static const String profile = '/contractor/more/profile';
+  static const String myProfile = profile;
+  static const String supervisors = workers;
+  static const String dailyAttendance = workers;
   static const String changePassword = '/contractor/more/change-password';
   static const String notifications = '/contractor/more/notifications';
   static const String auditLog = '/contractor/more/audit-log';

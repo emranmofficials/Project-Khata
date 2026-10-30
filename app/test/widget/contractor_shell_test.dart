@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:project_khata/core/constants/app_strings.dart';
 import 'package:project_khata/core/theme/contractor_theme.dart';
 import 'package:project_khata/features/contractor/presentation/contractor_shell.dart';
+import 'package:project_khata/features/contractor/presentation/screens/home/dashboard_screen.dart';
 import 'package:project_khata/features/contractor/presentation/screens/projects/create_project_screen.dart';
 
 void main() {
@@ -189,6 +190,34 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(AppStrings.invalidMobile), findsOneWidget);
+    });
+
+    testWidgets('ContractorDashboardScreen renders redesigned header and greeting banner', (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            theme: ContractorTheme.getTheme(isDark: false),
+            home: const ContractorDashboardScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // 1. App branding & Title in AppBar
+      expect(find.text('প্রজেক্ট খাতা'), findsOneWidget);
+      expect(find.byIcon(Icons.verified_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.notifications_none_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.person_rounded), findsOneWidget);
+
+      // 2. Greeting Header
+      expect(find.byIcon(Icons.calendar_today_rounded), findsOneWidget);
+      expect(find.text('ঢাকা, সদর দপ্তর'), findsOneWidget);
+      expect(find.textContaining('ঠিকাদার সাহেব'), findsOneWidget);
+
+      // 3. Quick Actions
+      expect(find.text('নতুন প্রজেক্ট তৈরি করুন'), findsOneWidget);
+      expect(find.text('শ্রমিক যোগ'), findsOneWidget);
+      expect(find.text('হিসাব খাতা'), findsOneWidget);
     });
   });
 }

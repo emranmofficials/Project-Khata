@@ -5,9 +5,11 @@ import 'package:project_khata/core/constants/app_colors.dart';
 import 'package:project_khata/core/constants/contractor_routes.dart';
 import 'package:project_khata/core/constants/contractor_strings.dart';
 import 'package:project_khata/core/utils/bengali_formatter.dart';
+import 'package:project_khata/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:project_khata/widgets/contractor_widgets.dart';
 import '../../contractor_providers.dart';
 import '../../../domain/models/contractor_models.dart';
+
 class ContractorDashboardScreen extends ConsumerWidget {
   const ContractorDashboardScreen({super.key});
 
@@ -17,122 +19,200 @@ class ContractorDashboardScreen extends ConsumerWidget {
     final summaryAsync = ref.watch(dashboardSummaryProvider);
     final projectsAsync = ref.watch(projectsProvider(ProjectStatus.active));
     final entriesAsync = ref.watch(todayEntriesProvider);
+    final userProfile = ref.watch(currentUserProvider).value;
+    final userName = (userProfile?.name != null && userProfile!.name.trim().isNotEmpty)
+        ? userProfile.name.trim()
+        : ContractorStrings.defaultUserName;
 
     return Scaffold(
       appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16.0),
-          child: Center(
-            child: Container(
-              width: 38,
-              height: 38,
+        automaticallyImplyLeading: false,
+        titleSpacing: 16,
+        elevation: 0,
+        scrolledUnderElevation: 1,
+        title: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  colors: [
-                    AppColors.contractorNavy,
-                    Color(0xFF2563EB),
-                  ],
+                color: isDark ? const Color(0xFF131D2E) : Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isDark ? const Color(0xFF1F2A40) : const Color(0xFFE2E8F0),
+                  width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.contractorNavy.withValues(alpha: 0.25),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+                    color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                    blurRadius: 4,
+                    offset: const Offset(0, 1),
                   ),
                 ],
               ),
-              child: const Center(
-                child: Text(
-                  'খাতা',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset(
+                  'assets/branding/app-icon.png',
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => const Icon(
+                    Icons.apartment_rounded,
+                    color: AppColors.contractorNavy,
+                    size: 22,
                   ),
                 ),
               ),
             ),
-          ),
-        ),
-        title: summaryAsync.when(
-          data: (summary) => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                greetingByHour(DateTime.now()),
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.normal,
-                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Row(
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Flexible(
-                    child: Text(
-                      summary.companyName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
+                  Row(
+                    children: [
+                      Text(
+                        'প্রজেক্ট খাতা',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : AppColors.contractorNavy,
+                          letterSpacing: -0.2,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Container(
+                        width: 7,
+                        height: 7,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFEA619),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 1),
+                  summaryAsync.when(
+                    data: (summary) => Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            summary.companyName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: isDark
+                                  ? AppColors.darkTextSecondary
+                                  : AppColors.lightTextSecondary,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.verified_rounded,
+                          size: 14,
+                          color: isDark
+                              ? const Color(0xFF93A8F4)
+                              : const Color(0xFF2563EB),
+                        ),
+                      ],
+                    ),
+                    loading: () => Text(
+                      'লোড হচ্ছে...',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: isDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.lightTextSecondary,
+                      ),
+                    ),
+                    error: (_, __) => Text(
+                      'মেসার্স ঠিকাদার কনস্ট্রাকশন',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: isDark
+                            ? AppColors.darkTextSecondary
+                            : AppColors.lightTextSecondary,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.verified_rounded,
-                    size: 16,
-                    color: isDark ? const Color(0xFF93A8F4) : const Color(0xFF2563EB),
-                  ),
                 ],
               ),
-            ],
-          ),
-          loading: () => const Text(
-            ContractorStrings.defaultUserName,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          error: (_, __) => const Text(
-            ContractorStrings.defaultUserName,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
+            ),
+          ],
         ),
         actions: [
           summaryAsync.when(
             data: (summary) => Stack(
+              alignment: Alignment.center,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.notifications_none_rounded),
+                  tooltip: 'নোটিফিকেশন',
+                  icon: const Icon(Icons.notifications_none_rounded, size: 23),
                   onPressed: () => context.push(ContractorRoutes.notifications),
                 ),
                 if (summary.pendingApprovalsCount > 0)
                   Positioned(
-                    right: 12,
-                    top: 12,
+                    right: 10,
+                    top: 10,
                     child: Container(
                       width: 8,
                       height: 8,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFF59E0B),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEF4444),
                         shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isDark ? const Color(0xFF0F172A) : Colors.white,
+                          width: 1.5,
+                        ),
                       ),
                     ),
                   ),
               ],
             ),
             loading: () => IconButton(
-              icon: const Icon(Icons.notifications_none_rounded),
+              tooltip: 'নোটিফিকেশন',
+              icon: const Icon(Icons.notifications_none_rounded, size: 23),
               onPressed: () => context.push(ContractorRoutes.notifications),
             ),
             error: (_, __) => IconButton(
-              icon: const Icon(Icons.notifications_none_rounded),
+              tooltip: 'নোটিফিকেশন',
+              icon: const Icon(Icons.notifications_none_rounded, size: 23),
               onPressed: () => context.push(ContractorRoutes.notifications),
             ),
           ),
-          const SizedBox(width: 8),
+          Padding(
+            padding: const EdgeInsets.only(right: 14.0),
+            child: InkWell(
+              onTap: () => context.push(ContractorRoutes.myProfile),
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isDark ? const Color(0xFF2563EB) : AppColors.contractorNavy,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.contractorNavy.withValues(alpha: 0.25),
+                      blurRadius: 4,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.person_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
       body: RefreshIndicator(
@@ -165,6 +245,11 @@ class ContractorDashboardScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // ০. Top Greeting Header (তারিখ পিল, স্বাগতম ও সাইট মনিটরিং)
+                  _buildGreetingHeader(context, isDark, userName),
+
+                  const SizedBox(height: 16),
+
                   // ১. HeroSummaryCard: আজ উপস্থিত শ্রমিক ও ব্যালেন্স
                   HeroSummaryCard(
                     title: ContractorStrings.workersPresentToday,
@@ -189,30 +274,63 @@ class ContractorDashboardScreen extends ConsumerWidget {
 
                   const SizedBox(height: 24),
 
-                  // ৩. QuickActions (৪টি আধুনিক অ্যাকশন বাটন)
+                  // ৩. QuickActions (৪টি আধুনিক অ্যাকশন বাটন + নতুন প্রজেক্ট CTA)
+                  const SectionTitleRow(
+                    title: 'দ্রুত কার্যক্রম',
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFFEA619),
+                        foregroundColor: const Color(0xFF684000),
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      onPressed: () => context.push(ContractorRoutes.projectNew),
+                      icon: const Icon(
+                        Icons.add_circle_rounded,
+                        size: 22,
+                        color: Color(0xFF684000),
+                      ),
+                      label: const Text(
+                        'নতুন প্রজেক্ট তৈরি করুন',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF684000),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       QuickAction(
-                        icon: Icons.add_business_rounded,
-                        label: ContractorStrings.quickActionNewProject,
-                        onTap: () => context.push(ContractorRoutes.projectNew),
-                      ),
-                      QuickAction(
                         icon: Icons.person_add_rounded,
-                        label: ContractorStrings.quickActionNewWorker,
+                        label: 'শ্রমিক যোগ',
                         onTap: () => context.push(ContractorRoutes.workerNew),
                       ),
                       QuickAction(
+                        icon: Icons.engineering_rounded,
+                        label: 'সুপারভাইজার',
+                        onTap: () => context.push(ContractorRoutes.supervisors),
+                      ),
+                      QuickAction(
                         icon: Icons.fact_check_rounded,
-                        label: ContractorStrings.quickActionEntryApproval,
+                        label: 'হাজিরা নিন',
                         badgeCount: summary.pendingApprovalsCount,
                         onTap: () => context.push(ContractorRoutes.approvals),
                       ),
                       QuickAction(
-                        icon: Icons.receipt_long_rounded,
-                        label: ContractorStrings.quickActionBillStatement,
+                        icon: Icons.menu_book_rounded,
+                        label: 'হিসাব খাতা',
                         onTap: () => context.push(ContractorRoutes.billStatements),
                       ),
                     ],
@@ -388,6 +506,79 @@ class ContractorDashboardScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildGreetingHeader(BuildContext context, bool isDark, String userName) {
+    final greeting = greetingByHour(DateTime.now());
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+                  width: 0.8,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.calendar_today_rounded,
+                    size: 13,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                  ),
+                  const SizedBox(width: 5),
+                  Text(
+                    BengaliFormatter.formatDate(DateTime.now()),
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.location_on_rounded,
+                  size: 14,
+                  color: Color(0xFFD97706),
+                ),
+                const SizedBox(width: 3),
+                Text(
+                  'ঢাকা, সদর দপ্তর',
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.normal,
+                    color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Text(
+          '$greeting, $userName 👋',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : AppColors.contractorNavy,
+            letterSpacing: -0.2,
+          ),
+        ),
+      ],
     );
   }
 }
