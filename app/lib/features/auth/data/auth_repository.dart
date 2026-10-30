@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/models/app_user.dart';
+import '../../../../core/auth/phone_email.dart';
 
 class AuthRepository {
   final SupabaseClient _client;
@@ -96,8 +97,7 @@ class AuthRepository {
     required String mobile,
     required String password,
   }) async {
-    final cleanMobile = mobile.trim();
-    final syntheticEmail = '$cleanMobile@members.projectkhata.app';
+    final syntheticEmail = mobileToSyntheticEmail(mobile);
 
     final response = await _client.auth.signInWithPassword(
       email: syntheticEmail,
