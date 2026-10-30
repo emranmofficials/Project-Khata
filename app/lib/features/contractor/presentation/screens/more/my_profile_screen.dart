@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:project_khata/core/constants/app_colors.dart';
 import 'package:project_khata/core/constants/contractor_strings.dart';
 import 'package:project_khata/features/auth/presentation/controllers/auth_controller.dart';
+import '../../contractor_providers.dart';
 
 class MyProfileScreen extends ConsumerWidget {
   const MyProfileScreen({super.key});
@@ -75,6 +76,8 @@ class MyProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authControllerProvider);
     final user = authState.value;
+    final companyAsync = ref.watch(companyProfileProvider);
+    final orgName = companyAsync.valueOrNull?.name ?? 'নির্মাণ প্রতিষ্ঠান';
 
     return Scaffold(
       appBar: AppBar(
@@ -105,7 +108,7 @@ class MyProfileScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              user?.organizationName ?? 'প্রতিষ্ঠান',
+              orgName,
               style: const TextStyle(fontSize: 14, color: Colors.grey),
             ),
 

@@ -34,7 +34,7 @@ class _WagesScreenState extends ConsumerState<WagesScreen> {
               error: (_, __) => const SizedBox.shrink(),
               data: (projects) {
                 return DropdownButtonFormField<String?>(
-                  value: _selectedProjectId,
+                  initialValue: _selectedProjectId,
                   decoration: const InputDecoration(labelText: 'প্রজেক্ট অনুযায়ী ফিল্টার'),
                   items: [
                     const DropdownMenuItem(value: null, child: Text('সব প্রজেক্ট')),
@@ -50,7 +50,7 @@ class _WagesScreenState extends ConsumerState<WagesScreen> {
               onRefresh: () async => ref.invalidate(wagesProvider(_selectedProjectId)),
               child: wagesAsync.when(
                 loading: () => const Center(child: CircularProgressIndicator()),
-                error: (e, _) => Center(child: Text(ContractorStrings.errorOccurred)),
+                error: (e, _) => const Center(child: Text(ContractorStrings.errorOccurred)),
                 data: (wages) {
                   if (wages.isEmpty) {
                     return ListView(

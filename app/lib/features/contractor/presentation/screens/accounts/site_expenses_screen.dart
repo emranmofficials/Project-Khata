@@ -28,7 +28,7 @@ class _SiteExpensesScreenState extends ConsumerState<SiteExpensesScreen> {
         onRefresh: () async => ref.invalidate(siteExpensesProvider(_selectedProjectId)),
         child: expensesAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text(ContractorStrings.errorOccurred)),
+          error: (e, _) => const Center(child: Text(ContractorStrings.errorOccurred)),
           data: (expenses) {
             if (expenses.isEmpty) {
               return ListView(

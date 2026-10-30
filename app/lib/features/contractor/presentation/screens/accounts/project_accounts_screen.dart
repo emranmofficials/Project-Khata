@@ -52,17 +52,17 @@ class ContractorProjectAccountsScreen extends ConsumerWidget {
 
                 // হিসাব সারাংশ মেট্রিকস
                 Row(
-                  children: [
+                  children: const [
                     Expanded(
                       child: KpiCard(
                         title: ContractorStrings.totalIncome,
                         value: '৳ ৫,০০,০০০',
                         subtitle: 'প্রাপ্ত ক্লায়েন্ট পেমেন্ট',
                         icon: Icons.arrow_downward_rounded,
-                        iconColor: Colors.green,
+                        iconColor: AppColors.contractorNavy,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Expanded(
                       child: KpiCard(
                         title: ContractorStrings.totalExpense,
