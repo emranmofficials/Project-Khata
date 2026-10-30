@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
+import 'contractor_theme.dart';
+export 'contractor_theme.dart';
 
 class AppTheme {
   AppTheme._();
@@ -9,6 +11,9 @@ class AppTheme {
     required Color primaryColor,
     required bool isDark,
   }) {
+    if (primaryColor == AppColors.contractorNavy) {
+      return ContractorTheme.getTheme(isDark: isDark);
+    }
     final baseColorScheme = isDark
         ? ColorScheme.dark(
             primary: primaryColor,
