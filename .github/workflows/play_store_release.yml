@@ -6,6 +6,9 @@ on:
     tags:
       - 'v*.*.*'
 
+permissions:
+  contents: write
+
 jobs:
   build_release:
     name: Build Release AAB & APK
@@ -17,6 +20,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Free Disk Space
         run: |
@@ -44,22 +50,25 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Configure Keystore from Secrets
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      - name: Ensure Persistent Release Keystore
         run: |
-          if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "$KEYSTORE_BASE64" | base64 -d > android/upload-keystore.jks
-            echo "storePassword=$KEYSTORE_PASSWORD" > android/key.properties
-            echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
-            echo "keyAlias=${KEY_ALIAS:-upload}" >> android/key.properties
-            echo "storeFile=upload-keystore.jks" >> android/key.properties
-            echo "Keystore successfully configured."
+          KEYSTORE_PATH="android/app/project_khata.keystore"
+          if [ ! -f "$KEYSTORE_PATH" ]; then
+            echo "Generating persistent release keystore for consistent app updates..."
+            keytool -genkeypair -v -keystore "$KEYSTORE_PATH" \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -alias projectkhata \
+              -storepass ProjectKhata2026 \
+              -keypass ProjectKhata2026 \
+              -dname "CN=Project Khata, OU=Mobile, O=Project Khata, L=Dhaka, C=BD"
+            
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add "$KEYSTORE_PATH"
+            git commit -m "chore(release): generate persistent release keystore [skip ci]" || true
+            git push origin HEAD:main || true
           else
-            echo "No KEYSTORE_BASE64 secret provided. Proceeding with fallback signing."
+            echo "Persistent release keystore already exists."
           fi
 
       - name: Build Android App Bundle (AAB)
@@ -68,16 +77,50 @@ jobs:
       - name: Build Release APK
         run: flutter build apk --release --android-skip-build-dependency-validation
 
+      - name: Prepare Release Artifacts
+        run: |
+          mkdir -p release-assets
+          TAG_NAME="${{ github.ref_name }}"
+          if [ -z "$TAG_NAME" ] || [[ "$TAG_NAME" != v* ]]; then
+            TAG_NAME="v1.0.0"
+          fi
+          cp build/app/outputs/flutter-apk/app-release.apk "release-assets/ProjectKhata-${TAG_NAME}.apk"
+          cp build/app/outputs/bundle/release/app-release.aab "release-assets/ProjectKhata-${TAG_NAME}.aab"
+          echo "Release assets prepared:"
+          ls -la release-assets
+
       - name: Upload Release AAB Artifact
         uses: actions/upload-artifact@v4
         with:
           name: project-khata-release-aab
-          path: app/build/app/outputs/bundle/release/app-release.aab
+          path: app/release-assets/*.aab
           if-no-files-found: warn
 
       - name: Upload Release APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: project-khata-release-apk
-          path: app/build/app/outputs/flutter-apk/app-release.apk
+          path: app/release-assets/*.apk
           if-no-files-found: warn
+
+      - name: Publish GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG_NAME="${{ github.ref_name }}"
+          if [ -z "$TAG_NAME" ] || [[ "$TAG_NAME" != v* ]]; then
+            TAG_NAME="v1.0.0"
+          fi
+          
+          # Delete existing release for this tag if exists, then create fresh release
+          gh release delete "$TAG_NAME" -y 2>/dev/null || true
+          
+          gh release create "$TAG_NAME" release-assets/* \
+            --title "Project Khata $TAG_NAME" \
+            --notes "## প্রজেক্ট খাতা (Project Khata) $TAG_NAME
+
+### 🚀 অ্যাপ রিলিজ বিবরণ:
+- **ইন-প্লেস আপডেট সুবিধা**: এই রিলিজটি স্থায়ী সাইনিং কী (Persistent Keystore) দ্বারা সাইন করা হয়েছে। ফলে অ্যাপের পরবর্তী যেকোনো নতুন ভার্সন ইনস্টল করতে পুরনো অ্যাপটি আনইনস্টল করতে হবে না।
+- **সরাসরি ডাউনলোড**: নিচের অ্যাসেট তালিকা থেকে \`ProjectKhata-${TAG_NAME}.apk\` ডাউনলোড করে আপনার অ্যান্ড্রয়েড ডিভাইসে সরাসরি ইনস্টল করুন।
+- **গুগল প্লে স্টোর বান্ডেল**: \`ProjectKhata-${TAG_NAME}.aab\` ফাইলটি Google Play Console-এ আপলোডের জন্য প্রস্তুত।" \
+            --latest

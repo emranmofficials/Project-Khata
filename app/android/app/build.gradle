@@ -12,7 +12,8 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.projectkhata.app"
-    compileSdk = 35
+    compileSdk = 36
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -33,7 +34,13 @@ android {
 
     signingConfigs {
         release {
-            if (keystorePropertiesFile.exists()) {
+            def persistentKeystore = file('project_khata.keystore')
+            if (persistentKeystore.exists()) {
+                storeFile = persistentKeystore
+                storePassword = "ProjectKhata2026"
+                keyAlias = "projectkhata"
+                keyPassword = "ProjectKhata2026"
+            } else if (keystorePropertiesFile.exists()) {
                 keyAlias = keystoreProperties['keyAlias']
                 keyPassword = keystoreProperties['keyPassword']
                 def storeFilePath = keystoreProperties['storeFile']
@@ -51,7 +58,9 @@ android {
 
     buildTypes {
         release {
-            signingConfig = (keystorePropertiesFile.exists() && keystoreProperties['storeFile']) ? signingConfigs.release : signingConfigs.debug
+            minifyEnabled false
+            shrinkResources false
+            signingConfig = (file('project_khata.keystore').exists() || (keystorePropertiesFile.exists() && keystoreProperties['storeFile'])) ? signingConfigs.release : signingConfigs.debug
         }
     }
 }

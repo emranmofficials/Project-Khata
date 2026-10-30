@@ -15,6 +15,7 @@ build/
 # Android & iOS artifacts
 *.keystore
 *.jks
+!**/project_khata.keystore
 **/key.properties
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
