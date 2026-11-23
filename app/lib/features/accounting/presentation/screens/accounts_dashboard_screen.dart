@@ -6,7 +6,7 @@ import '../../../../core/utils/bengali_formatter.dart';
 import '../../../../core/widgets/kpi_card.dart';
 import '../../../../core/widgets/loading_skeleton.dart';
 import '../../../../core/widgets/summary_card.dart';
-import '../../project/presentation/providers/project_provider.dart';
+import '../../../project/presentation/providers/project_provider.dart';
 import '../providers/accounting_provider.dart';
 import '../widgets/new_payment_bottom_sheet.dart';
 import 'bill_statements_screen.dart';

@@ -21,7 +21,7 @@ class AppTheme {
         error: AppColors.danger,
         outline: AppColors.lightBorder,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.lightCard,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -122,7 +122,7 @@ class AppTheme {
         error: AppColors.danger,
         outline: AppColors.darkBorder,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.darkCard,
         elevation: 0,
         shape: RoundedRectangleBorder(

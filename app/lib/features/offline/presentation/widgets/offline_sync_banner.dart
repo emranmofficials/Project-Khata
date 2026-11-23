@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/utils/bengali_formatter.dart';
-import '../../attendance/presentation/providers/attendance_provider.dart';
-import '../domain/offline_sync_queue.dart';
+import '../../../attendance/presentation/providers/attendance_provider.dart';
+import '../../domain/offline_sync_queue.dart';
 
 /// PRD সেকশন ১০.৪ অনুযায়ী অফলাইন ব্যানার ও সিঙ্ক স্ট্যাটাস ইন্ডিকেটর
 class OfflineSyncBanner extends ConsumerWidget {
