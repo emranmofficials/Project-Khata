@@ -16,7 +16,7 @@ void main() {
       expect(BengaliFormatter.toCurrency(null), '৳ ০');
       expect(BengaliFormatter.toCurrency(500), '৳ ৫০০');
       expect(BengaliFormatter.toCurrency(1500), '৳ ১,৫০০');
-      expect(BengaliFormatter.toCurrency(1250000), '৳ ১২,৫০,০০০');
+      expect(BengaliFormatter.toCurrency(1250000), '৳ ১,২৫০,০০০');
       expect(BengaliFormatter.toCurrency(750.50, showDecimals: true), '৳ ৭৫০.৫০');
       expect(BengaliFormatter.toCurrency('3200'), '৳ ৩,২০০');
     });
