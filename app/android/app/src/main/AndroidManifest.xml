@@ -1,15 +1,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.projectkhata.app">
 
+    <!-- ইন্টারনেট ও নেটওয়ার্ক পারমিশন (OpenStreetMap টাইলস ও Supabase সিঙ্ক) -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <!-- শুধু হাজিরা দেওয়ার সময় সাইট অবস্থান যাচাইয়ের জন্য জিপিএস পারমিশন -->
+    <!-- (PRD নিয়ম ৩৯: অ্যাপ কোনো ব্যাকগ্রাউন্ড লোকেশন ট্র্যাক করবে না) -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+
+    <!-- অ্যান্ড্রয়েড ১৩+ নোটিফিকেশন পারমিশন (FCM) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:label="প্রজেক্ট খাতা (Project Khata)"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -20,18 +28,17 @@
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
             <meta-data
-                android:name="io.flutter.embedding.android.NormalTheme"
-                android:resource="@style/NormalTheme"/>
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDummyKeyForBuildVerification" />
     </application>
 </manifest>

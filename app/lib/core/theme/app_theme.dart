@@ -1,108 +1,207 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
-import 'contractor_theme.dart';
-export 'contractor_theme.dart';
+import '../constants/app_sizes.dart';
 
+/// PRD সেকশন ১১.১ ও ১১.৩ অনুযায়ী সম্পূর্ণ অ্যাপের থিম কনফিগারেশন
 class AppTheme {
-  AppTheme._();
-
-  static ThemeData getTheme({
-    required Color primaryColor,
-    required bool isDark,
-  }) {
-    if (primaryColor == AppColors.contractorNavy) {
-      return ContractorTheme.getTheme(isDark: isDark);
-    }
-    final baseColorScheme = isDark
-        ? ColorScheme.dark(
-            primary: primaryColor,
-            secondary: primaryColor.withValues(alpha: 0.8),
-            surface: AppColors.darkSurface,
-            error: AppColors.error,
-            onPrimary: Colors.white,
-            onSurface: AppColors.darkTextPrimary,
-          )
-        : ColorScheme.light(
-            primary: primaryColor,
-            secondary: primaryColor.withValues(alpha: 0.8),
-            surface: AppColors.lightSurface,
-            error: AppColors.error,
-            onPrimary: Colors.white,
-            onSurface: AppColors.lightTextPrimary,
-          );
-
-    final textTheme = isDark
-        ? GoogleFonts.hindSiliguriTextTheme(ThemeData.dark().textTheme).apply(
-            bodyColor: AppColors.darkTextPrimary,
-            displayColor: AppColors.darkTextPrimary,
-          )
-        : GoogleFonts.hindSiliguriTextTheme(ThemeData.light().textTheme).apply(
-            bodyColor: AppColors.lightTextPrimary,
-            displayColor: AppColors.lightTextPrimary,
-          );
+  /// লাইট থিম
+  static ThemeData get lightTheme {
+    final baseTextTheme = GoogleFonts.notoSansBengaliTextTheme();
 
     return ThemeData(
       useMaterial3: true,
-      colorScheme: baseColorScheme,
-      scaffoldBackgroundColor:
-          isDark ? AppColors.darkBackground : AppColors.lightBackground,
-      textTheme: textTheme,
-      appBarTheme: AppBarTheme(
-        backgroundColor:
-            isDark ? AppColors.darkSurface : AppColors.lightSurface,
+      brightness: Brightness.light,
+      primaryColor: AppColors.contractorPrimary,
+      scaffoldBackgroundColor: AppColors.lightBackground,
+      colorScheme: const ColorScheme.light(
+        primary: AppColors.contractorPrimary,
+        secondary: Color(0xFF3B82F6),
+        surface: AppColors.lightCard,
+        error: AppColors.danger,
+        outline: AppColors.lightBorder,
+      ),
+      cardTheme: CardTheme(
+        color: AppColors.lightCard,
         elevation: 0,
-        centerTitle: true,
-        iconTheme: IconThemeData(
-          color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSizes.cardRadius),
+          side: const BorderSide(color: AppColors.lightBorder, width: 1),
         ),
-        titleTextStyle: textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: isDark ? AppColors.darkTextPrimary : AppColors.lightTextPrimary,
+        margin: EdgeInsets.zero,
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: AppColors.lightCard,
+        elevation: 0,
+        centerTitle: false,
+        iconTheme: const IconThemeData(color: AppColors.lightTextPrimary),
+        titleTextStyle: GoogleFonts.notoSansBengali(
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+          color: AppColors.lightTextPrimary,
         ),
       ),
-      cardTheme: CardThemeData(
-        color: isDark ? AppColors.darkCard : AppColors.lightCard,
-        elevation: 0.5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(
-            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+      textTheme: baseTextTheme.copyWith(
+        displayLarge: GoogleFonts.notoSansBengali(
+          fontSize: 30,
+          fontWeight: FontWeight.w700,
+          color: AppColors.lightTextPrimary,
+        ),
+        titleLarge: GoogleFonts.notoSansBengali(
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+          color: AppColors.lightTextPrimary,
+        ),
+        titleMedium: GoogleFonts.notoSansBengali(
+          fontSize: 17,
+          fontWeight: FontWeight.w700,
+          color: AppColors.lightTextPrimary,
+        ),
+        bodyLarge: GoogleFonts.notoSansBengali(
+          fontSize: 15,
+          fontWeight: FontWeight.normal,
+          color: AppColors.lightTextPrimary,
+        ),
+        bodyMedium: GoogleFonts.notoSansBengali(
+          fontSize: 13,
+          fontWeight: FontWeight.normal,
+          color: AppColors.lightTextSecondary,
+        ),
+        labelSmall: GoogleFonts.notoSansBengali(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: AppColors.lightTextSecondary,
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          elevation: 0,
+          minimumSize: const Size.fromHeight(AppSizes.minTouchTarget),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSizes.buttonRadius),
+          ),
+          textStyle: GoogleFonts.notoSansBengali(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: isDark ? AppColors.darkSurface : Colors.white,
+        fillColor: AppColors.lightCard,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
-            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
-          ),
+          borderRadius: BorderRadius.circular(AppSizes.buttonRadius),
+          borderSide: const BorderSide(color: AppColors.lightBorder),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
-            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
-          ),
+          borderRadius: BorderRadius.circular(AppSizes.buttonRadius),
+          borderSide: const BorderSide(color: AppColors.lightBorder),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: primaryColor, width: 2),
+          borderRadius: BorderRadius.circular(AppSizes.buttonRadius),
+          borderSide: const BorderSide(color: AppColors.contractorPrimary, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      ),
+    );
+  }
+
+  /// ডার্ক থিম
+  static ThemeData get darkTheme {
+    final baseTextTheme = GoogleFonts.notoSansBengaliTextTheme();
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      primaryColor: AppColors.contractorPrimaryDark,
+      scaffoldBackgroundColor: AppColors.darkBackground,
+      colorScheme: const ColorScheme.dark(
+        primary: AppColors.contractorPrimaryDark,
+        secondary: Color(0xFF60A5FA),
+        surface: AppColors.darkCard,
+        error: AppColors.danger,
+        outline: AppColors.darkBorder,
+      ),
+      cardTheme: CardTheme(
+        color: AppColors.darkCard,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSizes.cardRadius),
+          side: const BorderSide(color: AppColors.darkBorder, width: 1),
+        ),
+        margin: EdgeInsets.zero,
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: AppColors.darkCard,
+        elevation: 0,
+        centerTitle: false,
+        iconTheme: const IconThemeData(color: AppColors.darkTextPrimary),
+        titleTextStyle: GoogleFonts.notoSansBengali(
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+          color: AppColors.darkTextPrimary,
+        ),
+      ),
+      textTheme: baseTextTheme.copyWith(
+        displayLarge: GoogleFonts.notoSansBengali(
+          fontSize: 30,
+          fontWeight: FontWeight.w700,
+          color: AppColors.darkTextPrimary,
+        ),
+        titleLarge: GoogleFonts.notoSansBengali(
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+          color: AppColors.darkTextPrimary,
+        ),
+        titleMedium: GoogleFonts.notoSansBengali(
+          fontSize: 17,
+          fontWeight: FontWeight.w700,
+          color: AppColors.darkTextPrimary,
+        ),
+        bodyLarge: GoogleFonts.notoSansBengali(
+          fontSize: 15,
+          fontWeight: FontWeight.normal,
+          color: AppColors.darkTextPrimary,
+        ),
+        bodyMedium: GoogleFonts.notoSansBengali(
+          fontSize: 13,
+          fontWeight: FontWeight.normal,
+          color: AppColors.darkTextSecondary,
+        ),
+        labelSmall: GoogleFonts.notoSansBengali(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: AppColors.darkTextSecondary,
+        ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: primaryColor,
-          foregroundColor: Colors.white,
-          minimumSize: const Size.fromHeight(50),
+          elevation: 0,
+          minimumSize: const Size.fromHeight(AppSizes.minTouchTarget),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(AppSizes.buttonRadius),
           ),
-          textStyle: textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
+          textStyle: GoogleFonts.notoSansBengali(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
           ),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.darkCard,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSizes.buttonRadius),
+          borderSide: const BorderSide(color: AppColors.darkBorder),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSizes.buttonRadius),
+          borderSide: const BorderSide(color: AppColors.darkBorder),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSizes.buttonRadius),
+          borderSide: const BorderSide(color: AppColors.contractorPrimaryDark, width: 2),
         ),
       ),
     );

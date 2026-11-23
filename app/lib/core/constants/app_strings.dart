@@ -1,142 +1,82 @@
-export 'contractor_strings.dart';
-
+/// Project Khata (প্রজেক্ট খাতা) এর জন্য সার্বজনীন বাংলা স্ট্রিং কনস্ট্যান্ট
 class AppStrings {
-  AppStrings._();
+  static const String appName = 'প্রজেক্ট খাতা';
+  static const String appTagline = 'নির্মাণ ও ঠিকাদারি হিসাব খাতা';
 
-  // App Identity
-  static const String appName = 'Project Khata';
-  static const String appNameBangla = 'প্রজেক্ট খাতা';
-  static const String appTagline = 'ঠিকাদারি ও নির্মাণ কাজের স্মার্ট সমাধান';
-
-  // Auth & Roles
+  // ভূমিকা
   static const String roleContractor = 'ঠিকাদার';
-  static const String roleClient = 'ক্লায়েন্ট';
   static const String roleSupervisor = 'সুপারভাইজার';
+  static const String roleClient = 'ক্লায়েন্ট';
   static const String roleWorker = 'শ্রমিক';
 
-  // Login & Registration
+  // অথেনটিকেশন
   static const String loginTitle = 'লগইন করুন';
-  static const String contractorLoginTitle = 'ঠিকাদার লগইন';
-  static const String contractorLoginSubtitle =
-      'আপনার নিবন্ধিত ইমেইল ও পাসওয়ার্ড দিয়ে প্রবেশ করুন।';
-  static const String memberLoginTitle = 'ইউজার লগইন';
-  static const String memberLoginSubtitle =
-      'ক্লায়েন্ট, সুপারভাইজার ও শ্রমিকদের জন্য মোবাইল লগইন।';
-  static const String mobileLoginTab = 'মোবাইল নম্বর';
-  static const String contractorLoginTab = 'ঠিকাদার (ইমেইল)';
-  static const String switchToMemberLogin = 'অন্যান্য ইউজার লগইন (মোবাইল নম্বর)';
-  static const String switchToContractorLogin = 'ঠিকাদার লগইন (ইমেইল)';
-  static const String mobileLabel = 'মোবাইল নম্বর';
-  static const String mobileHint = '০১XXXXXXXXX';
-  static const String emailLabel = 'ইমেইল এড্রেস';
-  static const String emailHint = 'example@mail.com';
-  static const String passwordLabel = 'পাসওয়ার্ড';
-  static const String passwordHint = 'পাসওয়ার্ড লিখুন';
-  static const String loginButton = 'লগইন';
-  static const String registerButton = 'ঠিকাদার হিসেবে রেজিস্টার করুন';
-  static const String registerTitle = 'ঠিকাদার রেজিস্ট্রেশন';
-  static const String nameLabel = 'আপনার নাম';
-  static const String orgNameLabel = 'প্রতিষ্ঠানের নাম';
-  static const String orgAddressLabel = 'প্রতিষ্ঠানের ঠিকানা';
-  static const String phoneLabel = 'যোগাযোগের মোবাইল নম্বর';
+  static const String email = 'ইমেইল';
+  static const String password = 'পাসওয়ার্ড';
+  static const String mobileNumber = 'মোবাইল নম্বর';
   static const String forgotPassword = 'পাসওয়ার্ড ভুলে গেছেন?';
-  static const String resetPassword = 'পাসওয়ার্ড রিসেট করুন';
-  static const String invalidCredentials = 'ভুল ইমেইল/মোবাইল বা পাসওয়ার্ড।';
-  static const String loginFailedGeneral =
-      'লগইন ব্যর্থ হয়েছে। তথ্য পরীক্ষা করে আবার চেষ্টা করুন।';
-  static const String initialPasswordNotice =
-      'প্রাথমিক পাসওয়ার্ড আপনার মোবাইলের শেষ ৬ সংখ্যা।';
-  static const String createOrganizationTitle = 'প্রতিষ্ঠান তৈরি করুন';
-  static const String createOrganizationNotice =
-      'আপনার কোনো সক্রিয় প্রতিষ্ঠান পাওয়া যায়নি। অনুগ্রহ করে প্রতিষ্ঠান তৈরি করুন।';
+  static const String loginButton = 'লগইন';
+  static const String contractorSignUp = 'ঠিকাদার হিসেবে সাইন-আপ';
+  static const String mustChangePasswordTitle = 'পাসওয়ার্ড পরিবর্তন বাধ্যতামূলক';
+  static const String newPassword = 'নতুন পাসওয়ার্ড';
+  static const String confirmPassword = 'পাসওয়ার্ড নিশ্চিত করুন';
+  static const String changePasswordButton = 'পাসওয়ার্ড পরিবর্তন করুন';
 
-  // Password Change
-  static const String changePasswordRequiredTitle = 'নতুন পাসওয়ার্ড সেট করুন';
-  static const String changePasswordRequiredSubtitle =
-      'নিরাপত্তার স্বার্থে প্রথমবার লগইনে পাসওয়ার্ড পরিবর্তন বাধ্যতামূলক।';
-  static const String newPasswordLabel = 'নতুন পাসওয়ার্ড';
-  static const String confirmPasswordLabel = 'নতুন পাসওয়ার্ড পুনরায় লিখুন';
-  static const String updatePasswordButton = 'পাসওয়ার্ড পরিবর্তন ও চালিয়ে যান';
-  static const String passwordMinLength8 = 'পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে';
-  static const String passwordCannotBeInitial =
-      'প্রাথমিক পাসওয়ার্ড (মোবাইলের শেষ ৬ সংখ্যা) নতুন পাসওয়ার্ড হিসেবে গ্রহণযোগ্য নয়';
+  // প্রতিষ্ঠান সেটআপ
+  static const String orgSetupTitle = 'প্রতিষ্ঠান সেটআপ';
+  static const String orgName = 'প্রতিষ্ঠানের নাম';
+  static const String orgAddress = 'প্রতিষ্ঠানের ঠিকানা';
+  static const String orgPhone = 'প্রতিষ্ঠানের ফোন';
+  static const String contractorMobile = 'ঠিকাদারের মোবাইল নম্বর';
+  static const String saveAndContinue = 'সংরক্ষণ ও শুরু করুন';
 
-  // Nav Tabs - Contractor
-  static const String tabDashboard = 'ড্যাশবোর্ড';
-  static const String tabProjects = 'প্রজেক্ট';
-  static const String tabUsers = 'ইউজার';
-  static const String tabAccounts = 'হিসাব';
-  static const String tabProfile = 'প্রোফাইল';
+  // প্রজেক্ট
+  static const String projects = 'প্রজেক্ট';
+  static const String newProject = 'নতুন প্রজেক্ট';
+  static const String projectName = 'প্রজেক্টের নাম';
+  static const String projectType = 'প্রজেক্টের ধরন';
+  static const String siteAddress = 'সাইটের ঠিকানা';
+  static const String geofenceRadius = 'জিও-ফেন্স সীমা';
+  static const String clientName = 'ক্লায়েন্টের নাম';
+  static const String clientMobile = 'ক্লায়েন্টের মোবাইল';
 
-  // Nav Tabs - Client
-  static const String tabMaterials = 'মালামাল';
-  static const String tabBills = 'বিল';
+  // প্রজেক্ট ধরন
+  static const String typeSqft = 'স্কয়ার ফিট ভিত্তিক';
+  static const String typeContract = 'চুক্তি ভিত্তিক';
+  static const String typeDaily = 'রোজ ভিত্তিক';
 
-  // Nav Tabs - Supervisor
-  static const String tabEntries = 'এন্ট্রি';
-  static const String tabTeams = 'দল';
+  // প্রজেক্ট স্ট্যাটাস
+  static const String statusPlanned = 'পরিকল্পনা';
+  static const String statusActive = 'চলমান';
+  static const String statusCompleted = 'সম্পন্ন';
+  static const String statusOnHold = 'স্থগিত';
 
-  // Nav Tabs - Worker
-  static const String tabAttendance = 'হাজিরা';
-  static const String tabWorkAndWages = 'কাজ ও মজুরি';
+  // এন্ট্রি ও হাজিরা
+  static const String dailyEntry = 'দৈনিক এন্ট্রি';
+  static const String openEntry = 'আজকের এন্ট্রি খুলুন';
+  static const String teamFormation = 'দল গঠন';
+  static const String attendance = 'হাজিরা';
+  static const String markAttendance = 'আমি উপস্থিত';
+  static const String statusPresent = 'উপস্থিত';
+  static const String statusAbsent = 'অনুপস্থিত';
+  static const String statusHalfDay = 'অর্ধদিবস';
+  static const String statusOvertime = 'ওভারটাইম';
 
-  // Actions & Validation
-  static const String cancel = 'বাতিল';
-  static const String save = 'সংরক্ষণ';
-  static const String confirm = 'নিশ্চিত করুন';
-  static const String logout = 'লগআউট';
-  static const String fieldRequired = 'এই তথ্যটি দেওয়া আবশ্যক';
-  static const String invalidMobile = 'সঠিক ১১ সংখ্যার বাংলাদেশি মোবাইল নম্বর দিন';
-  static const String invalidEmail = 'সঠিক ইমেইল ঠিকানা দিন';
-  static const String passwordMinLength = 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে';
-  static const String passwordsDoNotMatch = 'পাসওয়ার্ড দুটি মিলছে না';
+  // লোকেশন স্ট্যাটাস
+  static const String locVerified = 'সঠিক';
+  static const String locOutsideSite = 'সাইটের বাইরে';
+  static const String locNotAvailable = 'পাওয়া যায়নি';
 
-  // Member Management
-  static const String addMember = 'নতুন ইউজার যুক্ত করুন';
-  static const String selectRole = 'ভূমিকা সিলেক্ট করুন';
-  static const String selectDesignation = 'পদ সিলেক্ট করুন';
-  static const String memberAddedSuccess = 'ইউজার সফলভাবে যুক্ত হয়েছে!';
-  static const String defaultPasswordNotice = 'ডিফল্ট পাসওয়ার্ড হবে মোবাইলের শেষ ৬ সংখ্যা।';
+  // অনুমোদন
+  static const String pending = 'অপেক্ষমাণ';
+  static const String approved = 'অনুমোদিত';
+  static const String rejected = 'প্রত্যাখ্যাত';
+  static const String handoverRequired = 'হস্তান্তর প্রয়োজন';
 
-  // Phase 3: Daily Entries & Attendance
-  static const String dailyEntries = 'দৈনিক এন্ট্রি';
-  static const String createDailyEntry = 'নতুন দৈনিক এন্ট্রি';
-  static const String workDescription = 'কাজের বিবরণ';
-  static const String workDescriptionHint = 'আজকের সম্পাদিত কাজের বিবরণ লিখুন...';
-  static const String notesOptional = 'মন্তব্য (ঐচ্ছিক)';
-  static const String dateLabel = 'তারিখ';
-  static const String selectProject = 'প্রজেক্ট নির্বাচন করুন';
-  static const String teamAttendance = 'দলের হাজিরা';
-  static const String addWorkerToTeam = 'শ্রমিক যুক্ত করুন';
-  static const String fullDay = 'উপস্থিত (পূর্ণদিবস)';
-  static const String halfDay = 'অর্ধদিবস';
-  static const String absent = 'অনুপস্থিত';
-  static const String overtimeHours = 'ওভারটাইম (ঘণ্টা)';
-  static const String siteLocationStatus = 'লোকেশন যাচাই';
-  static const String insideSite = 'সাইটের ভিতরে';
-  static const String outsideSite = 'সাইটের বাইরে';
-  static const String locationUnavailable = 'লোকেশন পাওয়া যায়নি';
-  static const String outsideSiteWarning =
-      'সতর্কতা: আপনি সাইটের নির্ধারিত সীমার বাইরে অবস্থান করছেন। হাজিরা ঠিকাদারের অনুমোদনের জন্য চিহ্নিত হবে।';
-  static const String locationPermissionRequired = 'হাজিরা যাচাইয়ের জন্য লোকেশন পারমিশন দিন';
-  static const String submitEntry = 'এন্ট্রি জমা দিন';
-  static const String saveDraft = 'ড্রাফট হিসেবে রাখুন';
-  static const String entrySubmittedSuccess = 'দৈনিক এন্ট্রি সফলভাবে জমা হয়েছে!';
-  static const String entryDraftSaved = 'ড্রাফট সংরক্ষিত হয়েছে';
-  static const String noWorkersFound = 'কোনো শ্রমিক পাওয়া যায়নি';
-  static const String workerAlreadyAdded = 'এই শ্রমিককে ইতিমধ্যে যুক্ত করা হয়েছে';
-  static const String workerAlreadyMarkedToday = 'এই শ্রমিক আজ ইতিমধ্যে অন্য প্রজেক্টে হাজিরা দিয়েছেন';
-  static const String statusDraft = 'ড্রাফট';
-  static const String statusSubmitted = 'জমা দেওয়া হয়েছে';
-  static const String statusApproved = 'অনুমোদিত';
-  static const String statusHandoverRequired = 'হস্তান্তর প্রয়োজন';
-
-  // Phase 6: Offline Resilience & Release
-  static const String offlineSyncTitle = 'অফলাইন সিঙ্ক';
-  static const String offlineSyncPending = 'অফলাইন এন্ট্রি সিঙ্ক বাকি';
-  static const String syncNow = 'সিঙ্ক করুন';
-  static const String syncingInProgress = 'সিঙ্ক হচ্ছে...';
-  static const String offlineModeNotice = 'ইন্টারনেট সংযোগ না থাকায় অফলাইনে সংরক্ষিত হয়েছে';
-  static const String appVersion = '১.০.০';
+  // সাধারণ
+  static const String currencySymbol = '৳';
+  static const String viewAll = 'সব দেখুন';
+  static const String search = 'অনুসন্ধান';
+  static const String retry = 'পুনরায় চেষ্টা করুন';
+  static const String offlineMessage = 'অফলাইন — সেভ হচ্ছে, নেটওয়ার্ক ফিরলে জমা হবে।';
 }
-

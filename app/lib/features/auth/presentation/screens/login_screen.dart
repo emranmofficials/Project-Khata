@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/constants/app_strings.dart';
-import '../../../../core/auth/phone_email.dart';
-import '../controllers/auth_controller.dart';
+import '../providers/auth_provider.dart';
+import 'contractor_signup_screen.dart';
 
+/// PRD সেকশন ৬.১ অনুযায়ী লগইন স্ক্রিন (ঠিকাদার ইমেইল ও অন্যান্যদের মোবাইল ভিত্তিক)
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -13,23 +14,19 @@ class LoginScreen extends ConsumerStatefulWidget {
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen>
-    with SingleTickerProviderStateMixin {
+class _LoginScreenState extends ConsumerState<LoginScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  // Mobile Tab Controllers
-  final _mobileFormKey = GlobalKey<FormState>();
-  final _mobileController = TextEditingController();
-  final _mobilePasswordController = TextEditingController();
-  bool _obscureMobilePass = true;
-
-  // Contractor Tab Controllers
-  final _contractorFormKey = GlobalKey<FormState>();
+  // ঠিকাদার ফর্ম
   final _emailController = TextEditingController();
   final _contractorPasswordController = TextEditingController();
-  bool _obscureContractorPass = true;
 
-  bool _isLoading = false;
+  // মোবাইল ইউজার ফর্ম (শ্রমিক, সুপারভাইজার, ক্লায়েন্ট)
+  final _mobileController = TextEditingController();
+  final _mobilePasswordController = TextEditingController();
+
+  bool _obscureContractorPassword = true;
+  bool _obscureMobilePassword = true;
 
   @override
   void initState() {
@@ -40,304 +37,227 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   @override
   void dispose() {
     _tabController.dispose();
-    _mobileController.dispose();
-    _mobilePasswordController.dispose();
     _emailController.dispose();
     _contractorPasswordController.dispose();
+    _mobileController.dispose();
+    _mobilePasswordController.dispose();
     super.dispose();
   }
 
-  Future<void> _handleMobileLogin() async {
-    if (!_mobileFormKey.currentState!.validate()) return;
-    setState(() => _isLoading = true);
+  void _handleContractorLogin() async {
+    final email = _emailController.text.trim();
+    final password = _contractorPasswordController.text;
 
-    try {
-      await ref.read(authControllerProvider.notifier).loginMember(
-            mobile: _mobileController.text.trim(),
-            password: _mobilePasswordController.text,
-          );
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString().replaceAll('Exception: ', '')),
-            backgroundColor: AppColors.error,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
+    if (email.isEmpty || password.isEmpty) {
+      _showSnackbar('দয়া করে ইমেইল ও পাসওয়ার্ড প্রদান করুন');
+      return;
+    }
+
+    final success = await ref.read(authStateProvider.notifier).loginWithEmail(email, password);
+    if (!success && mounted) {
+      final error = ref.read(authStateProvider).errorMessage ?? 'লগইন ব্যর্থ হয়েছে';
+      _showSnackbar(error, isError: true);
     }
   }
 
-  Future<void> _handleContractorLogin() async {
-    if (!_contractorFormKey.currentState!.validate()) return;
-    setState(() => _isLoading = true);
+  void _handleMobileLogin() async {
+    final mobile = _mobileController.text.trim();
+    final password = _mobilePasswordController.text;
 
-    try {
-      await ref.read(authControllerProvider.notifier).loginContractor(
-            email: _emailController.text.trim(),
-            password: _contractorPasswordController.text,
-          );
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString().replaceAll('Exception: ', '')),
-            backgroundColor: AppColors.error,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
+    if (mobile.isEmpty || password.isEmpty) {
+      _showSnackbar('দয়া করে মোবাইল নম্বর ও পাসওয়ার্ড প্রদান করুন');
+      return;
     }
+
+    final success = await ref.read(authStateProvider.notifier).loginWithMobile(mobile, password);
+    if (!success && mounted) {
+      final error = ref.read(authStateProvider).errorMessage ?? 'লগইন ব্যর্থ হয়েছে';
+      _showSnackbar(error, isError: true);
+    }
+  }
+
+  void _showSnackbar(String message, {bool isError = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? AppColors.danger : AppColors.success,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authStateProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            padding: const EdgeInsets.all(AppSizes.paddingLarge),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Header & Logo
-                Center(
-                  child: Image.asset(
-                    'assets/branding/app-icon.png',
-                    width: 80,
-                    height: 80,
-                    errorBuilder: (_, __, ___) => const Icon(
-                      Icons.architecture_rounded,
-                      size: 64,
-                      color: AppColors.contractorNavy,
-                    ),
+                // অ্যাপ লোগো ও হেডার
+                Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: AppColors.contractorPrimary.withOpacity(0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.account_balance_wallet_rounded,
+                    color: AppColors.contractorPrimary,
+                    size: 38,
                   ),
                 ),
                 const SizedBox(height: 16),
-                Center(
-                  child: Text(
-                    AppStrings.appNameBangla,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : AppColors.contractorNavy,
-                        ),
+                Text(
+                  AppStrings.appName,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                    color: isDark ? AppColors.darkTextPrimary : AppColors.contractorPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
-                Center(
-                  child: Text(
-                    AppStrings.loginTitle,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: isDark
-                              ? AppColors.darkTextSecondary
-                              : AppColors.lightTextSecondary,
-                        ),
-                  ),
+                Text(
+                  AppStrings.appTagline,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
-                const SizedBox(height: 28),
 
-                // Tabs for Mobile vs Contractor
+                const SizedBox(height: 32),
+
+                // ট্যাব বার (ঠিকাদার বনাম কর্মী/ক্লায়েন্ট)
                 Container(
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkCard : Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(12),
+                    color: isDark ? AppColors.darkCard : const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                   child: TabBar(
                     controller: _tabController,
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    dividerColor: Colors.transparent,
                     indicator: BoxDecoration(
-                      color: AppColors.contractorNavy,
-                      borderRadius: BorderRadius.circular(10),
+                      color: AppColors.contractorPrimary,
+                      borderRadius: BorderRadius.circular(12),
                     ),
+                    indicatorSize: TabBarIndicatorSize.tab,
                     labelColor: Colors.white,
-                    unselectedLabelColor: isDark
-                        ? AppColors.darkTextSecondary
-                        : AppColors.lightTextSecondary,
-                    labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                    unselectedLabelColor: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
+                    labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                     tabs: const [
-                      Tab(text: AppStrings.mobileLoginTab),
-                      Tab(text: AppStrings.contractorLoginTab),
+                      Tab(text: 'ঠিকাদার'),
+                      Tab(text: 'কর্মী / ক্লায়েন্ট'),
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 24),
 
-                // Tab View
+                // ট্যাব ভিউ কন্টেন্ট
                 SizedBox(
-                  height: 340,
+                  height: 260,
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      // Tab 1: Member Mobile Login
-                      Form(
-                        key: _mobileFormKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            TextFormField(
-                              controller: _mobileController,
-                              keyboardType: TextInputType.phone,
-                              decoration: const InputDecoration(
-                                labelText: AppStrings.mobileLabel,
-                                hintText: AppStrings.mobileHint,
-                                prefixIcon: Icon(Icons.phone_android_rounded),
-                              ),
-                              validator: (val) {
-                                if (val == null || val.trim().isEmpty) {
-                                  return AppStrings.fieldRequired;
-                                }
-                                if (!isValidBangladeshiMobile(val)) {
-                                  return AppStrings.invalidMobile;
-                                }
-                                return null;
-                              },
+                      // ১. ঠিকাদার ফর্ম
+                      Column(
+                        children: [
+                          TextField(
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: const InputDecoration(
+                              labelText: AppStrings.email,
+                              prefixIcon: Icon(Icons.email_outlined),
                             ),
-                            const SizedBox(height: 16),
-                            TextFormField(
-                              controller: _mobilePasswordController,
-                              obscureText: _obscureMobilePass,
-                              decoration: InputDecoration(
-                                labelText: AppStrings.passwordLabel,
-                                hintText: AppStrings.passwordHint,
-                                prefixIcon: const Icon(Icons.lock_outline_rounded),
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _obscureMobilePass
-                                        ? Icons.visibility_off_outlined
-                                        : Icons.visibility_outlined,
-                                  ),
-                                  onPressed: () => setState(
-                                      () => _obscureMobilePass = !_obscureMobilePass),
-                                ),
-                              ),
-                              validator: (val) {
-                                if (val == null || val.isEmpty) {
-                                  return AppStrings.fieldRequired;
-                                }
-                                if (val.length < 6) {
-                                  return AppStrings.passwordMinLength;
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              AppStrings.defaultPasswordNotice,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: isDark
-                                    ? AppColors.darkTextSecondary
-                                    : AppColors.lightTextSecondary,
+                          ),
+                          const SizedBox(height: 14),
+                          TextField(
+                            controller: _contractorPasswordController,
+                            obscureText: _obscureContractorPassword,
+                            decoration: InputDecoration(
+                              labelText: AppStrings.password,
+                              prefixIcon: const Icon(Icons.lock_outline),
+                              suffixIcon: IconButton(
+                                icon: Icon(_obscureContractorPassword ? Icons.visibility_off : Icons.visibility),
+                                onPressed: () => setState(() => _obscureContractorPassword = !_obscureContractorPassword),
                               ),
                             ),
-                            const Spacer(),
-                            ElevatedButton(
-                              onPressed: _isLoading ? null : _handleMobileLogin,
-                              child: _isLoading
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : const Text(AppStrings.loginButton),
+                          ),
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: authState.isLoading ? null : _handleContractorLogin,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.contractorPrimary,
+                              foregroundColor: Colors.white,
                             ),
-                          ],
-                        ),
+                            child: authState.isLoading
+                                ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                                : const Text(AppStrings.loginButton),
+                          ),
+                        ],
                       ),
 
-                      // Tab 2: Contractor Email Login
-                      Form(
-                        key: _contractorFormKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            TextFormField(
-                              controller: _emailController,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: const InputDecoration(
-                                labelText: AppStrings.emailLabel,
-                                hintText: AppStrings.emailHint,
-                                prefixIcon: Icon(Icons.email_outlined),
+                      // ২. মোবাইল ইউজার ফর্ম (শ্রমিক, সুপারভাইজার, ক্লায়েন্ট)
+                      Column(
+                        children: [
+                          TextField(
+                            controller: _mobileController,
+                            keyboardType: TextInputType.phone,
+                            decoration: const InputDecoration(
+                              labelText: AppStrings.mobileNumber,
+                              hintText: '০১XXXXXXXXX',
+                              prefixIcon: Icon(Icons.phone_android_outlined),
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                          TextField(
+                            controller: _mobilePasswordController,
+                            obscureText: _obscureMobilePassword,
+                            decoration: InputDecoration(
+                              labelText: AppStrings.password,
+                              helperText: 'প্রাথমিক পাসওয়ার্ড: মোবাইলের শেষ ৬ সংখ্যা',
+                              prefixIcon: const Icon(Icons.lock_outline),
+                              suffixIcon: IconButton(
+                                icon: Icon(_obscureMobilePassword ? Icons.visibility_off : Icons.visibility),
+                                onPressed: () => setState(() => _obscureMobilePassword = !_obscureMobilePassword),
                               ),
-                              validator: (val) {
-                                if (val == null || val.trim().isEmpty) {
-                                  return AppStrings.fieldRequired;
-                                }
-                                if (!val.contains('@') || !val.contains('.')) {
-                                  return AppStrings.invalidEmail;
-                                }
-                                return null;
-                              },
                             ),
-                            const SizedBox(height: 16),
-                            TextFormField(
-                              controller: _contractorPasswordController,
-                              obscureText: _obscureContractorPass,
-                              decoration: InputDecoration(
-                                labelText: AppStrings.passwordLabel,
-                                hintText: AppStrings.passwordHint,
-                                prefixIcon: const Icon(Icons.lock_outline_rounded),
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _obscureContractorPass
-                                        ? Icons.visibility_off_outlined
-                                        : Icons.visibility_outlined,
-                                  ),
-                                  onPressed: () => setState(() =>
-                                      _obscureContractorPass =
-                                          !_obscureContractorPass),
-                                ),
-                              ),
-                              validator: (val) {
-                                if (val == null || val.isEmpty) {
-                                  return AppStrings.fieldRequired;
-                                }
-                                if (val.length < 6) {
-                                  return AppStrings.passwordMinLength;
-                                }
-                                return null;
-                              },
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: authState.isLoading ? null : _handleMobileLogin,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.workerPrimary,
+                              foregroundColor: Colors.white,
                             ),
-                            const Spacer(),
-                            ElevatedButton(
-                              onPressed: _isLoading ? null : _handleContractorLogin,
-                              child: _isLoading
-                                  ? const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : const Text(AppStrings.loginButton),
-                            ),
-                            const SizedBox(height: 12),
-                            OutlinedButton(
-                              onPressed: () => context.push('/register-contractor'),
-                              style: OutlinedButton.styleFrom(
-                                minimumSize: const Size.fromHeight(48),
-                                side: const BorderSide(
-                                    color: AppColors.contractorNavy),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: const Text(AppStrings.registerButton),
-                            ),
-                          ],
-                        ),
+                            child: authState.isLoading
+                                ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                                : const Text(AppStrings.loginButton),
+                          ),
+                        ],
                       ),
                     ],
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // ঠিকাদার সাইন-আপ বাটন
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const ContractorSignUpScreen()),
+                    );
+                  },
+                  child: const Text(
+                    'নতুন ঠিকাদার? প্রতিষ্ঠান নিবন্ধন করুন',
+                    style: TextStyle(
+                      color: AppColors.contractorPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],

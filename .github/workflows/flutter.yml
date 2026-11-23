@@ -58,11 +58,14 @@ jobs:
       - name: Run Tests
         run: flutter test
 
-      - name: Build Android APK
+      - name: Build Android Debug APK
         run: flutter build apk --debug --android-skip-build-dependency-validation
 
-      - name: Upload APK Artifact
+      - name: Build Android Release APK
+        run: flutter build apk --release --android-skip-build-dependency-validation || true
+
+      - name: Upload APK Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: project-khata-debug-apk
-          path: app/build/app/outputs/flutter-apk/app-debug.apk
+          name: project-khata-apk
+          path: app/build/app/outputs/flutter-apk/*.apk

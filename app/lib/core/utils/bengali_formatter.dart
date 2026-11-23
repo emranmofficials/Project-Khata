@@ -1,9 +1,8 @@
 import 'package:intl/intl.dart';
 
+/// বাংলা সংখ্যা, তারিখ ও টাকা ফরম্যাটিং ইউটিলিটি
 class BengaliFormatter {
-  BengaliFormatter._();
-
-  static const Map<String, String> _enToBnDigits = {
+  static const Map<String, String> _englishToBengaliDigits = {
     '0': '০',
     '1': '১',
     '2': '২',
@@ -16,72 +15,69 @@ class BengaliFormatter {
     '9': '৯',
   };
 
-  /// Converts any English digits in a string or number to Bengali numerals
-  static String toBnNumber(dynamic number) {
+  static const List<String> _bengaliMonths = [
+    'জানুয়ারি',
+    'ফেব্রুয়ারি',
+    'মার্চ',
+    'এপ্রিল',
+    'মে',
+    'জুন',
+    'জুলাই',
+    'আগস্ট',
+    'সেপ্টেম্বর',
+    'অক্টোবর',
+    'নভেম্বর',
+    'ডিসেম্বর',
+  ];
+
+  /// যেকোনো ইংরেজি সংখ্যা বা স্ট্রিংকে বাংলা সংখ্যায় রূপান্তর
+  static String toBengaliNumber(dynamic number) {
     if (number == null) return '০';
-    final str = number.toString();
-    return str.split('').map((char) => _enToBnDigits[char] ?? char).join('');
+    String str = number.toString();
+    _englishToBengaliDigits.forEach((en, bn) {
+      str = str.replaceAll(en, bn);
+    });
+    return str;
   }
 
-  /// Formats currency with Taka symbol in Bengali numerals
-  static String formatCurrency(num amount) {
-    final formatter = NumberFormat('#,##,###.##', 'en_US');
-    final formatted = formatter.format(amount);
-    return '৳ ${toBnNumber(formatted)}';
+  /// টাকার ফরম্যাট (যেমন: ৳ ১,২৫০.০০)
+  static String toCurrency(dynamic amount, {bool showDecimals = false}) {
+    if (amount == null) return '৳ ০';
+    double val = (amount is num) ? amount.toDouble() : double.tryParse(amount.toString()) ?? 0.0;
+    final formatter = NumberFormat(showDecimals ? '#,##0.00' : '#,##0');
+    String formatted = formatter.format(val);
+    return '৳ ${toBengaliNumber(formatted)}';
   }
 
-  /// Alias for formatCurrency
-  static String toCurrency(num amount) => formatCurrency(amount);
-
-  /// Formats a DateTime to readable Bengali format (e.g. ২৯ অক্টোবর ২০২৬)
-  static String formatDate(DateTime date) {
-    const months = [
-      'জানুয়ারি',
-      'ফেব্রুয়ারি',
-      'মার্চ',
-      'এপ্রিল',
-      'মে',
-      'জুন',
-      'জুলাই',
-      'আগস্ট',
-      'সেপ্টেম্বর',
-      'অক্টোবর',
-      'নভেম্বর',
-      'ডিসেম্বর'
-    ];
-    final day = toBnNumber(date.day);
-    final month = months[date.month - 1];
-    final year = toBnNumber(date.year);
+  /// পূর্ণাঙ্গ বাংলা তারিখ (যেমন: ২৩ নভেম্বর ২০২৬)
+  static String toFullDate(DateTime? date) {
+    if (date == null) return '';
+    String day = toBengaliNumber(date.day);
+    String month = _bengaliMonths[date.month - 1];
+    String year = toBengaliNumber(date.year);
     return '$day $month $year';
   }
 
-  /// Alias for formatDate
-  static String toDate(DateTime date) => formatDate(date);
-  static String toBnDate(DateTime date) => formatDate(date);
-
-  /// Formats square feet
-  static String toSqft(num sqft) => '${toBnNumber(sqft)} বর্গফুট';
-
-  /// Formats relative time in Bengali (e.g. এইমাত্র, ৫ মিনিট আগে, ২ ঘণ্টা আগে, গতকাল)
-  static String formatRelativeTime(DateTime dateTime) {
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
-
-    if (difference.inSeconds < 60) {
-      return 'এইমাত্র';
-    } else if (difference.inMinutes < 60) {
-      return '${toBnNumber(difference.inMinutes)} মিনিট আগে';
-    } else if (difference.inHours < 24 && now.day == dateTime.day) {
-      return '${toBnNumber(difference.inHours)} ঘণ্টা আগে';
-    } else if (difference.inDays == 1 || (difference.inHours < 48 && now.day != dateTime.day)) {
-      return 'গতকাল';
-    } else if (difference.inDays < 7) {
-      return '${toBnNumber(difference.inDays)} দিন আগে';
-    } else {
-      return formatDate(dateTime);
-    }
+  /// সংক্ষিপ্ত বাংলা তারিখ (যেমন: ২৩/১১/২০২৬)
+  static String toShortDate(DateTime? date) {
+    if (date == null) return '';
+    String day = toBengaliNumber(date.day.toString().padLeft(2, '0'));
+    String month = toBengaliNumber(date.month.toString().padLeft(2, '0'));
+    String year = toBengaliNumber(date.year);
+    return '$day/$month/$year';
   }
 
-  /// Alias for formatRelativeTime
-  static String toRelativeTime(DateTime dateTime) => formatRelativeTime(dateTime);
+  /// সময়ভিত্তিক শুভেচ্ছা বার্তা (শুভ সকাল / দুপুর / সন্ধ্যা)
+  static String getGreeting() {
+    int hour = DateTime.now().hour;
+    if (hour >= 5 && hour < 12) {
+      return 'শুভ সকাল';
+    } else if (hour >= 12 && hour < 17) {
+      return 'শুভ দুপুর';
+    } else if (hour >= 17 && hour < 21) {
+      return 'শুভ সন্ধ্যা';
+    } else {
+      return 'শুভ রাত্রি';
+    }
+  }
 }

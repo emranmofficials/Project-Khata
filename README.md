@@ -5,9 +5,9 @@
 ## প্রযুক্তি
 
 - **ফ্রন্টএন্ড:** Flutter (Android ও iOS)
-- **ব্যাকএন্ড:** Supabase (PostgreSQL, Auth, RLS, Storage, Realtime, Edge Functions)
+- **ব্যাকএন্ড:** Supabase (PostgreSQL 15+, Auth, RLS, Storage, Realtime, Edge Functions)
 - **নোটিফিকেশন:** Firebase Cloud Messaging (FCM)
-- **ম্যাপ:** Google Maps SDK ও Places API
+- **ম্যাপ:** OpenStreetMap (`flutter_map`) ও Haversine জিও-ফেন্সিং (কোনো Google Maps API Key লাগে না, সম্পূর্ণ ফ্রি)
 
 ## ইউজার রোল
 
@@ -20,49 +20,29 @@
 
 ## প্রজেক্টের অবস্থা
 
-🚧 **ফেজ ১ চলমান:** অথেনটিকেশন ও প্রতিষ্ঠান ব্যবস্থাপনা।
-
-পূর্ণাঙ্গ প্রয়োজনীয়তা জানতে [docs/PRD.md](docs/PRD.md) দেখুন। এজেন্ট ও ডেভেলপারদের নিয়মাবলী আছে [AGENTS.md](AGENTS.md)-এ।
+✅ **ফেজ ১ থেকে ৬ সম্পন্ন:**
+- Phase 1: অথেনটিকেশন ও প্রতিষ্ঠান ব্যবস্থাপনা
+- Phase 2: প্রজেক্ট তৈরি, ক্লায়েন্ট লিংকিং ও ১৫০মি সাইট জিও-ফেন্সিং
+- Phase 3: সুপারভাইজার দৈনিক এন্ট্রি ও ডিজিটাল হাজিরা ব্যবস্থাপনা
+- Phase 4: মজুরি খতিয়ান, FIFO পেমেন্ট, মালামাল ও বিল স্টেটমেন্ট
+- Phase 5: রিয়েলটাইম নোটিফিকেশন, অফলাইন কিউ ও অপরিবর্তনীয় অডিট লগ
+- Phase 6: UAT টেস্ট সুইট, ProGuard ও GitHub Actions CI/CD বিল্ড
 
 ## বিল্ড ও চালানো
 
-> Flutter প্রজেক্ট তৈরির পর এই অংশ হালনাগাদ হবে।
-
 ```bash
+cd app
 flutter pub get
+flutter test
 flutter run
 ```
 
-Android ও iOS বিল্ড GitHub Actions-এ হবে (`.github/workflows/`)।
+Android ও iOS বিল্ড স্বয়ংক্রিয়ভাবে GitHub Actions-এ সম্পাদিত হয় (`.github/workflows/flutter.yml`)।
 
 ## সেটআপ (Supabase)
 
-1. Supabase প্রজেক্ট তৈরি করুন।
-2. `.env.example` কপি করে `.env` বানান এবং `SUPABASE_URL` ও `SUPABASE_ANON_KEY` বসান।
-3. Service-role key কখনও অ্যাপে বা রিপোজিটরিতে রাখবেন না। এটি শুধু Edge Functions-এর পরিবেশ-ভেরিয়েবলে থাকবে।
-
-## ব্রান্ড রং
-
-| ইন্টারফেস | রং | হেক্স |
-|---|---|---|
-| ঠিকাদার | নেভি | `#1E3A8A` |
-| ক্লায়েন্ট | টিল | `#0F766E` |
-| সুপারভাইজার | অ্যাম্বার | `#C2410C` |
-| শ্রমিক | ইন্ডিগো | `#6D28D9` |
-
-লোগো: `assets/branding/logo.png`
-
-## ডিরেক্টরি
-
-```
-.
-├── AGENTS.md          # এজেন্টের নির্দেশিকা
-├── docs/PRD.md        # প্রোডাক্ট রিকোয়ারমেন্ট (v2.0)
-├── assets/branding/   # লোগো ও আইকন
-├── app/               # Flutter প্রজেক্ট
-├── supabase/          # মাইগ্রেশন, RLS পলিসি, Edge Functions
-└── .github/workflows/ # CI বিল্ড
-```
+1. Supabase প্রজেক্টের SQL Editor-এ `supabase/all_in_one_migration.sql` স্ক্রিপ্টটি রান করুন।
+2. `app/.env.example` কপি করে `app/.env` বানান এবং প্রয়োজনীয় কী বসান।
 
 ## লাইসেন্স
 

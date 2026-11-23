@@ -1,46 +1,32 @@
 name: project_khata
-description: "Project Khata - Construction & Contracting Management Mobile Application"
-publish_to: 'none'
-version: 1.0.1+2
+description: "Project Khata (প্রজেক্ট খাতা) - Contractor & Construction Management App"
+publish_to: "none"
+version: 1.0.2+3
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
+  sdk: ">=3.3.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  flutter_localizations:
-    sdk: flutter
-  intl: ^0.20.2
-
-  # Location & Maps (Phase 2)
-  google_maps_flutter: ^2.6.0
-  geolocator: ^11.0.0
-
-  # Supabase & Backend
-  supabase_flutter: ^2.8.0
-
-  # State Management & Routing
-  flutter_riverpod: ^2.5.1
-  go_router: ^14.2.0
-
-  # UI, Fonts & Theming
+  flutter_riverpod: ^2.6.1
+  supabase_flutter: ^2.8.3
   google_fonts: ^6.2.1
-  flutter_svg: ^2.0.10+1
-  cached_network_image: ^3.3.1
-
-  # Local storage & Environment
-  shared_preferences: ^2.2.3
-  flutter_dotenv: ^5.1.0
+  intl: ^0.19.0
+  geolocator: ^13.0.2
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  shared_preferences: ^2.3.4
+  uuid: ^4.5.1
+  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^3.0.0
 
 flutter:
   uses-material-design: true
-
   assets:
     - .env
     - assets/branding/
