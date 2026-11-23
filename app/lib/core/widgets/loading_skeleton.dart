@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../constants/app_colors.dart';
 import '../constants/app_sizes.dart';
 
 /// PRD সেকশন ১১.৬ অনুযায়ী স্থির স্কেলেটন লোডার (ঝিলিমিলি নয়, পরিচ্ছন্ন স্থির আকার)

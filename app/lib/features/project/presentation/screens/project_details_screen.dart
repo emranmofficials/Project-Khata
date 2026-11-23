@@ -5,7 +5,6 @@ import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/utils/bengali_formatter.dart';
 import '../../../../core/widgets/empty_state_view.dart';
-import '../../../../core/widgets/kpi_card.dart';
 import '../../../../core/widgets/loading_skeleton.dart';
 import '../../../../core/widgets/status_chip.dart';
 import '../providers/project_provider.dart';

@@ -89,7 +89,6 @@ class BillStatementsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final statementsAsync = ref.watch(projectBillStatementsProvider(projectId));
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(

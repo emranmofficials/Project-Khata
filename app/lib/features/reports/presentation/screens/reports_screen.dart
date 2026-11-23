@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/utils/bengali_formatter.dart';
-import '../../../auth/presentation/providers/auth_provider.dart';
 
 /// PRD সেকশন ৬.৫ (১০) ও ১৭ অনুযায়ী রিপোর্ট ও এক্সপোর্ট স্ক্রিন (PDF & Excel)
 class ReportsScreen extends ConsumerStatefulWidget {

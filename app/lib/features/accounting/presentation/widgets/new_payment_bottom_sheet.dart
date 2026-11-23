@@ -39,7 +39,7 @@ class _NewPaymentBottomSheetState extends ConsumerState<NewPaymentBottomSheet> {
     setState(() => _isSaving = true);
     try {
       final amount = double.parse(_amountController.text.trim());
-      final res = await ref.read(accountingActionProvider.notifier).recordWorkerPayment(
+      await ref.read(accountingActionProvider.notifier).recordWorkerPayment(
         payeeId: _selectedWorkerId!,
         amount: amount,
         paymentDate: _paymentDate,

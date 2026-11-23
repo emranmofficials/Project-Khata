@@ -19,7 +19,6 @@ class WorkerMarkAttendanceScreen extends ConsumerStatefulWidget {
 class _WorkerMarkAttendanceScreenState extends ConsumerState<WorkerMarkAttendanceScreen> {
   bool _isLocating = false;
   String? _selectedEntryId;
-  String? _selectedProjectName;
   bool _alreadyMarked = false;
 
   void _handleMarkAttendance() async {
