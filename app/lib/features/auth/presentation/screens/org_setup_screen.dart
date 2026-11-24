@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/constants/app_strings.dart';
@@ -26,6 +27,20 @@ class _OrgSetupScreenState extends ConsumerState<OrgSetupScreen> {
     if (currentUser != null && currentUser.mobile.isNotEmpty) {
       _contractorMobileController.text = currentUser.mobile;
     }
+    try {
+      final meta = Supabase.instance.client.auth.currentUser?.userMetadata;
+      if (meta != null) {
+        if (meta['org_name'] != null && _orgNameController.text.isEmpty) {
+          _orgNameController.text = meta['org_name'].toString();
+        }
+        if (meta['org_address'] != null && _orgAddressController.text.isEmpty) {
+          _orgAddressController.text = meta['org_address'].toString();
+        }
+        if (meta['org_phone'] != null && _orgPhoneController.text.isEmpty) {
+          _orgPhoneController.text = meta['org_phone'].toString();
+        }
+      }
+    } catch (_) {}
   }
 
   @override

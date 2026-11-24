@@ -25,7 +25,20 @@ class SupabaseAuthRepository implements AuthRepository {
 
     final profile = await getCurrentUserProfile();
     if (profile == null) {
-      // যদি ঠিকাদারের প্রোফাইল এখনও প্রতিষ্ঠান তৈরি না করে থাকে
+      // যদি ঠিকাদারের প্রোফাইল এখনও প্রতিষ্ঠান তৈরি না করে থাকে কিন্তু মেটাডাটা থাকে
+      final meta = user.userMetadata;
+      final orgName = meta?['org_name'] as String?;
+      if (orgName != null && orgName.trim().isNotEmpty) {
+        try {
+          return await setupOrganization(
+            orgName: orgName.trim(),
+            orgAddress: (meta?['org_address'] as String?)?.trim() ?? '',
+            orgPhone: (meta?['org_phone'] as String?)?.trim() ?? '',
+            contractorMobile: (meta?['mobile'] as String?)?.trim() ?? '',
+          );
+        } catch (_) {}
+      }
+
       return UserProfile(
         id: user.id,
         role: 'contractor',
@@ -87,16 +100,36 @@ class SupabaseAuthRepository implements AuthRepository {
     required String email,
     required String password,
     required String mobile,
+    String? orgName,
+    String? orgAddress,
+    String? orgPhone,
   }) async {
-    await _client.auth.signUp(
+    final response = await _client.auth.signUp(
       email: email.trim(),
       password: password,
       data: {
         'name': name.trim(),
         'mobile': mobile.trim(),
         'role': 'contractor',
+        if (orgName != null && orgName.trim().isNotEmpty) 'org_name': orgName.trim(),
+        if (orgAddress != null && orgAddress.trim().isNotEmpty) 'org_address': orgAddress.trim(),
+        if (orgPhone != null && orgPhone.trim().isNotEmpty) 'org_phone': orgPhone.trim(),
       },
     );
+
+    // যদি তাৎক্ষণিক সেশন থাকে (Auto-confirm) এবং প্রতিষ্ঠানের নাম দেওয়া থাকে
+    if (response.session != null && orgName != null && orgName.trim().isNotEmpty) {
+      try {
+        await setupOrganization(
+          orgName: orgName.trim(),
+          orgAddress: orgAddress?.trim() ?? '',
+          orgPhone: orgPhone?.trim() ?? '',
+          contractorMobile: mobile.trim(),
+        );
+      } catch (_) {
+        // ফেইল করলে পরবর্তী লগইনে OrgSetupScreen হ্যান্ডেল করবে
+      }
+    }
   }
 
   @override

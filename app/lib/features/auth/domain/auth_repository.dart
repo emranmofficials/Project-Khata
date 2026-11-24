@@ -14,12 +14,15 @@ abstract class AuthRepository {
     required String password,
   });
 
-  /// ঠিকাদার প্রাথমিক সাইন-আপ (ধাপ ১)
+  /// ঠিকাদার সাইন-আপ ও প্রতিষ্ঠান তথ্য নিবন্ধন
   Future<void> contractorSignUp({
     required String name,
     required String email,
     required String password,
     required String mobile,
+    String? orgName,
+    String? orgAddress,
+    String? orgPhone,
   });
 
   /// ঠিকাদারের প্রতিষ্ঠান সেটআপ (ধাপ ২ - RPC কল)
