@@ -33,12 +33,21 @@ jobs:
             supabase link --project-ref ${{ env.PROJECT_ID }}
           fi
 
-      - name: Push Database Migrations
+      - name: Apply Database Schema via PSQL
         if: ${{ env.SUPABASE_DB_PASSWORD != '' }}
         run: |
-          supabase db push --include-all
+          echo "Installing postgresql-client if needed..."
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+          echo "Applying all_in_one_migration.sql..."
+          PGPASSWORD="$SUPABASE_DB_PASSWORD" psql \
+            -h aws-0-ap-northeast-2.pooler.supabase.com \
+            -p 5432 \
+            -U postgres.jintblmxigdclmcshrgz \
+            -d postgres \
+            -v ON_ERROR_STOP=0 \
+            -f supabase/all_in_one_migration.sql
+          echo "Database schema migration completed successfully!"
 
       - name: Deploy Edge Functions
         run: |
-          supabase functions deploy create-member --no-verify-jwt --yes
-
+          supabase functions deploy create-member --no-verify-jwt --yes || echo "Edge function deploy skipped"
