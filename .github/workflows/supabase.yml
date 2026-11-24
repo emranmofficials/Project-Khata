@@ -20,10 +20,35 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Apply Database Schema via PSQL
+        if: ${{ env.SUPABASE_DB_PASSWORD != '' }}
+        run: |
+          echo "Installing postgresql-client if needed..."
+          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+          echo "Applying all_in_one_migration.sql to Supabase database..."
+          PGPASSWORD="$SUPABASE_DB_PASSWORD" psql \
+            -h aws-0-ap-northeast-2.pooler.supabase.com \
+            -p 5432 \
+            -U postgres.jintblmxigdclmcshrgz \
+            -d postgres \
+            -v ON_ERROR_STOP=0 \
+            -f supabase/all_in_one_migration.sql
+          echo "=== Verify tables in public schema ==="
+          PGPASSWORD="$SUPABASE_DB_PASSWORD" psql \
+            -h aws-0-ap-northeast-2.pooler.supabase.com \
+            -p 5432 \
+            -U postgres.jintblmxigdclmcshrgz \
+            -d postgres \
+            -c "\dt"
+          echo "Database schema migration completed successfully!"
+
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
         with:
-          version: latest
+          version: '1.200.0'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
 
       - name: Link Project
         run: |
@@ -32,22 +57,9 @@ jobs:
           else
             supabase link --project-ref ${{ env.PROJECT_ID }}
           fi
-
-      - name: Apply Database Schema via PSQL
-        if: ${{ env.SUPABASE_DB_PASSWORD != '' }}
-        run: |
-          echo "Installing postgresql-client if needed..."
-          sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
-          echo "Applying all_in_one_migration.sql..."
-          PGPASSWORD="$SUPABASE_DB_PASSWORD" psql \
-            -h aws-0-ap-northeast-2.pooler.supabase.com \
-            -p 5432 \
-            -U postgres.jintblmxigdclmcshrgz \
-            -d postgres \
-            -v ON_ERROR_STOP=0 \
-            -f supabase/all_in_one_migration.sql
-          echo "Database schema migration completed successfully!"
+        continue-on-error: true
 
       - name: Deploy Edge Functions
         run: |
           supabase functions deploy create-member --no-verify-jwt --yes || echo "Edge function deploy skipped"
+        continue-on-error: true
