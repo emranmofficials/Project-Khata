@@ -206,7 +206,7 @@ class _SupervisorProjectCardState extends ConsumerState<_SupervisorProjectCard> 
               }
 
               return ElevatedButton.icon(
-                onPressed: _isOpening ? null : () => _openNewShift(context),
+                onPressed: _isOpening ? null : () => _openNewShift(),
                 icon: _isOpening
                     ? const SizedBox(
                         height: 16,
@@ -228,7 +228,7 @@ class _SupervisorProjectCardState extends ConsumerState<_SupervisorProjectCard> 
     );
   }
 
-  Future<void> _openNewShift(BuildContext context) async {
+  Future<void> _openNewShift() async {
     setState(() => _isOpening = true);
     try {
       final res = await ref.read(attendanceActionProvider.notifier).openDailyEntry(
@@ -236,8 +236,9 @@ class _SupervisorProjectCardState extends ConsumerState<_SupervisorProjectCard> 
         entryDate: DateTime.now(),
       );
 
+      if (!mounted) return;
       final entryId = res['entry_id'] as String?;
-      if (entryId != null && mounted) {
+      if (entryId != null) {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => DailyEntryDetailsScreen(entryId: entryId),
@@ -245,14 +246,13 @@ class _SupervisorProjectCardState extends ConsumerState<_SupervisorProjectCard> 
         );
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('এন্ট্রি খুলতে সমস্যা: ${e.toString().replaceAll("Exception: ", "")}'),
-            backgroundColor: AppColors.danger,
-          ),
-        );
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('এন্ট্রি খুলতে সমস্যা: ${e.toString().replaceAll("Exception: ", "")}'),
+          backgroundColor: AppColors.danger,
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isOpening = false);
     }
