@@ -11,6 +11,7 @@ import '../../../project/presentation/screens/project_list_screen.dart';
 import '../../../accounting/presentation/screens/accounts_dashboard_screen.dart';
 import '../../../supervisor/presentation/screens/supervisor_home_screen.dart';
 import '../../../worker/presentation/screens/worker_home_screen.dart';
+import '../../../worker/presentation/screens/workers_management_screen.dart';
 
 /// PRD সেকশন ৫ ও ১০.১ অনুযায়ী ভূমিকা-ভিত্তিক মূল নেভিগেশন রাউটার
 class RootNavigationScreen extends ConsumerStatefulWidget {
@@ -70,7 +71,7 @@ class _RootNavigationScreenState extends ConsumerState<RootNavigationScreen> {
     final screens = [
       const ContractorHomeScreen(),
       const ProjectListScreen(),
-      const Scaffold(body: Center(child: Text('শ্রমিক ও সুপারভাইজার'))),
+      const WorkersManagementScreen(),
       const AccountsDashboardScreen(),
       const ContractorMoreScreen(),
     ];

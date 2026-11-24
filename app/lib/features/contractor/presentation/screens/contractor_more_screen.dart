@@ -5,6 +5,7 @@ import '../../../../core/constants/app_sizes.dart';
 import '../../../attendance/presentation/screens/contractor_approval_screen.dart';
 import '../../../audit/presentation/screens/audit_log_screen.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../auth/presentation/screens/change_password_screen.dart';
 import '../../../notifications/presentation/screens/notifications_inbox_screen.dart';
 import '../../../reports/presentation/screens/reports_screen.dart';
 
@@ -128,7 +129,11 @@ class ContractorMoreScreen extends ConsumerWidget {
                   title: 'পাসওয়ার্ড পরিবর্তন',
                   subtitle: 'অ্যাকাউন্টের পাসওয়ার্ড আপডেট করুন',
                   onTap: () {
-                    // পাসওয়ার্ড পরিবর্তন
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => const ChangePasswordScreen(isMandatory: false),
+                      ),
+                    );
                   },
                 ),
               ],

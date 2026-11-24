@@ -4,7 +4,9 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_sizes.dart';
 import '../../../../core/utils/bengali_formatter.dart';
 import '../../../../core/widgets/loading_skeleton.dart';
+import '../../../project/domain/models/project_model.dart';
 import '../../../project/presentation/providers/project_provider.dart';
+import '../../../worker/presentation/providers/worker_provider.dart';
 import '../providers/accounting_provider.dart';
 import '../widgets/new_payment_bottom_sheet.dart';
 import 'bill_statements_screen.dart';
@@ -19,6 +21,7 @@ class AccountsDashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final overviewAsync = ref.watch(financialOverviewProvider);
     final projectsAsync = ref.watch(projectsListProvider);
+    final workersAsync = ref.watch(workersListProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -29,6 +32,7 @@ class AccountsDashboardScreen extends ConsumerWidget {
         onRefresh: () async {
           ref.invalidate(financialOverviewProvider);
           ref.invalidate(projectsListProvider);
+          ref.invalidate(workersListProvider);
         },
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSizes.paddingMedium),
@@ -38,7 +42,14 @@ class AccountsDashboardScreen extends ConsumerWidget {
               // ১. আর্থিক সারাংশ কার্ড
               overviewAsync.when(
                 loading: () => const LoadingSkeletonCard(height: 180),
-                error: (err, _) => Text('লোড ত্রুটি: $err'),
+                error: (err, _) => Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.danger.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text('আর্থিক সারাংশ লোড ত্রুটি: $err'),
+                ),
                 data: (data) {
                   final totalIncome = (data['total_income'] as num?)?.toDouble() ?? 0.0;
                   final totalCost = (data['total_cost'] as num?)?.toDouble() ?? 0.0;
@@ -100,16 +111,32 @@ class AccountsDashboardScreen extends ConsumerWidget {
                       label: 'শ্রমিক পেমেন্ট',
                       color: AppColors.success,
                       onTap: () {
-                        // শ্রমিকদের তালিকা এনে বটম শীট ওপেন করা
+                        final workers = workersAsync.valueOrNull ?? [];
+                        if (workers.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('কোনো কর্মী পাওয়া যায়নি। আগে কর্মী যুক্ত করুন।'),
+                              backgroundColor: AppColors.warning,
+                            ),
+                          );
+                          return;
+                        }
+
                         showModalBottomSheet(
                           context: context,
                           isScrollControlled: true,
-                          shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
-                          builder: (_) => const NewPaymentBottomSheet(
-                            workers: [
-                              {'id': 'demo-w1', 'name': 'আব্দুল করিম (মিস্ত্রি)', 'mobile': '01711111111'},
-                              {'id': 'demo-w2', 'name': 'মোবারক হোসেন (সহকারী)', 'mobile': '01822222222'},
-                            ],
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                          ),
+                          builder: (_) => NewPaymentBottomSheet(
+                            workers: workers
+                                .map((w) => {
+                                      'id': w.id,
+                                      'name':
+                                          '${w.name}${w.designationName != null ? " (${w.designationName})" : ""}',
+                                      'mobile': w.mobile,
+                                    })
+                                .toList(),
                           ),
                         );
                       },
@@ -122,18 +149,16 @@ class AccountsDashboardScreen extends ConsumerWidget {
                       label: 'বিল খতিয়ান',
                       color: AppColors.contractorPrimary,
                       onTap: () {
-                        projectsAsync.whenData((projects) {
-                          if (projects.isNotEmpty) {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => BillStatementsScreen(
-                                  projectId: projects.first.id,
-                                  projectName: projects.first.name,
-                                ),
-                              ),
-                            );
-                          }
-                        });
+                        final projects = projectsAsync.valueOrNull;
+                        _openProjectFeature(
+                          context,
+                          projects,
+                          'বিল খতিয়ান',
+                          (p) => BillStatementsScreen(
+                            projectId: p.id,
+                            projectName: p.name,
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -148,18 +173,16 @@ class AccountsDashboardScreen extends ConsumerWidget {
                       label: 'মালামাল হিসাব',
                       color: AppColors.clientPrimary,
                       onTap: () {
-                        projectsAsync.whenData((projects) {
-                          if (projects.isNotEmpty) {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => MaterialsScreen(
-                                  projectId: projects.first.id,
-                                  projectName: projects.first.name,
-                                ),
-                              ),
-                            );
-                          }
-                        });
+                        final projects = projectsAsync.valueOrNull;
+                        _openProjectFeature(
+                          context,
+                          projects,
+                          'মালামাল হিসাব',
+                          (p) => MaterialsScreen(
+                            projectId: p.id,
+                            projectName: p.name,
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -170,18 +193,16 @@ class AccountsDashboardScreen extends ConsumerWidget {
                       label: 'সাইট খরচ',
                       color: AppColors.supervisorPrimary,
                       onTap: () {
-                        projectsAsync.whenData((projects) {
-                          if (projects.isNotEmpty) {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => SiteExpensesScreen(
-                                  projectId: projects.first.id,
-                                  projectName: projects.first.name,
-                                ),
-                              ),
-                            );
-                          }
-                        });
+                        final projects = projectsAsync.valueOrNull;
+                        _openProjectFeature(
+                          context,
+                          projects,
+                          'সাইট খরচ',
+                          (p) => SiteExpensesScreen(
+                            projectId: p.id,
+                            projectName: p.name,
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -201,6 +222,36 @@ class AccountsDashboardScreen extends ConsumerWidget {
                 loading: () => const LoadingSkeletonList(count: 3, itemHeight: 80),
                 error: (err, _) => Text('প্রজেক্ট তালিকা লোড ত্রুটি: $err'),
                 data: (projects) {
+                  if (projects.isEmpty) {
+                    return Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(AppSizes.paddingMedium),
+                      decoration: BoxDecoration(
+                        color: isDark ? AppColors.darkCard : AppColors.lightCard,
+                        borderRadius: BorderRadius.circular(AppSizes.cardRadius),
+                        border: Border.all(
+                          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                        ),
+                      ),
+                      child: const Column(
+                        children: [
+                          Icon(Icons.folder_open_rounded, size: 36, color: Colors.grey),
+                          SizedBox(height: 8),
+                          Text(
+                            'কোনো প্রজেক্ট নেই',
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'প্রজেক্ট তৈরি করলে প্রতিটি সাইটের বাজেট ও খরচের হিসাব এখানে দেখতে পাবেন।',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
                   return ListView.separated(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -208,34 +259,65 @@ class AccountsDashboardScreen extends ConsumerWidget {
                     separatorBuilder: (_, __) => const SizedBox(height: 10),
                     itemBuilder: (context, index) {
                       final p = projects[index];
-                      return Container(
-                        padding: const EdgeInsets.all(AppSizes.paddingMedium),
-                        decoration: BoxDecoration(
-                          color: isDark ? AppColors.darkCard : AppColors.lightCard,
-                          borderRadius: BorderRadius.circular(AppSizes.cardRadius),
-                          border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
-                        ),
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              backgroundColor: AppColors.contractorPrimary.withOpacity(0.1),
-                              child: const Icon(Icons.apartment_rounded, color: AppColors.contractorPrimary),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(p.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                                  Text(
-                                    'বাজেট: ${BengaliFormatter.toCurrency(p.budget)}',
-                                    style: TextStyle(fontSize: 12, color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary),
-                                  ),
-                                ],
+                      return InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => BillStatementsScreen(
+                                projectId: p.id,
+                                projectName: p.name,
                               ),
                             ),
-                            const Icon(Icons.chevron_right_rounded, color: Colors.grey),
-                          ],
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(AppSizes.cardRadius),
+                        child: Container(
+                          padding: const EdgeInsets.all(AppSizes.paddingMedium),
+                          decoration: BoxDecoration(
+                            color: isDark ? AppColors.darkCard : AppColors.lightCard,
+                            borderRadius: BorderRadius.circular(AppSizes.cardRadius),
+                            border: Border.all(
+                              color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundColor:
+                                    AppColors.contractorPrimary.withOpacity(0.1),
+                                child: const Icon(
+                                  Icons.apartment_rounded,
+                                  color: AppColors.contractorPrimary,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      p.name,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'বাজেট: ${BengaliFormatter.toCurrency(p.budget)} • ${p.type}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: isDark
+                                            ? AppColors.darkTextSecondary
+                                            : AppColors.lightTextSecondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Icon(Icons.chevron_right_rounded, color: Colors.grey),
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -246,6 +328,66 @@ class AccountsDashboardScreen extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+
+  void _openProjectFeature(
+    BuildContext context,
+    List<ProjectModel>? projects,
+    String featureName,
+    Widget Function(ProjectModel project) screenBuilder,
+  ) {
+    if (projects == null || projects.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('অনুগ্রহ করে প্রথমে একটি প্রজেক্ট তৈরি করুন।'),
+          backgroundColor: AppColors.warning,
+        ),
+      );
+      return;
+    }
+
+    if (projects.length == 1) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => screenBuilder(projects.first)),
+      );
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '$featureName দেখতে প্রজেক্ট নির্বাচন করুন',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              ...projects.map((p) => ListTile(
+                    leading: const Icon(Icons.apartment_rounded,
+                        color: AppColors.contractorPrimary),
+                    title: Text(p.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text(p.address),
+                    onTap: () {
+                      Navigator.of(ctx).pop();
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => screenBuilder(p)),
+                      );
+                    },
+                  )),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -283,14 +425,16 @@ class AccountsDashboardScreen extends ConsumerWidget {
           borderRadius: BorderRadius.circular(AppSizes.cardRadius),
           border: Border.all(color: color.withOpacity(0.2)),
         ),
-        child: Row(
+        child: Column(
           children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                label,
-                style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 14),
+            Icon(icon, color: color, size: 28),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: 13,
               ),
             ),
           ],
