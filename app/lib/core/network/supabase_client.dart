@@ -8,8 +8,8 @@ final supabaseClientProvider = Provider<SupabaseClient>((ref) {
 
 /// Supabase কনফিগারেশন হেল্পার
 class SupabaseConfig {
-  static const String defaultUrl = 'https://uplxkvrztqmjiqiijfbk.supabase.co';
-  static const String defaultAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVwbHhrdnJ6dHFtamlxaWlqZmJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI0MjQwNDksImV4cCI6MjEwODAwMDA0OX0.sF-CJcsbX99xtndvIrtfQ9JxV3jBLlhBtqTtJw0Qsi4';
+  static const String defaultUrl = 'https://jintblmxigdclmcshrgz.supabase.co';
+  static const String defaultAnonKey = 'sb_publishable_Z0_xmA04aP9ZLbErj52k9Q_COgUFS9r';
 
   static String get supabaseUrl => const String.fromEnvironment(
         'SUPABASE_URL',
